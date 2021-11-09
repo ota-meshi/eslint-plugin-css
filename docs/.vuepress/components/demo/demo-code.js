@@ -1,1 +1,7 @@
-var foo = <div style={{unknownColor: "#ff"}} />
+var foo = <div style={
+    {
+        unknownColor: "#fff",
+        color: "#fffff",
+        'background-color': '#f00'
+    }
+} />

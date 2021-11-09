@@ -42,7 +42,7 @@ export default createRule("no-length-zero-unit", {
         messages: {
             unexpected: "Unexpected unit.",
         },
-        type: "suggestion", // "problem",
+        type: "suggestion",
     },
     create(context) {
         const ignoreFunctions = [

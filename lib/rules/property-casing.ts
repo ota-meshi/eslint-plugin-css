@@ -19,7 +19,7 @@ export default createRule("property-casing", {
         messages: {
             disallow: "'{{name}}' is not in {{caseType}}.",
         },
-        type: "suggestion", // "problem",
+        type: "layout",
     },
     create(context) {
         const option = context.options[0]
