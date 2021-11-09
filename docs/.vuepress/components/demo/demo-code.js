@@ -1,0 +1,1 @@
+var foo = <div style={{unknownColor: "#ff"}} />

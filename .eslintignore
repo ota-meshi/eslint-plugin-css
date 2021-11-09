@@ -1,0 +1,12 @@
+/.nyc_output
+/coverage
+/dist
+/docs/.vuepress/dist
+/docs/.vuepress/components/demo/demo-code.js
+/node_modules
+/assets
+!/docs/.vuepress
+!/.vscode
+!/.github
+/tests/fixtures/integrations/eslint-plugin/test.js
+/package-lock.json
