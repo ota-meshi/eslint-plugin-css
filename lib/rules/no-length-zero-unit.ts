@@ -12,6 +12,7 @@ export default createRule("no-length-zero-unit", {
             description: "disallow units for zero lengths",
             category: "Best Practices",
             recommended: false,
+            stylelint: "length-zero-no-unit",
         },
         schema: [
             {

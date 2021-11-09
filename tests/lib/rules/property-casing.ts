@@ -29,6 +29,34 @@ tester.run("property-casing", rule as any, {
             `,
             parser: require.resolve("vue-eslint-parser"),
         },
+        {
+            code: `
+            var a = <div style={
+                {
+                    '-moz-transform': 'scale(2)',
+                    '-ms-transform': 'scale(2)',
+                    '-o-transform': 'scale(2)',
+                    '-webkit-transform': 'scale(2)',
+                    'transform': 'scale(2)',
+                }
+            } />
+            `,
+            options: ["kebab-case"],
+        },
+        {
+            code: `
+            var a = <div style={
+                {
+                    'MozTransform': 'scale(2)',
+                    'msTransform': 'scale(2)',
+                    'OTransform': 'scale(2)',
+                    'WebkitTransform': 'scale(2)',
+                    'transform': 'scale(2)',
+                }
+            } />
+            `,
+            options: ["camelCase"],
+        },
     ],
     invalid: [
         {
@@ -155,6 +183,67 @@ tester.run("property-casing", rule as any, {
                     endLine: 4,
                     endColumn: 36,
                 },
+            ],
+        },
+        {
+            code: `
+            var a = <div style={
+                {
+                    '-moz-transform': 'scale(2)',
+                    '-ms-transform': 'scale(2)',
+                    '-o-transform': 'scale(2)',
+                    '-webkit-transform': 'scale(2)',
+                    'transform': 'scale(2)',
+                }
+            } />
+            `,
+            output: `
+            var a = <div style={
+                {
+                    'MozTransform': 'scale(2)',
+                    'msTransform': 'scale(2)',
+                    'OTransform': 'scale(2)',
+                    'WebkitTransform': 'scale(2)',
+                    'transform': 'scale(2)',
+                }
+            } />
+            `,
+            errors: [
+                "'-moz-transform' is not in camelCase.",
+                "'-ms-transform' is not in camelCase.",
+                "'-o-transform' is not in camelCase.",
+                "'-webkit-transform' is not in camelCase.",
+            ],
+        },
+        {
+            code: `
+            var a = <div style={
+                {
+                    'MozTransform': 'scale(2)',
+                    'msTransform': 'scale(2)',
+                    'OTransform': 'scale(2)',
+                    'WebkitTransform': 'scale(2)',
+                    'transform': 'scale(2)',
+                }
+            } />
+            `,
+            output: `
+            var a = <div style={
+                {
+                    '-moz-transform': 'scale(2)',
+                    '-ms-transform': 'scale(2)',
+                    '-o-transform': 'scale(2)',
+                    '-webkit-transform': 'scale(2)',
+                    'transform': 'scale(2)',
+                }
+            } />
+            `,
+            options: ["kebab-case"],
+            errors: [
+                "'MozTransform' is not in kebab-case.",
+                "'msTransform' is not in kebab-case.",
+                "'OTransform' is not in kebab-case.",
+                "'WebkitTransform' is not in kebab-case.",
             ],
         },
     ],

@@ -8,6 +8,7 @@ export default createRule("no-invalid-color-hex", {
             description: "disallow invalid hex colors",
             category: "Possible Errors",
             recommended: true,
+            stylelint: "color-no-invalid-hex",
         },
         schema: [],
         messages: {

@@ -44,6 +44,7 @@ export interface PartialRuleMetaData {
         recommended: boolean
         replacedBy?: string[]
         default?: "error" | "warn"
+        stylelint: string | null
     }
     messages: { [messageId: string]: string }
     fixable?: "code" | "whitespace"
