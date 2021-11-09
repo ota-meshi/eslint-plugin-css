@@ -41,7 +41,7 @@ tester.run("no-unknown-unit", rule as any, {
             `,
             errors: [
                 {
-                    message: "Unexpected unknown unit 'pixels'",
+                    message: "Unexpected unknown unit 'pixels'.",
                     line: 4,
                     column: 30,
                     endLine: 4,
@@ -61,7 +61,7 @@ tester.run("no-unknown-unit", rule as any, {
             parser: require.resolve("vue-eslint-parser"),
             errors: [
                 {
-                    message: "Unexpected unknown unit 'pixels'",
+                    message: "Unexpected unknown unit 'pixels'.",
                     line: 4,
                     column: 30,
                     endLine: 4,

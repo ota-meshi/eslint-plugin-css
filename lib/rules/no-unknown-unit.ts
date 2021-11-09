@@ -39,7 +39,7 @@ export default createRule("no-unknown-unit", {
             },
         ],
         messages: {
-            unknown: "Unexpected unknown unit '{{unit}}'",
+            unknown: "Unexpected unknown unit '{{unit}}'.",
         },
         type: "problem",
     },
