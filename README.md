@@ -35,7 +35,7 @@ npm install --save-dev eslint eslint-plugin-css
 
 > **Requirements**
 >
-> - ESLint v8.0.0 and above
+> - ESLint v7.0.0 and above
 > - Node.js v12.22.x, v14.17.x, v16.x and above
 
 <!--DOCS_IGNORE_END-->
@@ -101,20 +101,20 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 
 ### Possible Errors
 
-| Rule ID | Description |    |
-|:--------|:------------|:---|
+| Rule ID                                                                                                 | Description                 |        |
+| :------------------------------------------------------------------------------------------------------ | :-------------------------- | :----- |
 | [css/no-unknown-property](https://ota-meshi.github.io/eslint-plugin-css/rules/no-unknown-property.html) | disallow unknown properties | :star: |
 
 ### Best Practices
 
-| Rule ID | Description |    |
-|:--------|:------------|:---|
+| Rule ID                                                                                                 | Description                     |          |
+| :------------------------------------------------------------------------------------------------------ | :------------------------------ | :------- |
 | [css/no-length-zero-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-length-zero-unit.html) | disallow units for zero lengths | :wrench: |
 
 ### Stylistic Issues
 
-| Rule ID | Description |    |
-|:--------|:------------|:---|
+| Rule ID | Description |      |
+| :------ | :---------- | :--- |
 
 <!--RULES_TABLE_END-->
 <!--RULES_SECTION_END-->

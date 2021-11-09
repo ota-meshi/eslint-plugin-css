@@ -8,7 +8,7 @@ npm install --save-dev eslint eslint-plugin-css
 
 ::: tip Requirements
 
-- ESLint v8.0.0 and above
+- ESLint v7.0.0 and above
 - Node.js v12.22.x, v14.17.x, v16.x and above
 
 :::
