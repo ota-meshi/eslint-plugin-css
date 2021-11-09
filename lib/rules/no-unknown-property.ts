@@ -62,7 +62,7 @@ export default createRule("no-unknown-property", {
             return {
                 onProperty(property) {
                     const prop = property.getName()
-                    if (prop == null) {
+                    if (!prop) {
                         return
                     }
 

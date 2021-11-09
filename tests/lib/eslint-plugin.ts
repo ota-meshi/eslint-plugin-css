@@ -10,7 +10,7 @@ import plugin from "../../lib/index"
 const TEST_CWD = path.join(__dirname, "../fixtures/integrations/eslint-plugin")
 
 describe("Integration with eslint-plugin-css", () => {
-    it("should lint without errors", async () => {
+    it("should lint without crash", async () => {
         const eslint = new ESLint({
             cwd: TEST_CWD,
             plugins: { "eslint-plugin-css": plugin },
@@ -20,12 +20,7 @@ describe("Integration with eslint-plugin-css", () => {
         assert.strictEqual(results.length, 1)
         assert.deepStrictEqual(
             results[0].messages.map((m) => m.ruleId),
-            [
-                "regexp/no-dupe-characters-character-class",
-                "regexp/prefer-w",
-                "regexp/prefer-d",
-                "regexp/prefer-d",
-            ],
+            ["css/no-unknown-property"],
         )
     })
 })

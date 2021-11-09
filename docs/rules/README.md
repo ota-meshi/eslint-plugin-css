@@ -19,6 +19,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/no-length-zero-unit](./no-length-zero-unit.md) | disallow units for zero lengths | :wrench: |
 
 ### Stylistic Issues
 

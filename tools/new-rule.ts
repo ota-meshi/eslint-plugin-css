@@ -85,7 +85,7 @@ tester.run("${ruleId}", rule as any, {
             code: \`
             <template>
                 <div :style="{
-                color: 'red'
+                    color: 'red'
                 }"/>
             </template>
             \`,
@@ -117,7 +117,7 @@ tester.run("${ruleId}", rule as any, {
             code: \`
             <template>
                 <div :style="{
-                color: 'red'
+                    color: 'red'
                 }"/>
             </template>
             \`,

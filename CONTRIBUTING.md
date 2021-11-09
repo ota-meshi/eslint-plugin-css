@@ -25,7 +25,7 @@ To suggest a new feature, [open an issue][new-issue].
 ### Getting started
 
 - This is a TypeScript project. You need to have a recentish version of [Node.js](https://nodejs.org/) and npm installed.
-- Install all project and development dependencies by running `npm ci`.
+- Install all project and development dependencies by running `npm i`.
 - Test that everything is installed correctly by running `npm test`.
 
 We use [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) to lint and format our code base. They will be automatically installed as dependencies but you might need additional editor plugins for a good IDE experience. We recommend using [VSCode](https://code.visualstudio.com/) together with the [ESLint plugin](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) for a great editing experience.
@@ -57,7 +57,7 @@ The following steps will walk you through the process of creating a new rule.
 
     The `createVisitor` function will be where you implement your rule. The `cssContext` object contains information and methods that you will need for static analysis, reporting, and fixing. Use `messageId`s for report and suggestion messages.
 
-    The [`no-unknown-property`](./lib/rules/no-unknown-property.ts) and [`no-octal`](./lib/rules/no-octal.ts) rules are good examples to see how we usually implement rules.
+    The [`no-unknown-property`](./lib/rules/no-unknown-property.ts) and [`no-length-zero-unit`](./lib/rules/no-length-zero-unit.ts) rules are good examples to see how we usually implement rules.
 
 1.  Test your rule:
 

@@ -18,6 +18,12 @@ export type CSSPropertyContext = {
     getName: () => {
         name: string
         expression: ESTree.Expression
+        directExpression: ESTree.Expression | null
+    } | null
+    getValue: () => {
+        value: string | number
+        expression: ESTree.Expression
+        directExpression: ESTree.Expression | null
     } | null
 }
 
@@ -167,47 +173,78 @@ function buildCSSVisitor(
 
     /** Build property context */
     function buildPropertyContext(node: ESTree.Property): CSSPropertyContext {
-        const { key } = node
         return {
             getName() {
+                const { key } = node
                 if (key.type === "PrivateIdentifier") {
                     return null
                 }
-                if (key.type === "Literal") {
-                    return {
-                        name: String(key.value),
-                        expression: key,
-                    }
-                }
-                if (!node.computed) {
+                if (!node.computed && key.type !== "Literal") {
                     if (key.type === "Identifier") {
                         return {
                             name: key.name,
                             expression: key,
+                            directExpression: key,
                         }
                     }
                     return null
                 }
-                if (isStaticTemplateLiteral(key)) {
-                    return {
-                        name: key.quasis[0].value.cooked!,
-                        expression: key,
+                const val = resolveExpression(key)
+                return (
+                    val && {
+                        name: String(val.value),
+                        expression: val.expression,
+                        directExpression: val.directExpression,
                     }
-                }
-                const name = getStaticValue(context, key)
-                if (
-                    name != null &&
-                    (typeof name.value === "string" ||
-                        typeof name.value === "number")
-                ) {
-                    return {
-                        name: String(name.value),
-                        expression: key,
-                    }
-                }
-                return null
+                )
+            },
+            getValue() {
+                const value = node.value as Exclude<
+                    ESTree.Property["value"],
+                    | ESTree.ObjectPattern
+                    | ESTree.ArrayPattern
+                    | ESTree.RestElement
+                    | ESTree.AssignmentPattern
+                >
+                return resolveExpression(value)
             },
         }
+    }
+
+    /** Resolve Expression */
+    function resolveExpression(node: ESTree.Expression) {
+        if (node.type === "Literal") {
+            if (
+                typeof node.value === "string" ||
+                typeof node.value === "number"
+            ) {
+                return {
+                    value: node.value,
+                    expression: node,
+                    directExpression: node,
+                }
+            }
+            return null
+        }
+        if (isStaticTemplateLiteral(node)) {
+            return {
+                value: node.quasis[0].value.cooked!,
+                expression: node,
+                directExpression: node,
+            }
+        }
+        const name = getStaticValue(context, node)
+        if (
+            name != null &&
+            (typeof name.value === "string" || typeof name.value === "number")
+        ) {
+            return {
+                value: name.value,
+                expression: node,
+                directExpression: null,
+            }
+        }
+        return null
     }
 }
 
