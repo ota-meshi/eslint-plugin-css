@@ -15,6 +15,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 |:--------|:------------|:---|
 | [css/no-invalid-color-hex](./no-invalid-color-hex.md) | disallow invalid hex colors | :star: |
 | [css/no-unknown-property](./no-unknown-property.md) | disallow unknown properties | :star: |
+| [css/no-unknown-unit](./no-unknown-unit.md) | disallow unknown units | :star: |
 
 ### Best Practices
 

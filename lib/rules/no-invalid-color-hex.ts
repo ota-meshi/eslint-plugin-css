@@ -35,7 +35,7 @@ export default createRule("no-invalid-color-hex", {
                         ({ value: textValue, type, sourceIndex }) => {
                             if (
                                 type === "function" &&
-                                textValue.endsWith("url")
+                                textValue.toLowerCase() === "url"
                             )
                                 return false
 

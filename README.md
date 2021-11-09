@@ -105,6 +105,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 |:--------|:------------|:---|
 | [css/no-invalid-color-hex](https://ota-meshi.github.io/eslint-plugin-css/rules/no-invalid-color-hex.html) | disallow invalid hex colors | :star: |
 | [css/no-unknown-property](https://ota-meshi.github.io/eslint-plugin-css/rules/no-unknown-property.html) | disallow unknown properties | :star: |
+| [css/no-unknown-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-unknown-unit.html) | disallow unknown units | :star: |
 
 ### Best Practices
 
