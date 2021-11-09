@@ -12,7 +12,7 @@
     "scripts": {
         "prebuild": "npm run -s clean",
         "build": "tsc --project ./tsconfig.build.json",
-        "clean": "rimraf .nyc_output dist coverage",
+        "clean": "npx rimraf .nyc_output dist coverage",
         "lint": "eslint . --ext .js,.vue,.ts,.json,.yaml,.yml",
         "eslint-fix": "eslint . --ext .js,.vue,.ts,.json,.yaml,.yml --fix",
         "pretest": "npm run build",
