@@ -3,12 +3,12 @@ pageClass: "rule-details"
 sidebarDepth: 0
 title: "css/no-unknown-property"
 description: "disallow unknown properties"
+since: "v0.1.0"
 ---
 # css/no-unknown-property
 
 > disallow unknown properties
 
-- :exclamation: <badge text="This rule has not been released yet." vertical="middle" type="error"> ***This rule has not been released yet.*** </badge>
 - :gear: This rule is included in `"plugin:css/recommended"`.
 
 ## :book: Rule Details
@@ -62,6 +62,10 @@ var foo = <div
 - [Stylelint - property-no-unknown]
 
 [Stylelint - property-no-unknown]: https://stylelint.io/user-guide/rules/list/property-no-unknown/
+
+## :rocket: Version
+
+This rule was introduced in eslint-plugin-css v0.1.0
 
 ## :mag: Implementation
 

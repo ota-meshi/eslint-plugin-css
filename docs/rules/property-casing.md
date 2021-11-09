@@ -3,12 +3,12 @@ pageClass: "rule-details"
 sidebarDepth: 0
 title: "css/property-casing"
 description: "enforce specific casing for CSS properties"
+since: "v0.1.0"
 ---
 # css/property-casing
 
 > enforce specific casing for CSS properties
 
-- :exclamation: <badge text="This rule has not been released yet." vertical="middle" type="error"> ***This rule has not been released yet.*** </badge>
 - :wrench: The `--fix` option on the [command line](https://eslint.org/docs/user-guide/command-line-interface#fixing-problems) can automatically fix some of the problems reported by this rule.
 
 ## :book: Rule Details
@@ -53,6 +53,10 @@ var foo = <div
 
 - `"camelCase"` ... Enforce CSS property names to camel case. This is default.
 - `"kebab-case"` ... Enforce CSS property names to kebab case.
+
+## :rocket: Version
+
+This rule was introduced in eslint-plugin-css v0.1.0
 
 ## :mag: Implementation
 
