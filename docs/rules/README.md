@@ -25,3 +25,4 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/property-casing](./property-casing.md) | enforce specific casing for CSS properties | :wrench: |

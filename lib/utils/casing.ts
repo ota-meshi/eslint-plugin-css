@@ -20,13 +20,7 @@ function hasUpper(str: string) {
  * @return {string}
  */
 export function kebabCase(str: string): string {
-    return (
-        str
-            .replace(/_/gu, "-")
-            // eslint-disable-next-line regexp/prefer-named-capture-group -- ignore
-            .replace(/\B([A-Z])/gu, "-$1")
-            .toLowerCase()
-    )
+    return str.replace(/\B(?<c>[A-Z])/gu, "-$<c>").toLowerCase()
 }
 
 /**
@@ -34,12 +28,7 @@ export function kebabCase(str: string): string {
  * @param {string} str
  */
 export function isKebabCase(str: string): boolean {
-    if (
-        hasUpper(str) ||
-        hasSymbols(str) ||
-        str.startsWith("-") || // starts with hyphen is not kebab-case
-        /_|--|\s/u.test(str)
-    ) {
+    if (hasUpper(str) || hasSymbols(str) || /_|--|\s/u.test(str)) {
         return false
     }
     return true
@@ -51,8 +40,9 @@ export function isKebabCase(str: string): boolean {
  * @return {string} Converted string
  */
 export function camelCase(str: string): string {
-    // eslint-disable-next-line regexp/prefer-named-capture-group -- ignore
-    return str.replace(/[-_](\w)/gu, (_, c) => (c ? c.toUpperCase() : ""))
+    return str
+        .replace(/^-/u, "")
+        .replace(/-(?<c>\w)/gu, (_, c) => (c ? c.toUpperCase() : ""))
 }
 
 /**
