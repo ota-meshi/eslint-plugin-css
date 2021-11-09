@@ -23,7 +23,7 @@ and either use one of the two configurations available (`recommended` or `all`) 
 ### The recommended configuration
 
 The `plugin:css/recommended` config enables a subset of [the rules](../rules/README.md) that should be most useful to most users.
-*See [lib/configs/recommended.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/master/lib/configs/recommended.ts) for more details.*
+*See [lib/configs/recommended.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/recommended.ts) for more details.*
 
 ```js
 // .eslintrc.js
@@ -59,7 +59,7 @@ module.exports = {
 ### Using `"plugin:css/all"`
 
 The `plugin:css/all` config enables all rules. It's meant for testing, not for production use because it changes with every minor and major version of the plugin. Use it at your own risk.
-*See [lib/configs/all.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/master/lib/configs/all.ts) for more details.*
+*See [lib/configs/all.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/all.ts) for more details.*
 
 <!--USAGE_SECTION_END-->
 

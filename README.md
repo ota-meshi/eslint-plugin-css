@@ -9,8 +9,8 @@
 [![NPM downloads](https://img.shields.io/npm/dm/eslint-plugin-css.svg)](http://www.npmtrends.com/eslint-plugin-css)
 [![NPM downloads](https://img.shields.io/npm/dy/eslint-plugin-css.svg)](http://www.npmtrends.com/eslint-plugin-css)
 [![NPM downloads](https://img.shields.io/npm/dt/eslint-plugin-css.svg)](http://www.npmtrends.com/eslint-plugin-css)
-[![Build Status](https://github.com/ota-meshi/eslint-plugin-css/workflows/CI/badge.svg?branch=master)](https://github.com/ota-meshi/eslint-plugin-css/actions?query=workflow%3ACI)
-[![Coverage Status](https://coveralls.io/repos/github/ota-meshi/eslint-plugin-css/badge.svg?branch=master)](https://coveralls.io/github/ota-meshi/eslint-plugin-css?branch=master)
+[![Build Status](https://github.com/ota-meshi/eslint-plugin-css/workflows/CI/badge.svg?branch=main)](https://github.com/ota-meshi/eslint-plugin-css/actions?query=workflow%3ACI)
+[![Coverage Status](https://coveralls.io/repos/github/ota-meshi/eslint-plugin-css/badge.svg?branch=main)](https://coveralls.io/github/ota-meshi/eslint-plugin-css?branch=main)
 
 ## :name_badge: Features
 
@@ -50,7 +50,7 @@ and either use one of the two configurations available (`recommended` or `all`) 
 ### The recommended configuration
 
 The `plugin:css/recommended` config enables a subset of [the rules](#white_check_mark-rules) that should be most useful to most users.
-*See [lib/configs/recommended.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/master/lib/configs/recommended.ts) for more details.*
+*See [lib/configs/recommended.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/recommended.ts) for more details.*
 
 ```js
 // .eslintrc.js
@@ -86,7 +86,7 @@ module.exports = {
 ### Using `"plugin:css/all"`
 
 The `plugin:css/all` config enables all rules. It's meant for testing, not for production use because it changes with every minor and major version of the plugin. Use it at your own risk.
-*See [lib/configs/all.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/master/lib/configs/all.ts) for more details.*
+*See [lib/configs/all.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/all.ts) for more details.*
 
 <!--USAGE_SECTION_END-->
 

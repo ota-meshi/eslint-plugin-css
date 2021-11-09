@@ -60,5 +60,5 @@ This rule was introduced in eslint-plugin-css v0.1.0
 
 ## :mag: Implementation
 
-- [Rule source](https://github.com/ota-meshi/eslint-plugin-css/blob/master/lib/rules/property-casing.ts)
-- [Test source](https://github.com/ota-meshi/eslint-plugin-css/blob/master/tests/lib/rules/property-casing.ts)
+- [Rule source](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/rules/property-casing.ts)
+- [Test source](https://github.com/ota-meshi/eslint-plugin-css/blob/main/tests/lib/rules/property-casing.ts)
