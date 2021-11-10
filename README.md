@@ -12,6 +12,8 @@
 [![Build Status](https://github.com/ota-meshi/eslint-plugin-css/workflows/CI/badge.svg?branch=main)](https://github.com/ota-meshi/eslint-plugin-css/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/github/ota-meshi/eslint-plugin-css/badge.svg?branch=main)](https://coveralls.io/github/ota-meshi/eslint-plugin-css?branch=main)
 
+::: **WORKING IN PROGRESS** :::
+
 ## :name_badge: Features
 
 This ESLint plugin provides linting rules to verify CSS definition objects.
