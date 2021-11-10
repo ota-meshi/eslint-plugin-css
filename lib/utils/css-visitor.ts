@@ -6,7 +6,9 @@ import {
     findExpression,
     isStaticTemplateLiteral,
     getStaticValue,
+    getParent,
 } from "./ast-utils"
+import { toRegExp } from "./regexp"
 
 export type CSSObjectContext = {
     object: ESTree.ObjectExpression
@@ -123,12 +125,24 @@ function buildCSSVisitor(
         }
     }
 
+    const attributes = [
+        "style",
+        ...(context.settings.css?.target?.attributes || []),
+    ].map(toRegExp)
+
     return compositingVisitors(
         {
             "Program:exit": programExit,
-            "JSXAttribute[name.name='style'] > JSXExpressionContainer.value > .expression"(
+            [`JSXAttribute > JSXExpressionContainer.value > .expression`](
                 node: ESTree.Expression,
             ) {
+                const jsxAttr = getParent(getParent(node)) as {
+                    name?: { name?: string }
+                } | null
+                const attrName = jsxAttr?.name?.name
+                if (!attrName || !attributes.some((r) => r.test(attrName))) {
+                    return
+                }
                 let target = node
                 if (target.type === "Identifier") {
                     target = findExpression(context, target) || target
@@ -143,9 +157,19 @@ function buildCSSVisitor(
             },
         },
         defineTemplateBodyVisitor(context, {
-            "VAttribute[directive=true][key.name.name='bind'][key.argument.name='style'] > VExpressionContainer.value > ObjectExpression.expression"(
+            [`VAttribute[directive=true][key.name.name='bind'] > VExpressionContainer.value > ObjectExpression.expression`](
                 node: ESTree.ObjectExpression,
             ) {
+                const vBindAttr = getParent(getParent(node)) as {
+                    key?: {
+                        argument?: { name?: string }
+                    }
+                } | null
+                const attrName = vBindAttr?.key?.argument?.name
+                if (!attrName || !attributes.some((r) => r.test(attrName))) {
+                    return
+                }
+
                 verifyCSSObject({
                     object: node,
                     expression: node,
