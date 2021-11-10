@@ -17,9 +17,12 @@
 This ESLint plugin provides linting rules to verify CSS definition objects.
 
 - Find the wrong usage of CSS definition objects, and their hints.
-- The plugin supports Vue and JSX (React).
+- The plugin support for Vue and JSX (React).
+- The plugin partial support for [styled-components] style objects.
 
 You can check on the [Online DEMO](https://ota-meshi.github.io/eslint-plugin-css/playground/).
+
+[styled-components]: https://styled-components.com/docs/advanced#style-objects
 
 <!--DOCS_IGNORE_START-->
 

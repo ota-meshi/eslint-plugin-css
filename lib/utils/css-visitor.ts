@@ -9,12 +9,13 @@ import {
     getParent,
 } from "./ast-utils"
 import { toRegExp } from "./regexp"
+import { extractCallReferences } from "./extract-calls-references"
 
 type CSSHelperContext = {
     isFixable<T extends ESTree.Node>(targetNode?: T | null): targetNode is T
 }
 type CSSBaseContext = {
-    expression: ESTree.Expression
+    scope: ESTree.Expression
 }
 export type CSSObjectContext = CSSHelperContext &
     CSSBaseContext &
@@ -26,6 +27,10 @@ export type CSSObjectContext = CSSHelperContext &
         | {
               define: ESTree.ObjectExpression | ESTree.ArrayExpression
               on: "vue-style"
+          }
+        | {
+              define: ESTree.ObjectExpression | ESTree.ArrayExpression
+              on: "define-function"
           }
     )
 
@@ -41,11 +46,20 @@ export type CSSPropertyContext = {
         directExpression: ESTree.Expression | null
     } | null
 }
+export type CSSRuleContext = {
+    getSelector: () => {
+        selector: string
+        expression: ESTree.Expression
+        directExpression: ESTree.Expression | null
+    } | null
+}
 
 export type CSSVisitorHandlers = {
     onRoot?: (context: CSSObjectContext) => void
     "onRoot:exit"?: (context: CSSObjectContext) => void
     onProperty?: (property: CSSPropertyContext) => void
+    onRule?: (rule: CSSRuleContext) => void
+    "onRule:exit"?: (rule: CSSRuleContext) => void
 }
 
 export type DefineCSSVisitorRule = {
@@ -54,7 +68,43 @@ export type DefineCSSVisitorRule = {
 
 type CSSRule = DefineCSSVisitorRule
 
-const regexpRules = new WeakMap<ESTree.Program, CSSRule[]>()
+type DefineFunctionPaths = string[][]
+type DefineFunctions = {
+    [module: string]: DefineFunctionPaths | undefined
+}
+
+/** Normalize define functions settings */
+function normalizeDefineFunctions(settings: unknown): DefineFunctions {
+    if (typeof settings !== "object" || settings == null) {
+        return {}
+    }
+    const defines: DefineFunctions = {}
+    for (const moduleName of Object.keys(settings)) {
+        const moduleSettings =
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ignore
+            (settings as any)[moduleName]
+        if (typeof moduleSettings !== "object") {
+            continue
+        }
+        const paths: string[][] = []
+        if (Array.isArray(moduleSettings)) {
+            paths.push(...moduleSettings.map(normalizePaths))
+        }
+
+        defines[moduleName] = paths
+    }
+    return defines
+
+    /** Normalize paths settings */
+    function normalizePaths(val: unknown): string[] {
+        if (Array.isArray(val)) {
+            return val.map((s) => String(s))
+        }
+        return [String(val)]
+    }
+}
+
+const cssRules = new WeakMap<ESTree.Program, CSSRule[]>()
 
 /**
  * Define the CSS visitor rule.
@@ -66,12 +116,12 @@ export function defineCSSVisitor(
     const programNode = context.getSourceCode().ast
 
     let visitor: RuleListener
-    let rules = regexpRules.get(programNode)
+    let rules = cssRules.get(programNode)
     if (!rules) {
         rules = []
-        regexpRules.set(programNode, rules)
+        cssRules.set(programNode, rules)
         visitor = buildCSSVisitor(context, rules, () => {
-            regexpRules.delete(programNode)
+            cssRules.delete(programNode)
         })
     } else {
         visitor = {}
@@ -93,8 +143,8 @@ function buildCSSVisitor(
      */
     function verifyCSSObject(info: {
         define: ESTree.ObjectExpression | ESTree.ArrayExpression
-        expression: ESTree.Expression
-        on: "jsx-style" | "vue-style"
+        scope: ESTree.Expression
+        on: "jsx-style" | "vue-style" | "define-function"
     }) {
         const ctx = buildCSSObjectContext(info)
 
@@ -105,17 +155,13 @@ function buildCSSVisitor(
      * Visit CSS
      */
     function visitCSS(ctx: CSSObjectContext, visitor: CSSVisitorHandlers) {
-        if (visitor.onRoot) {
-            visitor.onRoot(ctx)
-        }
+        visitor.onRoot?.(ctx)
         if (ctx.define.type === "ObjectExpression") {
             visitObject(ctx.define)
         } else if (ctx.define.type === "ArrayExpression") {
             visitArray(ctx.define)
         }
-        if (visitor["onRoot:exit"]) {
-            visitor["onRoot:exit"](ctx)
-        }
+        visitor["onRoot:exit"]?.(ctx)
 
         /**
          * Visit CSS array
@@ -142,38 +188,201 @@ function buildCSSVisitor(
             }
         }
 
+        /* eslint-disable complexity -- ignore */
         /**
          * Visit CSS object
          */
-        function visitObject(object: ESTree.ObjectExpression) {
-            if (visitor.onProperty) {
-                for (const prop of object.properties) {
-                    if (prop.type === "Property") {
-                        visitor.onProperty(buildPropertyContext(ctx, prop))
-                    } else if (prop.type === "SpreadElement") {
-                        if (prop.argument.type === "Identifier") {
-                            const target = resolveDefineExpression(
-                                prop.argument,
-                                ctx,
-                            )
-                            if (target.type === "ObjectExpression") {
-                                visitObject(target)
+        function visitObject(
+            /* eslint-enable complexity -- ignore */
+            object: ESTree.ObjectExpression,
+        ) {
+            if (ctx.on === "jsx-style" || ctx.on === "vue-style") {
+                if (visitor.onProperty) {
+                    for (const prop of object.properties) {
+                        if (prop.type === "Property") {
+                            visitor.onProperty(buildPropertyContext(ctx, prop))
+                        } else if (prop.type === "SpreadElement") {
+                            if (prop.argument.type === "Identifier") {
+                                const target = resolveDefineExpression(
+                                    prop.argument,
+                                    ctx,
+                                )
+                                if (target.type === "ObjectExpression") {
+                                    visitObject(target)
+                                }
                             }
                         }
                     }
                 }
+            } else if (ctx.on === "define-function") {
+                if (
+                    visitor.onProperty ||
+                    visitor.onRule ||
+                    visitor["onRule:exit"]
+                ) {
+                    for (const prop of object.properties) {
+                        if (prop.type === "Property") {
+                            const value = resolveDefineExpression(
+                                prop.value as Exclude<
+                                    ESTree.Property["value"],
+                                    | ESTree.ObjectPattern
+                                    | ESTree.ArrayPattern
+                                    | ESTree.RestElement
+                                    | ESTree.AssignmentPattern
+                                >,
+                                ctx,
+                            )
+                            if (value.type === "ObjectExpression") {
+                                const rule = buildRuleContext(ctx, prop)
+                                visitor.onRule?.(rule)
+                                visitObject(value)
+                                visitor["onRule:exit"]?.(rule)
+                            } else if (
+                                value.type === "Literal" ||
+                                value.type === "TemplateLiteral"
+                            ) {
+                                visitor.onProperty?.(
+                                    buildPropertyContext(ctx, prop),
+                                )
+                            }
+                        } else if (prop.type === "SpreadElement") {
+                            if (prop.argument.type === "Identifier") {
+                                const target = resolveDefineExpression(
+                                    prop.argument,
+                                    ctx,
+                                )
+                                if (target.type === "ObjectExpression") {
+                                    visitObject(target)
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                throw new Error()
             }
         }
     }
 
-    const attributes = [
-        "style",
-        ...(context.settings.css?.target?.attributes || []),
-    ].map(toRegExp)
+    const settingsTarget = context.settings.css?.target || {}
+
+    const attributes = ["style", ...(settingsTarget.attributes || [])].map(
+        toRegExp,
+    )
+
+    const defineFunctions: DefineFunctions = {
+        ...normalizeDefineFunctions(settingsTarget.defineFunctions),
+        "styled-components": [
+            ["default", "/^\\w+$/u"],
+            ["default", "/^\\w+$/u", "attrs()"],
+            ["default()"],
+            ["default()", "attrs()"],
+            ["default", "/^\\w+$/u", "withConfig()"],
+            ["default", "/^\\w+$/u", "withConfig()", "attrs()"],
+            ["default", "/^\\w+$/u", "attrs()", "withConfig()"],
+            ["default()", "withConfig()"],
+            ["default()", "withConfig()", "attrs()"],
+            ["default()", "attrs()", "withConfig()"],
+            ["css"],
+            ["keyframes"],
+            ["createGlobalStyle"],
+        ],
+    }
+
+    type ScopeStack = {
+        upper: ScopeStack | null
+        node: ESTree.Node
+        defineStyleFunctionArg?: ESTree.Expression | null
+    }
+
+    let scopeStack: ScopeStack | null = {
+        upper: null,
+        node: context.getSourceCode().ast,
+    }
+    const defineStyleFunctions = new Map<ESTree.Node, ESTree.Expression>()
 
     return compositingVisitors(
         {
             "Program:exit": programExit,
+            Program(node) {
+                for (const body of node.body) {
+                    if (body.type !== "ImportDeclaration") {
+                        continue
+                    }
+                    const moduleDefineFunctions =
+                        defineFunctions[String(body.source.value)]
+                    if (!moduleDefineFunctions) {
+                        continue
+                    }
+                    for (const call of extractCallReferences(
+                        body,
+                        moduleDefineFunctions,
+                        context,
+                    )) {
+                        for (const arg of call.arguments) {
+                            if (arg.type === "SpreadElement") {
+                                continue
+                            }
+                            const target = resolveDefineExpression(arg, null)
+                            if (target.type === "ObjectExpression") {
+                                verifyCSSObject({
+                                    define: target,
+                                    scope: arg,
+                                    on: "define-function",
+                                })
+                            } else if (
+                                target.type === "FunctionExpression" ||
+                                target.type === "ArrowFunctionExpression"
+                            ) {
+                                defineStyleFunctions.set(target, arg)
+                            }
+                        }
+                    }
+                }
+            },
+            ":function, PropertyDefinition"(node: ESTree.Node) {
+                const arg = defineStyleFunctions.get(node)
+                scopeStack = {
+                    upper: scopeStack,
+                    node,
+                    defineStyleFunctionArg: arg || null,
+                }
+
+                if (
+                    node.type === "ArrowFunctionExpression" &&
+                    node.expression &&
+                    node.body.type !== "BlockStatement" &&
+                    arg
+                ) {
+                    const target = resolveDefineExpression(node.body, null)
+                    if (target.type === "ObjectExpression") {
+                        verifyCSSObject({
+                            define: target,
+                            scope: arg,
+                            on: "define-function",
+                        })
+                    }
+                }
+            },
+            ReturnStatement(node: ESTree.ReturnStatement) {
+                if (
+                    scopeStack &&
+                    scopeStack.defineStyleFunctionArg &&
+                    node.argument
+                ) {
+                    const target = resolveDefineExpression(node.argument, null)
+                    if (target.type === "ObjectExpression") {
+                        verifyCSSObject({
+                            define: target,
+                            scope: scopeStack.defineStyleFunctionArg,
+                            on: "define-function",
+                        })
+                    }
+                }
+            },
+            ":function, PropertyDefinition:exit"() {
+                scopeStack = scopeStack && scopeStack.upper
+            },
             [`JSXAttribute > JSXExpressionContainer.value > .expression`](
                 node: ESTree.Expression,
             ) {
@@ -191,7 +400,7 @@ function buildCSSVisitor(
                 ) {
                     verifyCSSObject({
                         define: target,
-                        expression: node,
+                        scope: node,
                         on: "jsx-style",
                     })
                 }
@@ -213,7 +422,7 @@ function buildCSSVisitor(
 
                 verifyCSSObject({
                     define: node,
-                    expression: node,
+                    scope: node,
                     on: "vue-style",
                 })
             },
@@ -226,27 +435,31 @@ function buildCSSVisitor(
      */
     function buildCSSObjectContext(info: {
         define: ESTree.ObjectExpression | ESTree.ArrayExpression
-        expression: ESTree.Expression
-        on: "jsx-style" | "vue-style"
+        scope: ESTree.Expression
+        on: "jsx-style" | "vue-style" | "define-function"
     }): CSSObjectContext {
         return {
             define: info.define,
-            expression: info.expression,
+            scope: info.scope,
             on: info.on,
             isFixable<T extends ESTree.Node>(
                 targetNode?: T | null,
             ): targetNode is T {
-                if (info.expression !== info.define) {
-                    return false
+                const scopeRange = info.scope.range!
+                if (
+                    scopeRange[0] <= info.define.range![0] &&
+                    info.define.range![1] <= scopeRange[1]
+                ) {
+                    if (!targetNode) {
+                        return true
+                    }
+                    const targetRange = targetNode.range!
+                    return (
+                        scopeRange[0] <= targetRange[0] &&
+                        targetRange[1] <= scopeRange[1]
+                    )
                 }
-                if (!targetNode) {
-                    return true
-                }
-                const targetRange = targetNode.range!
-                return (
-                    info.expression.range![0] <= targetRange[0] &&
-                    targetRange[1] <= info.expression.range![1]
-                )
+                return false
             },
         }
     }
@@ -304,6 +517,39 @@ function buildCSSVisitor(
                     | ESTree.AssignmentPattern
                 >
                 return resolveExpression(ctx, value)
+            },
+        }
+    }
+
+    /** Build rule context */
+    function buildRuleContext(
+        ctx: CSSObjectContext,
+        node: ESTree.Property,
+    ): CSSRuleContext {
+        return {
+            getSelector() {
+                const { key } = node
+                if (key.type === "PrivateIdentifier") {
+                    return null
+                }
+                if (!node.computed && key.type !== "Literal") {
+                    if (key.type === "Identifier") {
+                        return {
+                            selector: key.name,
+                            expression: key,
+                            directExpression: key,
+                        }
+                    }
+                    return null
+                }
+                const val = resolveExpression(ctx, key)
+                return (
+                    val && {
+                        selector: String(val.value),
+                        expression: val.expression,
+                        directExpression: val.directExpression,
+                    }
+                )
             },
         }
     }

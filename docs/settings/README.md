@@ -17,7 +17,8 @@ module.exports = {
     css: {
       // define settings here, such as:
       target: {
-        attributes: []
+        attributes: [],
+        defineFunctions: {}
       }
     }
   }
@@ -45,6 +46,29 @@ module.exports = {
         attributes: [
           'css' // The plugin will also parse `css` attribute.
         ]
+      }
+    }
+  }
+}
+```
+
+### `target.defineFunctions`
+
+Specifies the function paths that uses the style object.
+
+#### Example of `target.defineFunctions`
+
+```js
+module.exports = {
+  ..., // rules, plugins, etc.
+  settings: {
+    css: {
+      target: {
+        defineFunctions: {
+          '@emotion/styled': [
+            ['default', '/^\\w+$/u']
+          ]
+        }
       }
     }
   }

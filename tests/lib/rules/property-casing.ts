@@ -278,5 +278,59 @@ tester.run("property-casing", rule as any, {
                 "'border-color' is not in camelCase.",
             ],
         },
+        {
+            code: `
+            import styled from 'styled-components'
+            const Box = styled.div({
+                'border-color': 'red',
+            });
+            const Overlay = styled.div(() => ({
+                'background-color': 'red',
+            }));
+            const Overlay2 = styled.div(function () {
+                return {
+                    'background-color': 'red',
+                }
+            });
+            `,
+            output: `
+            import styled from 'styled-components'
+            const Box = styled.div({
+                'borderColor': 'red',
+            });
+            const Overlay = styled.div(() => ({
+                'backgroundColor': 'red',
+            }));
+            const Overlay2 = styled.div(function () {
+                return {
+                    'backgroundColor': 'red',
+                }
+            });
+            `,
+            errors: [
+                "'border-color' is not in camelCase.",
+                "'background-color' is not in camelCase.",
+                "'background-color' is not in camelCase.",
+            ],
+        },
+        {
+            code: `
+            import {css} from 'styled-components'
+            css({
+                "selector-kebab": {
+                    'border-color': 'red',
+                }
+            });
+            `,
+            output: `
+            import {css} from 'styled-components'
+            css({
+                "selector-kebab": {
+                    'borderColor': 'red',
+                }
+            });
+            `,
+            errors: ["'border-color' is not in camelCase."],
+        },
     ],
 })
