@@ -12,6 +12,7 @@ export default createRule("no-unknown-property", {
             description: "disallow unknown properties",
             category: "Possible Errors",
             recommended: true,
+            stylelint: "property-no-unknown",
         },
         schema: [
             {

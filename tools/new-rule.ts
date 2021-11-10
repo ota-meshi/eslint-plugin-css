@@ -37,7 +37,7 @@ export default createRule("${ruleId}", {
         },
         schema: [],
         messages: {},
-        type: "suggestion", // "problem",
+        type: "",
     },
     create(context) {
         /**

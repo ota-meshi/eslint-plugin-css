@@ -60,7 +60,7 @@ module.exports = {
         repo: "ota-meshi/eslint-plugin-css",
         docsRepo: "ota-meshi/eslint-plugin-css",
         docsDir: "docs",
-        docsBranch: "master",
+        docsBranch: "main",
         editLinks: true,
         lastUpdated: true,
         serviceWorker: {

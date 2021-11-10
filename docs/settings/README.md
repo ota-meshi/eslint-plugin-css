@@ -4,7 +4,7 @@
 
 ## :book: Usage
 
-All settings for this plugin use the `regexp` namespace.
+All settings for this plugin use the `css` namespace.
 
 Example **.eslintrc.js**:
 
@@ -13,10 +13,13 @@ module.exports = {
   ..., // rules, plugins, etc.
 
   settings: {
-    // all settings for this plugin have to be in the `regexp` namespace
-    regexp: {
+    // all settings for this plugin have to be in the `css` namespace
+    css: {
       // define settings here, such as:
-      // allowedCharacterRanges: 'all'
+      target: {
+        attributes: [],
+        defineFunctions: {}
+      }
     }
   }
 }
@@ -24,52 +27,50 @@ module.exports = {
 
 ## :gear: Available settings
 
-### `allowedCharacterRanges`
+### `target`
 
-Defines a set of allowed character ranges. Rules will only allow, create, and fix character ranges defined here.
+Specifies the target to use the style object.
 
-#### Values
+### `target.attributes`
 
-The following values are allowed:
+Specifies the attribute name or pattern that uses the style object.
 
-- `"alphanumeric"`
-
-  This will allow only alphanumeric ranges (`0-9`, `A-Z`, and `a-z`). Only ASCII character are included.
-
-- `"all"`
-
-  This will allow only all ranges (roughly equivalent to `"\x00-\uFFFF"`).
-
-- `"<min>-<max>"`
-
-  A custom range that allows all character from `<min>` to `<max>`. Both `<min>` and `<max>` have to be single Unicode code points.
-
-  E.g. `"A-Z"` (U+0041 - U+005A), `"а-я"` (U+0430 - U+044F), `"😀-😏"` (U+1F600 - U+1F60F).
-
-- A non-empty array of the string values mentioned above. All ranges of the array items will be allowed.
-
-#### Default
-
-If the setting isn't defined, its value defaults to `"alphanumeric"`.
-
-#### Example
+#### Example of `target.attributes`
 
 ```js
 module.exports = {
   ..., // rules, plugins, etc.
   settings: {
-    regexp: {
-      // allow alphanumeric and cyrillic ranges
-      allowedCharacterRanges: ['alphanumeric', 'а-я', 'А-Я']
+    css: {
+      target: {
+        attributes: [
+          'css' // The plugin will also parse `css` attribute.
+        ]
+      }
     }
   }
 }
 ```
 
-#### Affected rules
+### `target.defineFunctions`
 
-- [regexp/no-obscure-range]
-- [regexp/prefer-range]
+Specifies the function paths that uses the style object.
 
-[regexp/no-obscure-range]: ../rules/no-obscure-range.md
-[regexp/prefer-range]: ../rules/prefer-range.md
+#### Example of `target.defineFunctions`
+
+```js
+module.exports = {
+  ..., // rules, plugins, etc.
+  settings: {
+    css: {
+      target: {
+        defineFunctions: {
+          '@emotion/styled': [
+            ['default', '/^\\w+$/u']
+          ]
+        }
+      }
+    }
+  }
+}
+```

@@ -12,6 +12,7 @@ export default createRule("no-length-zero-unit", {
             description: "disallow units for zero lengths",
             category: "Best Practices",
             recommended: false,
+            stylelint: "length-zero-no-unit",
         },
         schema: [
             {
@@ -42,7 +43,7 @@ export default createRule("no-length-zero-unit", {
         messages: {
             unexpected: "Unexpected unit.",
         },
-        type: "suggestion", // "problem",
+        type: "suggestion",
     },
     create(context) {
         const ignoreFunctions = [
@@ -59,7 +60,7 @@ export default createRule("no-length-zero-unit", {
          * Create visitor
          */
         function createVisitor(
-            _cssContext: CSSObjectContext,
+            cssContext: CSSObjectContext,
         ): CSSVisitorHandlers {
             /** Checks whether given name is ignore */
             function ignorePropName(name: string) {
@@ -147,7 +148,9 @@ export default createRule("no-length-zero-unit", {
                                 messageId: "unexpected",
                                 fix(fixer) {
                                     if (
-                                        value.directExpression ||
+                                        cssContext.isFixable(
+                                            value.directExpression,
+                                        ) ||
                                         sourceCode.text.slice(
                                             startIndex,
                                             endIndex,

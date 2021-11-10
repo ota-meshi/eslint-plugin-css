@@ -9,6 +9,7 @@ export default createRule("property-casing", {
             description: "enforce specific casing for CSS properties",
             category: "Stylistic Issues",
             recommended: false,
+            stylelint: null,
         },
         fixable: "code",
         schema: [
@@ -19,7 +20,7 @@ export default createRule("property-casing", {
         messages: {
             disallow: "'{{name}}' is not in {{caseType}}.",
         },
-        type: "suggestion", // "problem",
+        type: "layout",
     },
     create(context) {
         const option = context.options[0]
@@ -31,7 +32,7 @@ export default createRule("property-casing", {
          * Create visitor
          */
         function createVisitor(
-            _cssContext: CSSObjectContext,
+            cssContext: CSSObjectContext,
         ): CSSVisitorHandlers {
             return {
                 onProperty(property) {
@@ -50,7 +51,7 @@ export default createRule("property-casing", {
                             caseType,
                         },
                         fix(fixer) {
-                            if (!prop.directExpression) {
+                            if (!cssContext.isFixable(prop.directExpression)) {
                                 return null
                             }
                             const quoted =

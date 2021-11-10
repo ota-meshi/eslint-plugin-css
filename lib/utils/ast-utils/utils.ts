@@ -3,8 +3,12 @@ import * as eslintUtils from "eslint-utils"
 import type {
     Expression,
     Identifier,
+    MemberExpression,
+    MethodDefinition,
     Node,
     PrivateIdentifier,
+    Property,
+    PropertyDefinition,
     TemplateElement,
     TemplateLiteral,
 } from "estree"
@@ -41,6 +45,15 @@ export function getStringIfConstant(
     return eslintUtils.getStringIfConstant(node, getScope(context, node))
 }
 
+/**
+ * Get the property name of a given nodes.
+ */
+export function getPropertyName(
+    context: Rule.RuleContext,
+    node: MemberExpression | MethodDefinition | Property | PropertyDefinition,
+): string | null {
+    return eslintUtils.getPropertyName(node, getScope(context, node))
+}
 type GetStaticValueResult =
     | { value: unknown }
     | { value: undefined; optional?: true }

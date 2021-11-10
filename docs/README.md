@@ -9,17 +9,29 @@
 [![NPM downloads](https://img.shields.io/npm/dm/eslint-plugin-css.svg)](http://www.npmtrends.com/eslint-plugin-css)
 [![NPM downloads](https://img.shields.io/npm/dy/eslint-plugin-css.svg)](http://www.npmtrends.com/eslint-plugin-css)
 [![NPM downloads](https://img.shields.io/npm/dt/eslint-plugin-css.svg)](http://www.npmtrends.com/eslint-plugin-css)
-[![Build Status](https://github.com/ota-meshi/eslint-plugin-css/workflows/CI/badge.svg?branch=master)](https://github.com/ota-meshi/eslint-plugin-css/actions?query=workflow%3ACI)
-[![Coverage Status](https://coveralls.io/repos/github/ota-meshi/eslint-plugin-css/badge.svg?branch=master)](https://coveralls.io/github/ota-meshi/eslint-plugin-css?branch=master)
+[![Build Status](https://github.com/ota-meshi/eslint-plugin-css/workflows/CI/badge.svg?branch=main)](https://github.com/ota-meshi/eslint-plugin-css/actions?query=workflow%3ACI)
+[![Coverage Status](https://coveralls.io/repos/github/ota-meshi/eslint-plugin-css/badge.svg?branch=main)](https://coveralls.io/github/ota-meshi/eslint-plugin-css?branch=main)
+
+::: **WORKING IN PROGRESS** :::
 
 ## :name_badge: Features
 
 This ESLint plugin provides linting rules to verify CSS definition objects.
 
 - Find the wrong usage of CSS definition objects, and their hints.
-- The plugin supports Vue and JSX (React).
+- The plugin support for Vue and JSX (React).
+- The plugin partial support for [styled-components] style objects.
 
 You can check on the [Online DEMO](./playground/README.md).
+
+[styled-components]: https://styled-components.com/docs/advanced#style-objects
+
+## :question: Why is it ESLint plugin?
+
+[Stylelint] partially supports CSS in JS, but some issues haven't been resolved for a long time.  
+Also, CSS definitions using template literals are similar to CSS syntax, but CSS definitions using JavaScript objects are not. ESLint may work better for linting JavaScript objects.
+
+[Stylelint]: https://stylelint.io
 
 ## :book: Usage
 

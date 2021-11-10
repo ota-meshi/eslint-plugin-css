@@ -86,6 +86,38 @@ tester.run("no-unknown-property", rule as any, {
             `,
             parser: require.resolve("vue-eslint-parser"),
         },
+        `
+        var a = <div style={
+            {
+                mozTransform: 'scale(2)',
+                msTransform: 'scale(2)',
+                oTransform: 'scale(2)',
+                webkitTransform: 'scale(2)',
+            }
+        } />
+        `,
+        `
+        var a = <div style={
+            {
+                '-moz-transform': 'scale(2)',
+                '-ms-transform': 'scale(2)',
+                '-o-transform': 'scale(2)',
+                '-webkit-transform': 'scale(2)',
+                'transform': 'scale(2)',
+            }
+        } />
+        `,
+        `
+        var a = <div style={
+            {
+                'MozTransform': 'scale(2)',
+                'msTransform': 'scale(2)',
+                'OTransform': 'scale(2)',
+                'WebkitTransform': 'scale(2)',
+                'transform': 'scale(2)',
+            }
+        } />
+        `,
     ],
     invalid: [
         {

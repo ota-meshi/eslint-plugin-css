@@ -20,7 +20,10 @@ function hasUpper(str: string) {
  * @return {string}
  */
 export function kebabCase(str: string): string {
-    return str.replace(/\B(?<c>[A-Z])/gu, "-$<c>").toLowerCase()
+    return str
+        .replace(/\B(?<c>[A-Z])/gu, "-$<c>")
+        .toLowerCase()
+        .replace(/^(?<vender>apple|moz|ms|o|wap|webkit)-/u, "-$<vender>-")
 }
 
 /**
@@ -41,8 +44,8 @@ export function isKebabCase(str: string): boolean {
  */
 export function camelCase(str: string): string {
     return str
-        .replace(/^-/u, "")
         .replace(/-(?<c>\w)/gu, (_, c) => (c ? c.toUpperCase() : ""))
+        .replace(/^Ms[A-Z]/u, (ms) => `m${ms.slice(1)}`)
 }
 
 /**
@@ -52,7 +55,6 @@ export function camelCase(str: string): string {
 export function isCamelCase(str: string): boolean {
     if (
         hasSymbols(str) ||
-        /^[A-Z]/u.test(str) ||
         /[\s\-_]/u.test(str) // kebab or snake or space
     ) {
         return false

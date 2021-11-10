@@ -11,3 +11,10 @@ export function hasVendorPrefix(prop: string): boolean {
 export function getVendorPrefix(prop: string): string {
     return /^-\w+-/u.exec(prop)?.[0] || ""
 }
+
+/**
+ * Strip the vender prefix
+ */
+export function stripVendorPrefix(prop: string): string {
+    return prop.slice(getVendorPrefix(prop).length)
+}

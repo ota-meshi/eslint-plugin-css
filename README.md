@@ -9,17 +9,29 @@
 [![NPM downloads](https://img.shields.io/npm/dm/eslint-plugin-css.svg)](http://www.npmtrends.com/eslint-plugin-css)
 [![NPM downloads](https://img.shields.io/npm/dy/eslint-plugin-css.svg)](http://www.npmtrends.com/eslint-plugin-css)
 [![NPM downloads](https://img.shields.io/npm/dt/eslint-plugin-css.svg)](http://www.npmtrends.com/eslint-plugin-css)
-[![Build Status](https://github.com/ota-meshi/eslint-plugin-css/workflows/CI/badge.svg?branch=master)](https://github.com/ota-meshi/eslint-plugin-css/actions?query=workflow%3ACI)
-[![Coverage Status](https://coveralls.io/repos/github/ota-meshi/eslint-plugin-css/badge.svg?branch=master)](https://coveralls.io/github/ota-meshi/eslint-plugin-css?branch=master)
+[![Build Status](https://github.com/ota-meshi/eslint-plugin-css/workflows/CI/badge.svg?branch=main)](https://github.com/ota-meshi/eslint-plugin-css/actions?query=workflow%3ACI)
+[![Coverage Status](https://coveralls.io/repos/github/ota-meshi/eslint-plugin-css/badge.svg?branch=main)](https://coveralls.io/github/ota-meshi/eslint-plugin-css?branch=main)
+
+::: **WORKING IN PROGRESS** :::
 
 ## :name_badge: Features
 
 This ESLint plugin provides linting rules to verify CSS definition objects.
 
 - Find the wrong usage of CSS definition objects, and their hints.
-- The plugin supports Vue and JSX (React).
+- The plugin support for Vue and JSX (React).
+- The plugin partial support for [styled-components] style objects.
 
 You can check on the [Online DEMO](https://ota-meshi.github.io/eslint-plugin-css/playground/).
+
+[styled-components]: https://styled-components.com/docs/advanced#style-objects
+
+## :question: Why is it ESLint plugin?
+
+[Stylelint] partially supports CSS in JS, but some issues haven't been resolved for a long time.  
+Also, CSS definitions using template literals are similar to CSS syntax, but CSS definitions using JavaScript objects are not. ESLint may work better for linting JavaScript objects.
+
+[Stylelint]: https://stylelint.io
 
 <!--DOCS_IGNORE_START-->
 
@@ -50,7 +62,7 @@ and either use one of the two configurations available (`recommended` or `all`) 
 ### The recommended configuration
 
 The `plugin:css/recommended` config enables a subset of [the rules](#white_check_mark-rules) that should be most useful to most users.
-*See [lib/configs/recommended.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/master/lib/configs/recommended.ts) for more details.*
+*See [lib/configs/recommended.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/recommended.ts) for more details.*
 
 ```js
 // .eslintrc.js
@@ -86,7 +98,7 @@ module.exports = {
 ### Using `"plugin:css/all"`
 
 The `plugin:css/all` config enables all rules. It's meant for testing, not for production use because it changes with every minor and major version of the plugin. Use it at your own risk.
-*See [lib/configs/all.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/master/lib/configs/all.ts) for more details.*
+*See [lib/configs/all.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/all.ts) for more details.*
 
 <!--USAGE_SECTION_END-->
 
@@ -103,7 +115,10 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/no-dupe-properties](https://ota-meshi.github.io/eslint-plugin-css/rules/no-dupe-properties.html) | disallow duplicate properties | :star: |
+| [css/no-invalid-color-hex](https://ota-meshi.github.io/eslint-plugin-css/rules/no-invalid-color-hex.html) | disallow invalid hex colors | :star: |
 | [css/no-unknown-property](https://ota-meshi.github.io/eslint-plugin-css/rules/no-unknown-property.html) | disallow unknown properties | :star: |
+| [css/no-unknown-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-unknown-unit.html) | disallow unknown units | :star: |
 
 ### Best Practices
 
