@@ -24,6 +24,13 @@ You can check on the [Online DEMO](https://ota-meshi.github.io/eslint-plugin-css
 
 [styled-components]: https://styled-components.com/docs/advanced#style-objects
 
+## :question: Why is it ESLint plugin?
+
+[Stylelint] partially supports CSS in JS, but some issues haven't been resolved for a long time.  
+Also, CSS definitions using template literals are similar to CSS syntax, but CSS definitions using JavaScript objects are not. ESLint may work better for linting JavaScript objects.
+
+[Stylelint]: https://stylelint.io
+
 <!--DOCS_IGNORE_START-->
 
 ## :book: Documentation
