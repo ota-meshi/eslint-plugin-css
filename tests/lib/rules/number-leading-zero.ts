@@ -49,6 +49,7 @@ tester.run("number-leading-zero", rule as any, {
             </template>
             `,
             options: ["never"],
+            parser: require.resolve("vue-eslint-parser"),
         },
     ],
     invalid: [
