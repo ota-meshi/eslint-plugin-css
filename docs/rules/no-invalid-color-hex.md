@@ -3,12 +3,12 @@ pageClass: "rule-details"
 sidebarDepth: 0
 title: "css/no-invalid-color-hex"
 description: "disallow invalid hex colors"
+since: "v0.2.0"
 ---
 # css/no-invalid-color-hex
 
 > disallow invalid hex colors
 
-- :exclamation: <badge text="This rule has not been released yet." vertical="middle" type="error"> ***This rule has not been released yet.*** </badge>
 - :gear: This rule is included in `"plugin:css/recommended"`.
 
 ## :book: Rule Details
@@ -53,6 +53,10 @@ Nothing.
 - [Stylelint - color-no-invalid-hex]
 
 [Stylelint - color-no-invalid-hex]: https://stylelint.io/user-guide/rules/list/color-no-invalid-hex/
+
+## :rocket: Version
+
+This rule was introduced in eslint-plugin-css v0.2.0
 
 ## :mag: Implementation
 

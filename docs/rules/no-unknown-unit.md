@@ -3,12 +3,12 @@ pageClass: "rule-details"
 sidebarDepth: 0
 title: "css/no-unknown-unit"
 description: "disallow unknown units"
+since: "v0.2.0"
 ---
 # css/no-unknown-unit
 
 > disallow unknown units
 
-- :exclamation: <badge text="This rule has not been released yet." vertical="middle" type="error"> ***This rule has not been released yet.*** </badge>
 - :gear: This rule is included in `"plugin:css/recommended"`.
 
 ## :book: Rule Details
@@ -62,6 +62,10 @@ var foo = <div
 - [Stylelint - unit-no-unknown]
 
 [Stylelint - unit-no-unknown]: https://stylelint.io/user-guide/rules/list/unit-no-unknown/
+
+## :rocket: Version
+
+This rule was introduced in eslint-plugin-css v0.2.0
 
 ## :mag: Implementation
 
