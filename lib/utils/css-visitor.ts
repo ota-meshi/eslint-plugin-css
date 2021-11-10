@@ -10,6 +10,8 @@ import {
 } from "./ast-utils"
 import { toRegExp } from "./regexp"
 import { extractCallReferences } from "./extract-calls-references"
+import postcssValueParser from "postcss-value-parser"
+import type { ParsedValue as PostcssParsedValue } from "postcss-value-parser"
 
 type CSSHelperContext = {
     isFixable<T extends ESTree.Node>(targetNode?: T | null): targetNode is T
@@ -43,6 +45,7 @@ export type CSSPropertyValue = {
     value: string | number
     expression: ESTree.Expression
     directExpression: ESTree.Expression | null
+    parsed: Readonly<PostcssParsedValue>
 }
 export type CSSSelector = {
     selector: string
@@ -519,7 +522,23 @@ function buildCSSVisitor(
                     | ESTree.RestElement
                     | ESTree.AssignmentPattern
                 >
-                return resolveExpression(ctx, value)
+                const val = resolveExpression(ctx, value)
+                let parsed: PostcssParsedValue | undefined
+                return (
+                    val && {
+                        value: val.value,
+                        expression: val.expression,
+                        directExpression: val.directExpression,
+                        get parsed() {
+                            if (parsed) {
+                                return parsed
+                            }
+                            return (parsed = postcssValueParser(
+                                String(val!.value),
+                            ))
+                        },
+                    }
+                )
             },
         }
     }

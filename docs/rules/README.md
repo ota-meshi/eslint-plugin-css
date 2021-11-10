@@ -28,4 +28,5 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/number-leading-zero](./number-leading-zero.md) | require or disallow a leading zero for fractional numbers less than 1 | :wrench: |
 | [css/property-casing](./property-casing.md) | enforce specific casing for CSS properties | :wrench: |

@@ -1,6 +1,5 @@
 import type { CSSObjectContext, CSSVisitorHandlers } from "../utils"
 import { createRule, defineCSSVisitor } from "../utils"
-import valueParser from "postcss-value-parser"
 
 export default createRule("no-invalid-color-hex", {
     meta: {
@@ -29,7 +28,7 @@ export default createRule("no-invalid-color-hex", {
                     if (!value) {
                         return
                     }
-                    const parsedValue = valueParser(String(value.value))
+                    const parsedValue = value.parsed
 
                     parsedValue.walk(
                         ({ value: textValue, type, sourceIndex }) => {

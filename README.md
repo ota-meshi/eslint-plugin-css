@@ -130,6 +130,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/number-leading-zero](https://ota-meshi.github.io/eslint-plugin-css/rules/number-leading-zero.html) | require or disallow a leading zero for fractional numbers less than 1 | :wrench: |
 | [css/property-casing](https://ota-meshi.github.io/eslint-plugin-css/rules/property-casing.html) | enforce specific casing for CSS properties | :wrench: |
 
 <!--RULES_TABLE_END-->
