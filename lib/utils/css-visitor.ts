@@ -34,24 +34,27 @@ export type CSSObjectContext = CSSHelperContext &
           }
     )
 
+export type CSSPropertyName = {
+    name: string
+    expression: ESTree.Expression
+    directExpression: ESTree.Expression | null
+}
+export type CSSPropertyValue = {
+    value: string | number
+    expression: ESTree.Expression
+    directExpression: ESTree.Expression | null
+}
+export type CSSSelector = {
+    selector: string
+    expression: ESTree.Expression
+    directExpression: ESTree.Expression | null
+}
 export type CSSPropertyContext = {
-    getName: () => {
-        name: string
-        expression: ESTree.Expression
-        directExpression: ESTree.Expression | null
-    } | null
-    getValue: () => {
-        value: string | number
-        expression: ESTree.Expression
-        directExpression: ESTree.Expression | null
-    } | null
+    getName: () => CSSPropertyName | null
+    getValue: () => CSSPropertyValue | null
 }
 export type CSSRuleContext = {
-    getSelector: () => {
-        selector: string
-        expression: ESTree.Expression
-        directExpression: ESTree.Expression | null
-    } | null
+    getSelector: () => CSSSelector | null
 }
 
 export type CSSVisitorHandlers = {
