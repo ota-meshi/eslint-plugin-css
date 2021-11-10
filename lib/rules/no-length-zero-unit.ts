@@ -60,7 +60,7 @@ export default createRule("no-length-zero-unit", {
          * Create visitor
          */
         function createVisitor(
-            _cssContext: CSSObjectContext,
+            cssContext: CSSObjectContext,
         ): CSSVisitorHandlers {
             /** Checks whether given name is ignore */
             function ignorePropName(name: string) {
@@ -148,7 +148,9 @@ export default createRule("no-length-zero-unit", {
                                 messageId: "unexpected",
                                 fix(fixer) {
                                     if (
-                                        value.directExpression ||
+                                        cssContext.isFixable(
+                                            value.directExpression,
+                                        ) ||
                                         sourceCode.text.slice(
                                             startIndex,
                                             endIndex,

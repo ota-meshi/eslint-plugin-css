@@ -32,7 +32,7 @@ export default createRule("property-casing", {
          * Create visitor
          */
         function createVisitor(
-            _cssContext: CSSObjectContext,
+            cssContext: CSSObjectContext,
         ): CSSVisitorHandlers {
             return {
                 onProperty(property) {
@@ -51,7 +51,7 @@ export default createRule("property-casing", {
                             caseType,
                         },
                         fix(fixer) {
-                            if (!prop.directExpression) {
+                            if (!cssContext.isFixable(prop.directExpression)) {
                                 return null
                             }
                             const quoted =

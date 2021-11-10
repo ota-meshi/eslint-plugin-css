@@ -246,5 +246,37 @@ tester.run("property-casing", rule as any, {
                 "'WebkitTransform' is not in kebab-case.",
             ],
         },
+        {
+            filename: "test.vue",
+            code: `
+            <template>
+                <div :style="[
+                    {
+                        'background-color': 'red'
+                    },
+                    {
+                        'border-color': 'red'
+                    },
+                ]"/>
+            </template>
+            `,
+            output: `
+            <template>
+                <div :style="[
+                    {
+                        'backgroundColor': 'red'
+                    },
+                    {
+                        'borderColor': 'red'
+                    },
+                ]"/>
+            </template>
+            `,
+            parser: require.resolve("vue-eslint-parser"),
+            errors: [
+                "'background-color' is not in camelCase.",
+                "'border-color' is not in camelCase.",
+            ],
+        },
     ],
 })

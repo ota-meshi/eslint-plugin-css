@@ -10,11 +10,24 @@ import {
 } from "./ast-utils"
 import { toRegExp } from "./regexp"
 
-export type CSSObjectContext = {
-    object: ESTree.ObjectExpression
-    expression: ESTree.Expression
-    on: "jsx-style" | "vue-style"
+type CSSHelperContext = {
+    isFixable<T extends ESTree.Node>(targetNode?: T | null): targetNode is T
 }
+type CSSBaseContext = {
+    expression: ESTree.Expression
+}
+export type CSSObjectContext = CSSHelperContext &
+    CSSBaseContext &
+    (
+        | {
+              define: ESTree.ObjectExpression | ESTree.ArrayExpression
+              on: "jsx-style"
+          }
+        | {
+              define: ESTree.ObjectExpression | ESTree.ArrayExpression
+              on: "vue-style"
+          }
+    )
 
 export type CSSPropertyContext = {
     getName: () => {
@@ -79,7 +92,7 @@ function buildCSSVisitor(
      * Verify a given css object.
      */
     function verifyCSSObject(info: {
-        object: ESTree.ObjectExpression
+        define: ESTree.ObjectExpression | ESTree.ArrayExpression
         expression: ESTree.Expression
         on: "jsx-style" | "vue-style"
     }) {
@@ -95,9 +108,38 @@ function buildCSSVisitor(
         if (visitor.onRoot) {
             visitor.onRoot(ctx)
         }
-        visitObject(ctx.object)
+        if (ctx.define.type === "ObjectExpression") {
+            visitObject(ctx.define)
+        } else if (ctx.define.type === "ArrayExpression") {
+            visitArray(ctx.define)
+        }
         if (visitor["onRoot:exit"]) {
             visitor["onRoot:exit"](ctx)
+        }
+
+        /**
+         * Visit CSS array
+         */
+        function visitArray(array: ESTree.ArrayExpression) {
+            for (const element of array.elements) {
+                if (!element) {
+                    continue
+                }
+                if (element.type === "SpreadElement") {
+                    const target = resolveDefineExpression(
+                        element.argument,
+                        ctx,
+                    )
+                    if (target.type === "ArrayExpression") {
+                        visitArray(target)
+                    }
+                    continue
+                }
+                const target = resolveDefineExpression(element, ctx)
+                if (target.type === "ObjectExpression") {
+                    visitObject(target)
+                }
+            }
         }
 
         /**
@@ -107,14 +149,13 @@ function buildCSSVisitor(
             if (visitor.onProperty) {
                 for (const prop of object.properties) {
                     if (prop.type === "Property") {
-                        visitor.onProperty(buildPropertyContext(prop))
+                        visitor.onProperty(buildPropertyContext(ctx, prop))
                     } else if (prop.type === "SpreadElement") {
                         if (prop.argument.type === "Identifier") {
-                            let target: ESTree.Expression = prop.argument
-                            if (target.type === "Identifier") {
-                                target =
-                                    findExpression(context, target) || target
-                            }
+                            const target = resolveDefineExpression(
+                                prop.argument,
+                                ctx,
+                            )
                             if (target.type === "ObjectExpression") {
                                 visitObject(target)
                             }
@@ -143,13 +184,13 @@ function buildCSSVisitor(
                 if (!attrName || !attributes.some((r) => r.test(attrName))) {
                     return
                 }
-                let target = node
-                if (target.type === "Identifier") {
-                    target = findExpression(context, target) || target
-                }
-                if (target.type === "ObjectExpression") {
+                const target = resolveDefineExpression(node, null)
+                if (
+                    target.type === "ObjectExpression" ||
+                    target.type === "ArrayExpression"
+                ) {
                     verifyCSSObject({
-                        object: target,
+                        define: target,
                         expression: node,
                         on: "jsx-style",
                     })
@@ -157,8 +198,8 @@ function buildCSSVisitor(
             },
         },
         defineTemplateBodyVisitor(context, {
-            [`VAttribute[directive=true][key.name.name='bind'] > VExpressionContainer.value > ObjectExpression.expression`](
-                node: ESTree.ObjectExpression,
+            [`VAttribute[directive=true][key.name.name='bind'] > VExpressionContainer.value > :matches(ObjectExpression,ArrayExpression).expression`](
+                node: ESTree.ObjectExpression | ESTree.ArrayExpression,
             ) {
                 const vBindAttr = getParent(getParent(node)) as {
                     key?: {
@@ -171,7 +212,7 @@ function buildCSSVisitor(
                 }
 
                 verifyCSSObject({
-                    object: node,
+                    define: node,
                     expression: node,
                     on: "vue-style",
                 })
@@ -184,19 +225,51 @@ function buildCSSVisitor(
      * Build CSSObjectContext
      */
     function buildCSSObjectContext(info: {
-        object: ESTree.ObjectExpression
+        define: ESTree.ObjectExpression | ESTree.ArrayExpression
         expression: ESTree.Expression
         on: "jsx-style" | "vue-style"
     }): CSSObjectContext {
         return {
-            object: info.object,
+            define: info.define,
             expression: info.expression,
             on: info.on,
+            isFixable<T extends ESTree.Node>(
+                targetNode?: T | null,
+            ): targetNode is T {
+                if (info.expression !== info.define) {
+                    return false
+                }
+                if (!targetNode) {
+                    return true
+                }
+                const targetRange = targetNode.range!
+                return (
+                    info.expression.range![0] <= targetRange[0] &&
+                    targetRange[1] <= info.expression.range![1]
+                )
+            },
         }
     }
 
+    /** Resolve define expression */
+    function resolveDefineExpression(
+        node: ESTree.Expression,
+        ctx: CSSObjectContext | null,
+    ) {
+        if (ctx && ctx.on === "vue-style") {
+            return node
+        }
+        if (node.type === "Identifier") {
+            return findExpression(context, node) || node
+        }
+        return node
+    }
+
     /** Build property context */
-    function buildPropertyContext(node: ESTree.Property): CSSPropertyContext {
+    function buildPropertyContext(
+        ctx: CSSObjectContext,
+        node: ESTree.Property,
+    ): CSSPropertyContext {
         return {
             getName() {
                 const { key } = node
@@ -213,7 +286,7 @@ function buildCSSVisitor(
                     }
                     return null
                 }
-                const val = resolveExpression(key)
+                const val = resolveExpression(ctx, key)
                 return (
                     val && {
                         name: String(val.value),
@@ -230,13 +303,13 @@ function buildCSSVisitor(
                     | ESTree.RestElement
                     | ESTree.AssignmentPattern
                 >
-                return resolveExpression(value)
+                return resolveExpression(ctx, value)
             },
         }
     }
 
     /** Resolve Expression */
-    function resolveExpression(node: ESTree.Expression) {
+    function resolveExpression(ctx: CSSObjectContext, node: ESTree.Expression) {
         if (node.type === "Literal") {
             if (
                 typeof node.value === "string" ||
@@ -256,6 +329,9 @@ function buildCSSVisitor(
                 expression: node,
                 directExpression: node,
             }
+        }
+        if (ctx.on === "vue-style") {
+            return null
         }
         const name = getStaticValue(context, node)
         if (
