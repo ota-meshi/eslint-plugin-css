@@ -163,6 +163,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 |:--------|:------------|:---|
 | [css/no-dupe-properties](https://ota-meshi.github.io/eslint-plugin-css/rules/no-dupe-properties.html) | disallow duplicate properties | :star: |
 | [css/no-invalid-color-hex](https://ota-meshi.github.io/eslint-plugin-css/rules/no-invalid-color-hex.html) | disallow invalid hex colors | :star: |
+| [css/no-shorthand-property-overrides](https://ota-meshi.github.io/eslint-plugin-css/rules/no-shorthand-property-overrides.html) | disallow shorthand properties that override related longhand properties | :star: |
 | [css/no-unknown-property](https://ota-meshi.github.io/eslint-plugin-css/rules/no-unknown-property.html) | disallow unknown properties | :star: |
 | [css/no-unknown-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-unknown-unit.html) | disallow unknown units | :star: |
 

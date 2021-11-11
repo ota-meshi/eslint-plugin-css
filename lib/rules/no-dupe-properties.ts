@@ -4,7 +4,7 @@ import type {
     CSSVisitorHandlers,
 } from "../utils"
 import { createRule, defineCSSVisitor } from "../utils"
-import { isCamelCase, kebabCase } from "../utils/casing"
+import { normalizePropertyName } from "../utils/css-utils"
 
 export default createRule("no-dupe-properties", {
     meta: {
@@ -38,7 +38,9 @@ export default createRule("no-dupe-properties", {
                 const reported = new Set<CSSPropertyName>()
                 const map = new Map<string, CSSPropertyName>()
                 for (const name of names) {
-                    const normalized = normalizePropName(name.name)
+                    const normalized = normalizePropertyName(name.name, {
+                        keepVendorPrefix: true,
+                    })
                     const already = map.get(normalized)
                     if (
                         already &&
@@ -89,18 +91,3 @@ export default createRule("no-dupe-properties", {
         })
     },
 })
-
-/** Normalize prop name */
-function normalizePropName(name: string): string {
-    // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssFloat
-    if (name === "cssFloat") {
-        return "float"
-    }
-    if (name.startsWith("--")) {
-        return name
-    }
-    if (isCamelCase(name)) {
-        return kebabCase(name)
-    }
-    return name
-}

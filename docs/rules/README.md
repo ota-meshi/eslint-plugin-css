@@ -15,6 +15,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 |:--------|:------------|:---|
 | [css/no-dupe-properties](./no-dupe-properties.md) | disallow duplicate properties | :star: |
 | [css/no-invalid-color-hex](./no-invalid-color-hex.md) | disallow invalid hex colors | :star: |
+| [css/no-shorthand-property-overrides](./no-shorthand-property-overrides.md) | disallow shorthand properties that override related longhand properties | :star: |
 | [css/no-unknown-property](./no-unknown-property.md) | disallow unknown properties | :star: |
 | [css/no-unknown-unit](./no-unknown-unit.md) | disallow unknown units | :star: |
 

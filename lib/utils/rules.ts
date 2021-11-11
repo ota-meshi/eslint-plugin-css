@@ -3,6 +3,7 @@ import noDupeProperties from "../rules/no-dupe-properties"
 import noInvalidColorHex from "../rules/no-invalid-color-hex"
 import noLengthZeroUnit from "../rules/no-length-zero-unit"
 import noNumberTrailingZeros from "../rules/no-number-trailing-zeros"
+import noShorthandPropertyOverrides from "../rules/no-shorthand-property-overrides"
 import noUnknownProperty from "../rules/no-unknown-property"
 import noUnknownUnit from "../rules/no-unknown-unit"
 import numberLeadingZero from "../rules/number-leading-zero"
@@ -14,6 +15,7 @@ export const rules = [
     noInvalidColorHex,
     noLengthZeroUnit,
     noNumberTrailingZeros,
+    noShorthandPropertyOverrides,
     noUnknownProperty,
     noUnknownUnit,
     numberLeadingZero,
