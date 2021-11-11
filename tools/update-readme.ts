@@ -25,6 +25,7 @@ fs.writeFileSync(
     docsReadmeFilePath,
     newReadme
         .replace("# eslint-plugin-css\n", "# Introduction\n")
+        .replace(/.\/docs\//gu, "./")
         .replace(
             /<!--RULES_SECTION_START-->[\s\S]*<!--RULES_SECTION_END-->/u,
             "See [Available Rules](./rules/README.md).",

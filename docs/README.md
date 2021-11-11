@@ -24,7 +24,9 @@ This ESLint plugin provides linting rules to verify CSS definition objects.
 
 You can check on the [Online DEMO](./playground/README.md).
 
-[styled-components]: https://styled-components.com/docs/advanced#style-objects
+<img alt="vue" src="./images/vue.png" height="150px"><img alt="jsx" src="./images/jsx.png" height="150px">
+
+[styled-components]: https://styled-components.co./advanced#style-objects
 
 ## :question: Why is it ESLint plugin?
 
