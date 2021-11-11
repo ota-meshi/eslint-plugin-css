@@ -31,7 +31,7 @@ ${createTable(categories["Stylistic Issues"], buildRulePath)}
 
     if (categories.deprecated.length >= 1) {
         md += `
-        ${header} Deprecated
+${header} Deprecated
 
 - :warning: We're going to remove deprecated rules in the next major release. Please migrate to successor/new rules.
 - :innocent: We don't fix bugs which are in deprecated rules since we don't have enough resources.
