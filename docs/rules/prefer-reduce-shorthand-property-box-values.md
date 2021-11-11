@@ -3,12 +3,12 @@ pageClass: "rule-details"
 sidebarDepth: 0
 title: "css/prefer-reduce-shorthand-property-box-values"
 description: "require reduction in box values of shorthand property"
+since: "v0.3.0"
 ---
 # css/prefer-reduce-shorthand-property-box-values
 
 > require reduction in box values of shorthand property
 
-- :exclamation: <badge text="This rule has not been released yet." vertical="middle" type="error"> ***This rule has not been released yet.*** </badge>
 - :wrench: The `--fix` option on the [command line](https://eslint.org/docs/user-guide/command-line-interface#fixing-problems) can automatically fix some of the problems reported by this rule.
 
 ## :book: Rule Details
@@ -52,6 +52,10 @@ Nothing.
 - [Stylelint - shorthand-property-no-redundant-values]
 
 [Stylelint - shorthand-property-no-redundant-values]: https://stylelint.io/user-guide/rules/list/shorthand-property-no-redundant-values/
+
+## :rocket: Version
+
+This rule was introduced in eslint-plugin-css v0.3.0
 
 ## :mag: Implementation
 

@@ -3,12 +3,12 @@ pageClass: "rule-details"
 sidebarDepth: 0
 title: "css/no-shorthand-property-overrides"
 description: "disallow shorthand properties that override related longhand properties"
+since: "v0.3.0"
 ---
 # css/no-shorthand-property-overrides
 
 > disallow shorthand properties that override related longhand properties
 
-- :exclamation: <badge text="This rule has not been released yet." vertical="middle" type="error"> ***This rule has not been released yet.*** </badge>
 - :gear: This rule is included in `"plugin:css/recommended"`.
 
 ## :book: Rule Details
@@ -54,6 +54,10 @@ Nothing.
 - [Stylelint - declaration-block-no-shorthand-property-overrides]
 
 [Stylelint - declaration-block-no-shorthand-property-overrides]: https://stylelint.io/user-guide/rules/list/declaration-block-no-shorthand-property-overrides/
+
+## :rocket: Version
+
+This rule was introduced in eslint-plugin-css v0.3.0
 
 ## :mag: Implementation
 
