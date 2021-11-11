@@ -110,5 +110,3 @@ const myStyle = {
 <!--USAGE_SECTION_END-->
 
 See [the rule list](../rules/README.md) to get the `rules` that this plugin provides.
-
-Some rules also support [shared settings](../settings/README.md).
