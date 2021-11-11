@@ -150,7 +150,7 @@ export default createRule("no-length-zero-unit", {
                                     if (
                                         cssContext.isFixable(
                                             value.directExpression,
-                                        ) ||
+                                        ) &&
                                         sourceCode.text.slice(
                                             startIndex,
                                             endIndex,

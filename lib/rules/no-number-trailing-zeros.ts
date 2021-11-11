@@ -80,7 +80,7 @@ export default createRule("no-number-trailing-zeros", {
                                 if (
                                     cssContext.isFixable(
                                         value.directExpression,
-                                    ) ||
+                                    ) &&
                                     /^0+$/u.test(
                                         sourceCode.text.slice(
                                             startIndex,

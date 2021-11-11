@@ -17,7 +17,6 @@ export default createRule("no-dupe-properties", {
         schema: [],
         messages: {
             unexpected: "Duplicate property '{{name}}' and '{{other}}'.",
-            unexpectedSame: "Duplicate property '{{name}}'.",
         },
         type: "problem",
     },
@@ -41,7 +40,11 @@ export default createRule("no-dupe-properties", {
                 for (const name of names) {
                     const normalized = normalizePropName(name.name)
                     const already = map.get(normalized)
-                    if (already) {
+                    if (
+                        already &&
+                        // Ignore same name
+                        name.name !== already.name
+                    ) {
                         for (const [report, other] of [
                             [already, name],
                             [name, already],
@@ -50,10 +53,7 @@ export default createRule("no-dupe-properties", {
                                 node:
                                     report.directExpression ||
                                     report.expression,
-                                messageId:
-                                    report.name === other.name
-                                        ? "unexpectedSame"
-                                        : "unexpected",
+                                messageId: "unexpected",
                                 data: { name: report.name, other: other.name },
                             })
                             reported.add(report)

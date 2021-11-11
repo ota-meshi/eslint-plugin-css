@@ -3,6 +3,7 @@ import * as eslintUtils from "eslint-utils"
 import type {
     Expression,
     Identifier,
+    Literal,
     MemberExpression,
     MethodDefinition,
     Node,
@@ -138,4 +139,12 @@ export function isStaticTemplateLiteral(
     node: Expression | PrivateIdentifier,
 ): node is TemplateLiteral & { quasis: [TemplateElement]; expressions: [] } {
     return node.type === "TemplateLiteral" && node.quasis.length === 1
+}
+/**
+ * Checks whether given node is string literal
+ */
+export function isStringLiteral(
+    node: Expression | PrivateIdentifier,
+): node is Literal & { value: string } {
+    return node.type === "Literal" && typeof node.value === "string"
 }

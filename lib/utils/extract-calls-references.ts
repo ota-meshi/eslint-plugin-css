@@ -9,17 +9,25 @@ import type { Rule, Scope } from "eslint"
 import { toRegExp } from "./regexp"
 import { findVariable, getParent, getPropertyName } from "./ast-utils"
 
+type TargetPath = {
+    define: string[]
+    target: string[]
+}
+
 class TargetPaths {
     private readonly targets: {
         tester: { test: (str: string) => boolean }
-        paths: string[]
+        next: string[] | null
+        define: string[]
     }[] = []
 
-    public constructor(paths: string[][]) {
-        for (const [key, ...others] of paths) {
+    public constructor(targetPaths: TargetPath[]) {
+        for (const paths of targetPaths) {
+            const [key, ...next] = paths.target
             this.targets.push({
                 tester: toRegExp(key),
-                paths: others,
+                next: next.length ? next : null,
+                define: paths.define,
             })
         }
     }
@@ -28,28 +36,45 @@ class TargetPaths {
         if (name == null) {
             return this
         }
-        const next: string[][] = []
+        const next: TargetPath[] = []
 
         for (const target of this.targets) {
             if (!target.tester.test(name)) {
                 continue
             }
-            if (target.paths.length) {
-                next.push(target.paths)
+            if (target.next) {
+                next.push({
+                    target: target.next,
+                    define: target.define,
+                })
             }
         }
 
         return next.length ? new TargetPaths(next) : null
     }
 
-    public isTargetCall(name: string | null) {
+    public getTargetCallPaths(name: string | null): string[][] {
         if (name == null) {
-            return false
+            return []
         }
-        return this.targets.some(
-            (target) => target.tester.test(name) && !target.paths.length,
-        )
+        const paths: string[][] = []
+
+        for (const target of this.targets) {
+            if (!target.tester.test(name)) {
+                continue
+            }
+            if (target.next) {
+                continue
+            }
+            paths.push(target.define)
+        }
+        return paths
     }
+}
+
+export type CallReference = {
+    node: SimpleCallExpression
+    paths: readonly string[][]
 }
 
 /** Extract call references from the given import declaration */
@@ -57,8 +82,10 @@ export function* extractCallReferences(
     node: ImportDeclaration,
     functionPaths: string[][],
     context: Rule.RuleContext,
-): Iterable<SimpleCallExpression> {
-    const paths = new TargetPaths(functionPaths)
+): Iterable<CallReference> {
+    const paths = new TargetPaths(
+        functionPaths.map((define) => ({ define, target: define })),
+    )
     for (const specifier of node.specifiers) {
         const variable = findVariable(context, specifier.local)
         if (!variable) {
@@ -115,7 +142,7 @@ function* extractCallReferencesForExpression(
     name: string | null,
     paths: TargetPaths,
     context: Rule.RuleContext,
-): Iterable<SimpleCallExpression> {
+): Iterable<CallReference> {
     let node = expression
     let parent = getParent(node)
     while (
@@ -161,8 +188,12 @@ function* extractCallReferencesForExpression(
             )
         }
     } else if (parent.type === "CallExpression") {
-        if (paths.isTargetCall(name)) {
-            yield parent
+        const target = paths.getTargetCallPaths(name)
+        if (target.length) {
+            yield {
+                node: parent,
+                paths: target,
+            }
         }
         if (name) {
             yield* extractCallReferencesForExpression(
@@ -181,7 +212,7 @@ function* extractCallReferencesForPattern(
     name: string | null,
     paths: TargetPaths,
     context: Rule.RuleContext,
-): Iterable<SimpleCallExpression> {
+): Iterable<CallReference> {
     let target = pattern
     while (target.type === "AssignmentPattern") {
         target = target.left

@@ -171,6 +171,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 | Rule ID | Description |    |
 |:--------|:------------|:---|
 | [css/no-length-zero-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-length-zero-unit.html) | disallow units for zero lengths | :wrench: |
+| [css/prefer-reduce-shorthand-property-box-values](https://ota-meshi.github.io/eslint-plugin-css/rules/prefer-reduce-shorthand-property-box-values.html) | require reduction in box values of shorthand property | :wrench: |
 
 ### Stylistic Issues
 

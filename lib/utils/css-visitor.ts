@@ -9,6 +9,7 @@ import {
     getParent,
 } from "./ast-utils"
 import { toRegExp } from "./regexp"
+import type { CallReference } from "./extract-calls-references"
 import { extractCallReferences } from "./extract-calls-references"
 import postcssValueParser from "postcss-value-parser"
 import type { ParsedValue as PostcssParsedValue } from "postcss-value-parser"
@@ -17,13 +18,35 @@ type CSSHelperContext = {
     isFixable<T extends ESTree.Node>(targetNode?: T | null): targetNode is T
 }
 
-type StyleOn = "jsx-style" | "vue-style" | "define-function" | "mark"
-
-export type CSSObjectContext = CSSHelperContext & {
-    define: ESTree.ObjectExpression | ESTree.ArrayExpression
-    scope: ESTree.Expression
-    on: StyleOn
+type DefineStyleArgument = {
+    argument: ESTree.Expression
+    callReference: CallReference
 }
+
+type CSSObjectPropsContext =
+    | {
+          define: ESTree.ObjectExpression | ESTree.ArrayExpression
+          scope: ESTree.Expression
+          on: "jsx-style"
+      }
+    | {
+          define: ESTree.ObjectExpression | ESTree.ArrayExpression
+          scope: ESTree.Expression
+          on: "vue-style"
+      }
+    | {
+          define: ESTree.ObjectExpression
+          scope: ESTree.Expression
+          on: "define-function"
+          defineStyleArgument: DefineStyleArgument
+      }
+    | {
+          define: ESTree.ObjectExpression
+          scope: ESTree.Expression
+          on: "mark"
+      }
+
+export type CSSObjectContext = CSSHelperContext & CSSObjectPropsContext
 
 export type CSSPropertyName = {
     name: string
@@ -160,17 +183,13 @@ function buildCSSVisitor(
     /**
      * Verify a given css object.
      */
-    function verifyCSSObject(info: {
-        define: ESTree.ObjectExpression | ESTree.ArrayExpression
-        scope: ESTree.Expression
-        on: StyleOn
-    }) {
-        verifiedObjects.push(info.define)
-        if (info.define.type === "ArrayExpression") {
-            verifiedObjects.push(...info.define.elements)
+    function verifyCSSObject(baseCtx: CSSObjectPropsContext) {
+        verifiedObjects.push(baseCtx.define)
+        if (baseCtx.define.type === "ArrayExpression") {
+            verifiedObjects.push(...baseCtx.define.elements)
         }
 
-        const ctx = buildCSSObjectContext(info)
+        const ctx = buildCSSObjectContext(baseCtx)
 
         visitCSS(ctx, createVisitorFromRules(rules, ctx))
     }
@@ -283,8 +302,8 @@ function buildCSSVisitor(
                     }
                 }
             } else {
-                const neverType: never = ctx.on
-                throw new Error(`${neverType} is not style type.`)
+                const neverCtx: never = ctx
+                throw new Error(`Unknown context. ${neverCtx}`)
             }
         }
     }
@@ -317,14 +336,17 @@ function buildCSSVisitor(
     type ScopeStack = {
         upper: ScopeStack | null
         node: ESTree.Node
-        defineStyleFunctionArg?: ESTree.Expression | null
+        defineStyleArgumentFunction?: DefineStyleArgument | null
     }
 
     let scopeStack: ScopeStack | null = {
         upper: null,
         node: context.getSourceCode().ast,
     }
-    const defineStyleFunctions = new Map<ESTree.Node, ESTree.Expression>()
+    const defineStyleArgumentFunctions = new Map<
+        ESTree.Node,
+        DefineStyleArgument
+    >()
 
     return compositingVisitors(
         {
@@ -338,52 +360,65 @@ function buildCSSVisitor(
                     if (!moduleDefineFunctions) {
                         continue
                     }
-                    for (const call of extractCallReferences(
+                    for (const callReference of extractCallReferences(
                         body,
                         moduleDefineFunctions,
                         context,
                     )) {
-                        for (const arg of call.arguments) {
-                            if (arg.type === "SpreadElement") {
+                        for (const argument of callReference.node.arguments) {
+                            if (argument.type === "SpreadElement") {
                                 continue
                             }
-                            const target = resolveDefineExpression(arg, null)
+                            const defineStyleArgument: DefineStyleArgument = {
+                                argument,
+                                callReference,
+                            }
+                            const target = resolveDefineExpression(
+                                defineStyleArgument.argument,
+                                null,
+                            )
                             if (target.type === "ObjectExpression") {
                                 verifyCSSObject({
                                     define: target,
-                                    scope: arg,
+                                    scope: defineStyleArgument.argument,
                                     on: "define-function",
+                                    defineStyleArgument,
                                 })
                             } else if (
                                 target.type === "FunctionExpression" ||
                                 target.type === "ArrowFunctionExpression"
                             ) {
-                                defineStyleFunctions.set(target, arg)
+                                defineStyleArgumentFunctions.set(
+                                    target,
+                                    defineStyleArgument,
+                                )
                             }
                         }
                     }
                 }
             },
             ":function, PropertyDefinition"(node: ESTree.Node) {
-                const arg = defineStyleFunctions.get(node)
+                const defineStyleArgument =
+                    defineStyleArgumentFunctions.get(node)
                 scopeStack = {
                     upper: scopeStack,
                     node,
-                    defineStyleFunctionArg: arg || null,
+                    defineStyleArgumentFunction: defineStyleArgument,
                 }
 
                 if (
                     node.type === "ArrowFunctionExpression" &&
                     node.expression &&
                     node.body.type !== "BlockStatement" &&
-                    arg
+                    defineStyleArgument
                 ) {
                     const target = resolveDefineExpression(node.body, null)
                     if (target.type === "ObjectExpression") {
                         verifyCSSObject({
                             define: target,
-                            scope: arg,
+                            scope: defineStyleArgument.argument,
                             on: "define-function",
+                            defineStyleArgument,
                         })
                     }
                 }
@@ -391,15 +426,18 @@ function buildCSSVisitor(
             ReturnStatement(node: ESTree.ReturnStatement) {
                 if (
                     scopeStack &&
-                    scopeStack.defineStyleFunctionArg &&
+                    scopeStack.defineStyleArgumentFunction &&
                     node.argument
                 ) {
                     const target = resolveDefineExpression(node.argument, null)
                     if (target.type === "ObjectExpression") {
+                        const defineStyleArgument =
+                            scopeStack.defineStyleArgumentFunction
                         verifyCSSObject({
                             define: target,
-                            scope: scopeStack.defineStyleFunctionArg,
+                            scope: defineStyleArgument.argument,
                             on: "define-function",
+                            defineStyleArgument,
                         })
                     }
                 }
@@ -481,22 +519,18 @@ function buildCSSVisitor(
     /**
      * Build CSSObjectContext
      */
-    function buildCSSObjectContext(info: {
-        define: ESTree.ObjectExpression | ESTree.ArrayExpression
-        scope: ESTree.Expression
-        on: StyleOn
-    }): CSSObjectContext {
+    function buildCSSObjectContext(
+        baseCtx: CSSObjectPropsContext,
+    ): CSSObjectContext {
         return {
-            define: info.define,
-            scope: info.scope,
-            on: info.on,
+            ...baseCtx,
             isFixable<T extends ESTree.Node>(
                 targetNode?: T | null,
             ): targetNode is T {
-                const scopeRange = info.scope.range!
+                const scopeRange = baseCtx.scope.range!
                 if (
-                    scopeRange[0] <= info.define.range![0] &&
-                    info.define.range![1] <= scopeRange[1]
+                    scopeRange[0] <= baseCtx.define.range![0] &&
+                    baseCtx.define.range![1] <= scopeRange[1]
                 ) {
                     if (!targetNode) {
                         return true

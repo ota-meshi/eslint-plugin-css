@@ -92,7 +92,7 @@ export default createRule("number-leading-zero", {
                                     if (
                                         cssContext.isFixable(
                                             value.directExpression,
-                                        ) ||
+                                        ) &&
                                         sourceCode.text[startIndex] === "."
                                     ) {
                                         return fixer.insertTextBeforeRange(
@@ -139,7 +139,7 @@ export default createRule("number-leading-zero", {
                                     if (
                                         cssContext.isFixable(
                                             value.directExpression,
-                                        ) ||
+                                        ) &&
                                         /^0+$/u.test(
                                             sourceCode.text.slice(
                                                 startIndex,

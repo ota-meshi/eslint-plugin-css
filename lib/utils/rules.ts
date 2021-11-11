@@ -6,6 +6,7 @@ import noNumberTrailingZeros from "../rules/no-number-trailing-zeros"
 import noUnknownProperty from "../rules/no-unknown-property"
 import noUnknownUnit from "../rules/no-unknown-unit"
 import numberLeadingZero from "../rules/number-leading-zero"
+import preferReduceShorthandPropertyBoxValues from "../rules/prefer-reduce-shorthand-property-box-values"
 import propertyCasing from "../rules/property-casing"
 
 export const rules = [
@@ -16,5 +17,6 @@ export const rules = [
     noUnknownProperty,
     noUnknownUnit,
     numberLeadingZero,
+    preferReduceShorthandPropertyBoxValues,
     propertyCasing,
 ] as RuleModule[]
