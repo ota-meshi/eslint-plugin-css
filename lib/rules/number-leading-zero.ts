@@ -71,9 +71,10 @@ export default createRule("number-leading-zero", {
                                 node.sourceIndex +
                                 match.index +
                                 match[0].length -
-                                match[1].length +
+                                match.groups!.decimal.length +
                                 1 /* quote */
-                            const endIndex = startIndex + match[1].length
+                            const endIndex =
+                                startIndex + match.groups!.decimal.length
                             const loc = value.directExpression
                                 ? {
                                       start: sourceCode.getLocFromIndex(
@@ -116,9 +117,11 @@ export default createRule("number-leading-zero", {
                                 node.sourceIndex +
                                 match.index +
                                 match[0].length -
-                                (match[1].length + match[2].length) +
+                                (match.groups!.zero.length +
+                                    match.groups!.decimal.length) +
                                 1 /* quote */
-                            const endIndex = startIndex + match[1].length
+                            const endIndex =
+                                startIndex + match.groups!.zero.length
                             const loc = value.directExpression
                                 ? {
                                       start: sourceCode.getLocFromIndex(

@@ -61,6 +61,52 @@ module.exports = {
 The `plugin:css/all` config enables all rules. It's meant for testing, not for production use because it changes with every minor and major version of the plugin. Use it at your own risk.
 *See [lib/configs/all.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/all.ts) for more details.*
 
+### How does ESLint detect CSS objects?
+
+All CSS-related rules are applied to code that passes any of the following checks:
+
+- `style={ {} }` JSX attribute expression
+
+    ```jsx
+    const jsx = <div
+        style={ {/* JSX attribute expression */} }
+    />
+    ```
+
+- `v-bind:style="{}"` Vue directive
+
+    ```vue
+    <template>
+        <div
+            v-bind:style="{/* Vue directive */}"
+        />
+    </template>
+    ```
+
+- CSS definition function call for [styled-components](https://styled-components.com/docs/advanced#style-objects)
+
+    e.g.
+
+    ```js
+    import styled, { css, createGlobalStyle } from 'styled-components'
+
+    styled.input({/*CSS*/})
+    styled.input.attrs({})({/*CSS*/})
+    css({/*CSS*/})
+    createGlobalStyle({/*CSS*/})
+    ```
+
+- According to [`settings.css.target` settings](../settings/README.md#target).
+
+However, if you want to take advantage of the rules in any of your custom objects that are CSS objects, you might need to use the special comment `// @css` that marks an object in the next line as a CSS object in any file, e.g.:
+
+```js
+// @css
+const myStyle = {
+  height: '100px'
+}
+```
+
 <!--USAGE_SECTION_END-->
 
 See [the rule list](../rules/README.md) to get the `rules` that this plugin provides.

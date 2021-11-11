@@ -16,25 +16,14 @@ import type { ParsedValue as PostcssParsedValue } from "postcss-value-parser"
 type CSSHelperContext = {
     isFixable<T extends ESTree.Node>(targetNode?: T | null): targetNode is T
 }
-type CSSBaseContext = {
+
+type StyleOn = "jsx-style" | "vue-style" | "define-function" | "mark"
+
+export type CSSObjectContext = CSSHelperContext & {
+    define: ESTree.ObjectExpression | ESTree.ArrayExpression
     scope: ESTree.Expression
+    on: StyleOn
 }
-export type CSSObjectContext = CSSHelperContext &
-    CSSBaseContext &
-    (
-        | {
-              define: ESTree.ObjectExpression | ESTree.ArrayExpression
-              on: "jsx-style"
-          }
-        | {
-              define: ESTree.ObjectExpression | ESTree.ArrayExpression
-              on: "vue-style"
-          }
-        | {
-              define: ESTree.ObjectExpression | ESTree.ArrayExpression
-              on: "define-function"
-          }
-    )
 
 export type CSSPropertyName = {
     name: string
@@ -110,6 +99,27 @@ function normalizeDefineFunctions(settings: unknown): DefineFunctions {
     }
 }
 
+/**
+ * @type { WeakMap<RuleContext, Token[]> }
+ */
+const cssComments = new WeakMap<Rule.RuleContext, ESTree.Comment[]>()
+
+/**
+ * Gets the css comments of a given context.
+ */
+function getCSSComments(context: Rule.RuleContext) {
+    let tokens = cssComments.get(context)
+    if (tokens) {
+        return tokens
+    }
+    const sourceCode = context.getSourceCode()
+    tokens = sourceCode
+        .getAllComments()
+        .filter((comment) => /@css(?:\b|$)/u.test(comment.value))
+    cssComments.set(context, tokens)
+    return tokens
+}
+
 const cssRules = new WeakMap<ESTree.Program, CSSRule[]>()
 
 /**
@@ -144,14 +154,22 @@ function buildCSSVisitor(
     rules: CSSRule[],
     programExit: (node: ESTree.Program) => void,
 ): RuleListener {
+    const verifiedObjects: (ESTree.Node | null)[] = []
+    const markedObjects: ESTree.ObjectExpression[] = []
+
     /**
      * Verify a given css object.
      */
     function verifyCSSObject(info: {
         define: ESTree.ObjectExpression | ESTree.ArrayExpression
         scope: ESTree.Expression
-        on: "jsx-style" | "vue-style" | "define-function"
+        on: StyleOn
     }) {
+        verifiedObjects.push(info.define)
+        if (info.define.type === "ArrayExpression") {
+            verifiedObjects.push(...info.define.elements)
+        }
+
         const ctx = buildCSSObjectContext(info)
 
         visitCSS(ctx, createVisitorFromRules(rules, ctx))
@@ -220,7 +238,7 @@ function buildCSSVisitor(
                         }
                     }
                 }
-            } else if (ctx.on === "define-function") {
+            } else if (ctx.on === "define-function" || ctx.on === "mark") {
                 if (
                     visitor.onProperty ||
                     visitor.onRule ||
@@ -265,7 +283,8 @@ function buildCSSVisitor(
                     }
                 }
             } else {
-                throw new Error()
+                const neverType: never = ctx.on
+                throw new Error(`${neverType} is not style type.`)
             }
         }
     }
@@ -309,7 +328,6 @@ function buildCSSVisitor(
 
     return compositingVisitors(
         {
-            "Program:exit": programExit,
             Program(node) {
                 for (const body of node.body) {
                     if (body.type !== "ImportDeclaration") {
@@ -411,6 +429,30 @@ function buildCSSVisitor(
                     })
                 }
             },
+            ObjectExpression(node) {
+                if (
+                    getCSSComments(context).some(
+                        (comment) =>
+                            comment.loc!.end.line === node.loc!.start.line - 1,
+                    )
+                ) {
+                    markedObjects.push(node)
+                }
+            },
+            "Program:exit"(node: ESTree.Program) {
+                const set = new Set(verifiedObjects)
+                for (const objNode of markedObjects) {
+                    if (set.has(objNode)) {
+                        continue
+                    }
+                    verifyCSSObject({
+                        define: objNode,
+                        scope: objNode,
+                        on: "mark",
+                    })
+                }
+                programExit(node)
+            },
         },
         defineTemplateBodyVisitor(context, {
             [`VAttribute[directive=true][key.name.name='bind'] > VExpressionContainer.value > :matches(ObjectExpression,ArrayExpression).expression`](
@@ -442,7 +484,7 @@ function buildCSSVisitor(
     function buildCSSObjectContext(info: {
         define: ESTree.ObjectExpression | ESTree.ArrayExpression
         scope: ESTree.Expression
-        on: "jsx-style" | "vue-style" | "define-function"
+        on: StyleOn
     }): CSSObjectContext {
         return {
             define: info.define,

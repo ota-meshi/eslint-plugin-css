@@ -2,10 +2,10 @@ import path from "path"
 import fs from "fs"
 import renderRulesTableContent from "./render-rules"
 
-const insertText = `\n${renderRulesTableContent(
-    (name) =>
+const insertText = `\n${renderRulesTableContent({
+    buildRulePath: (name) =>
         `https://ota-meshi.github.io/eslint-plugin-css/rules/${name}.html`,
-)}\n`
+})}\n`
 
 const readmeFilePath = path.resolve(__dirname, "../README.md")
 const newReadme = fs
@@ -71,5 +71,22 @@ fs.writeFileSync(
     userGuideReadmeFilePath,
     newUserGuideReadme
         .replace(/\(#white_check_mark-rules\)/gu, "(../rules/README.md)")
+        .replace(
+            // eslint-disable-next-line regexp/no-super-linear-backtracking -- it's acceptable here
+            /\(https:\/\/ota-meshi.github.io\/eslint-plugin-css(?<paths>.*?)(?<name>[^/]*\.html)?(?<hash>#.*?)?\)/gu,
+            (_ptn, paths, name, hash) => {
+                let result = `(..${paths}`
+                if (name) {
+                    result +=
+                        name === "index.html"
+                            ? "README.md"
+                            : name.replace(/\.html$/u, ".md")
+                } else {
+                    result += "README.md"
+                }
+                result += `${hash || ""})`
+                return result
+            },
+        )
         .replace(/\n{3,}/gu, "\n\n"),
 )
