@@ -36,5 +36,5 @@ export function normalizePropertyName(
         return name
     }
     const normalized = isCamelCase(name) ? kebabCase(name) : name
-    return opt?.keepVendorPrefix ? stripVendorPrefix(normalized) : normalized
+    return opt?.keepVendorPrefix ? normalized : stripVendorPrefix(normalized)
 }
