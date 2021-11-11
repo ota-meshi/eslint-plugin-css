@@ -87,7 +87,7 @@ export default createRule("no-length-zero-unit", {
                     if (!value) {
                         return
                     }
-                    const parsedValue = valueParser(String(value.value))
+                    const parsedValue = value.parsed
 
                     parsedValue.walk(
                         (valueNode, valueNodeIndex, valueNodes) => {
@@ -150,7 +150,7 @@ export default createRule("no-length-zero-unit", {
                                     if (
                                         cssContext.isFixable(
                                             value.directExpression,
-                                        ) ||
+                                        ) &&
                                         sourceCode.text.slice(
                                             startIndex,
                                             endIndex,

@@ -19,8 +19,8 @@
 This ESLint plugin provides linting rules to verify CSS definition objects.
 
 - Find the wrong usage of CSS definition objects, and their hints.
-- The plugin support for Vue and JSX (React).
-- The plugin partial support for [styled-components] style objects.
+- Support for Vue and JSX (React).
+- Partial support for [styled-components] style objects.
 
 You can check on the [Online DEMO](https://ota-meshi.github.io/eslint-plugin-css/playground/).
 
@@ -100,6 +100,52 @@ module.exports = {
 The `plugin:css/all` config enables all rules. It's meant for testing, not for production use because it changes with every minor and major version of the plugin. Use it at your own risk.
 *See [lib/configs/all.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/all.ts) for more details.*
 
+### How does ESLint detect CSS objects?
+
+All CSS-related rules are applied to code that passes any of the following checks:
+
+- `style={ {} }` JSX attribute expression
+
+    ```jsx
+    const jsx = <div
+        style={ {/* JSX attribute expression */} }
+    />
+    ```
+
+- `v-bind:style="{}"` Vue directive
+
+    ```vue
+    <template>
+        <div
+            v-bind:style="{/* Vue directive */}"
+        />
+    </template>
+    ```
+
+- CSS definition function call for [styled-components](https://styled-components.com/docs/advanced#style-objects)
+
+    e.g.
+
+    ```js
+    import styled, { css, createGlobalStyle } from 'styled-components'
+
+    styled.input({/*CSS*/})
+    styled.input.attrs({})({/*CSS*/})
+    css({/*CSS*/})
+    createGlobalStyle({/*CSS*/})
+    ```
+
+- According to [`settings.css.target` settings](../settings/README.md#target).
+
+However, if you want to take advantage of the rules in any of your custom objects that are CSS objects, you might need to use the special comment `// @css` that marks an object in the next line as a CSS object in any file, e.g.:
+
+```js
+// @css
+const myStyle = {
+  height: '100px'
+}
+```
+
 <!--USAGE_SECTION_END-->
 
 ## :white_check_mark: Rules
@@ -117,6 +163,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 |:--------|:------------|:---|
 | [css/no-dupe-properties](https://ota-meshi.github.io/eslint-plugin-css/rules/no-dupe-properties.html) | disallow duplicate properties | :star: |
 | [css/no-invalid-color-hex](https://ota-meshi.github.io/eslint-plugin-css/rules/no-invalid-color-hex.html) | disallow invalid hex colors | :star: |
+| [css/no-shorthand-property-overrides](https://ota-meshi.github.io/eslint-plugin-css/rules/no-shorthand-property-overrides.html) | disallow shorthand properties that override related longhand properties | :star: |
 | [css/no-unknown-property](https://ota-meshi.github.io/eslint-plugin-css/rules/no-unknown-property.html) | disallow unknown properties | :star: |
 | [css/no-unknown-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-unknown-unit.html) | disallow unknown units | :star: |
 
@@ -125,11 +172,14 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 | Rule ID | Description |    |
 |:--------|:------------|:---|
 | [css/no-length-zero-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-length-zero-unit.html) | disallow units for zero lengths | :wrench: |
+| [css/prefer-reduce-shorthand-property-box-values](https://ota-meshi.github.io/eslint-plugin-css/rules/prefer-reduce-shorthand-property-box-values.html) | require reduction in box values of shorthand property | :wrench: |
 
 ### Stylistic Issues
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/no-number-trailing-zeros](https://ota-meshi.github.io/eslint-plugin-css/rules/no-number-trailing-zeros.html) | disallow trailing zeros in numbers. | :wrench: |
+| [css/number-leading-zero](https://ota-meshi.github.io/eslint-plugin-css/rules/number-leading-zero.html) | require or disallow a leading zero for fractional numbers less than 1 | :wrench: |
 | [css/property-casing](https://ota-meshi.github.io/eslint-plugin-css/rules/property-casing.html) | enforce specific casing for CSS properties | :wrench: |
 
 <!--RULES_TABLE_END-->

@@ -1,3 +1,5 @@
+import { isCamelCase, kebabCase } from "../casing"
+
 /**
  * Checks whether given property name has vender prefix
  */
@@ -17,4 +19,22 @@ export function getVendorPrefix(prop: string): string {
  */
 export function stripVendorPrefix(prop: string): string {
     return prop.slice(getVendorPrefix(prop).length)
+}
+
+/**
+ * Normalize property name
+ */
+export function normalizePropertyName(
+    name: string,
+    opt?: { keepVendorPrefix?: boolean },
+): string {
+    // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssFloat
+    if (name === "cssFloat") {
+        return "float"
+    }
+    if (name.startsWith("--")) {
+        return name
+    }
+    const normalized = isCamelCase(name) ? kebabCase(name) : name
+    return opt?.keepVendorPrefix ? normalized : stripVendorPrefix(normalized)
 }

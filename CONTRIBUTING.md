@@ -57,7 +57,7 @@ The following steps will walk you through the process of creating a new rule.
 
     The `createVisitor` function will be where you implement your rule. The `cssContext` object contains information and methods that you will need for static analysis, reporting, and fixing. Use `messageId`s for report and suggestion messages.
 
-    The [`no-unknown-property`](./lib/rules/no-unknown-property.ts) and [`no-length-zero-unit`](./lib/rules/no-length-zero-unit.ts) rules are good examples to see how we usually implement rules.
+    The [`no-length-zero-unit`](./lib/rules/no-length-zero-unit.ts) and [`no-number-trailing-zeros`](./lib/rules/no-number-trailing-zeros.ts) rules are good examples to see how we usually implement rules.
 
 1.  Test your rule:
 

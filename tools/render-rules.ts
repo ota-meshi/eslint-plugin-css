@@ -7,28 +7,31 @@ const DEFAULT_BUILD_RULE_PATH: BuildRulePathFn = (ruleName: string) =>
     `./${ruleName}.md`
 
 //eslint-disable-next-line require-jsdoc -- ignore
-export default function renderRulesTableContent(
-    buildRulePath: BuildRulePathFn = DEFAULT_BUILD_RULE_PATH,
-): string {
+export default function renderRulesTableContent(opt?: {
+    header?: "##" | "###"
+    buildRulePath?: BuildRulePathFn
+}): string {
+    const buildRulePath = opt?.buildRulePath || DEFAULT_BUILD_RULE_PATH
+    const header = opt?.header || "###"
     const categories = categorizeRules()
 
     let md = `
-### Possible Errors
+${header} Possible Errors
 
 ${createTable(categories["Possible Errors"], buildRulePath)}
 
-### Best Practices
+${header} Best Practices
 
 ${createTable(categories["Best Practices"], buildRulePath)}
 
-### Stylistic Issues
+${header} Stylistic Issues
 
 ${createTable(categories["Stylistic Issues"], buildRulePath)}
 `
 
     if (categories.deprecated.length >= 1) {
         md += `
-### Deprecated
+${header} Deprecated
 
 - :warning: We're going to remove deprecated rules in the next major release. Please migrate to successor/new rules.
 - :innocent: We don't fix bugs which are in deprecated rules since we don't have enough resources.
