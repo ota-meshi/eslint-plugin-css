@@ -47,13 +47,13 @@ var foo = <div
 
 ```json
 {
-  "css/number-leading-zero": ["error", 
+  "css/number-leading-zero": ["error",
     "always" // or "never"
   ]
 }
 ```
 
-- `"always"` ... Require always have leading zero.
+- `"always"` ... Require always have leading zero. This is default.
 - `"never"` ... Disallow leading zero.
 
 ## :books: Further reading

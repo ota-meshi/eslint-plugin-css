@@ -23,6 +23,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/named-color](./named-color.md) | enforce named colors | :wrench: |
 | [css/no-length-zero-unit](./no-length-zero-unit.md) | disallow units for zero lengths | :wrench: |
 | [css/prefer-reduce-shorthand-property-box-values](./prefer-reduce-shorthand-property-box-values.md) | require reduction in box values of shorthand property | :wrench: |
 
@@ -30,6 +31,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/color-hex-style](./color-hex-style.md) | enforce hex color style | :wrench: |
 | [css/no-number-trailing-zeros](./no-number-trailing-zeros.md) | disallow trailing zeros in numbers. | :wrench: |
 | [css/number-leading-zero](./number-leading-zero.md) | require or disallow a leading zero for fractional numbers less than 1 | :wrench: |
 | [css/property-casing](./property-casing.md) | enforce specific casing for CSS properties | :wrench: |

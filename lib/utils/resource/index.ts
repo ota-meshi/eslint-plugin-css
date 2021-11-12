@@ -277,3 +277,14 @@ export const SHORTHAND_PROPERTIES = new Map<string, string[]>([
         ],
     ],
 ])
+
+export const COLOR_FUNCTION_NAMES = new Set([
+    "rgb",
+    "rgba",
+    "hsl",
+    "hsla",
+    "hwb",
+    "gray", // gray() has been removed from Color Module Level 4 specification.
+    "lch",
+    "lab",
+])

@@ -1,4 +1,6 @@
 import type { RuleModule } from "../types"
+import colorHexStyle from "../rules/color-hex-style"
+import namedColor from "../rules/named-color"
 import noDupeProperties from "../rules/no-dupe-properties"
 import noInvalidColorHex from "../rules/no-invalid-color-hex"
 import noLengthZeroUnit from "../rules/no-length-zero-unit"
@@ -11,6 +13,8 @@ import preferReduceShorthandPropertyBoxValues from "../rules/prefer-reduce-short
 import propertyCasing from "../rules/property-casing"
 
 export const rules = [
+    colorHexStyle,
+    namedColor,
     noDupeProperties,
     noInvalidColorHex,
     noLengthZeroUnit,
