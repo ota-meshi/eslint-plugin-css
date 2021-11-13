@@ -19,7 +19,7 @@ import type { InvalidLchData, LchData } from "./lch"
 import { parseLch } from "./lch"
 
 abstract class AbsColor {
-    protected colord?: Colord
+    protected colord?: Colord | null
 
     public toHex(
         format?: "RGB" | "RRGGBB" | "default" | null | undefined,
@@ -29,7 +29,7 @@ abstract class AbsColor {
         }
         const hex = this.toHexImpl()
         if (hex == null) {
-            return hex
+            return null
         }
         return format === "RGB"
             ? toHexRGB(hex)
@@ -42,7 +42,7 @@ abstract class AbsColor {
         if (!this.isValid()) {
             return null
         }
-        return this.getColord().toName() ?? null
+        return this.getColord()?.toName() ?? null
     }
 
     public abstract isValid(): boolean
@@ -54,15 +54,13 @@ abstract class AbsColor {
     public abstract toColorString(): string
 
     protected toHexImpl() {
-        return this.getColord().toHex()
+        return this.getColord()?.toHex()
     }
 
-    protected getColord(): Colord {
-        return (
-            this.colord ??
-            (this.colord =
-                this.newColord() || parseColord(this.toColorString()))
-        )
+    protected getColord(): Colord | null {
+        return this.colord !== undefined
+            ? this.colord
+            : (this.colord = this.newColord())
     }
 
     protected newColord(): Colord | null {
@@ -107,11 +105,11 @@ class ColorForColord extends AbsColor {
     public readonly type = "unknown"
 
     public isValid() {
-        return this.getColord().isValid()
+        return this.getColord()?.isValid() || false
     }
 
     public getAlpha() {
-        return this.getColord().alpha()
+        return this.getColord()?.alpha() ?? null
     }
 
     public removeAlpha() {
@@ -214,7 +212,7 @@ class ColorFromRgb extends AbsColor {
     }
 
     public isValid() {
-        return this.rgb.valid && this.getColord().isValid()
+        return (this.rgb.valid && this.getColord()?.isValid()) || false
     }
 
     public getAlpha() {
@@ -282,7 +280,7 @@ class ColorFromHsl extends AbsColor {
     public readonly type = "hsl"
 
     public isValid() {
-        return this.hsl.valid && this.getColord().isValid()
+        return (this.hsl.valid && this.getColord()?.isValid()) || false
     }
 
     public getAlpha() {
@@ -316,7 +314,7 @@ class ColorFromHwb extends AbsColor {
     public readonly type = "hwb"
 
     public isValid() {
-        return this.hwb.valid && this.getColord().isValid()
+        return (this.hwb.valid && this.getColord()?.isValid()) || false
     }
 
     public getAlpha() {
@@ -350,7 +348,7 @@ class ColorFromLab extends AbsColor {
     public readonly type = "lab"
 
     public isValid() {
-        return this.lab.valid && this.getColord().isValid()
+        return (this.lab.valid && this.getColord()?.isValid()) || false
     }
 
     public getAlpha() {
@@ -371,6 +369,19 @@ class ColorFromLab extends AbsColor {
             this.lab.extraArgs || []
         ).join("")})`
     }
+
+    protected newColord() {
+        const lab = this.lab
+        if (lab.valid) {
+            return parseColord({
+                l: lab.lightness.value.number,
+                a: lab.a.value.number,
+                b: lab.b.value.number,
+                alpha: lab.alpha?.value ?? undefined,
+            })
+        }
+        return null
+    }
 }
 class ColorFromLch extends AbsColor {
     private readonly lch: LchData | InvalidLchData
@@ -383,7 +394,7 @@ class ColorFromLch extends AbsColor {
     public readonly type = "lch"
 
     public isValid() {
-        return this.lch.valid && this.getColord().isValid()
+        return (this.lch.valid && this.getColord()?.isValid()) || false
     }
 
     public getAlpha() {
@@ -417,7 +428,7 @@ class ColorFromGray extends AbsColor {
     public readonly type = "gray"
 
     public isValid() {
-        return this.gray.valid && this.getColord().isValid()
+        return (this.gray.valid && this.getColord()?.isValid()) || false
     }
 
     public getAlpha() {
@@ -435,6 +446,19 @@ class ColorFromGray extends AbsColor {
         return `${this.gray.rawName}(${this.gray.lightness || ""}${
             this.gray.alpha || ""
         }${(this.gray.extraArgs || []).join("")})`
+    }
+
+    protected newColord() {
+        const gray = this.gray
+        if (gray.valid) {
+            return parseColord({
+                l: gray.lightness.value.number,
+                a: 0,
+                b: 0,
+                alpha: gray.alpha?.value ?? undefined,
+            })
+        }
+        return null
     }
 }
 

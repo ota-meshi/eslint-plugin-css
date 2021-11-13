@@ -43,6 +43,9 @@ export const parseColord = colord
 function parseLabString(
     input: string,
 ): { r: number; g: number; b: number; a: number } | null {
+    if (!/^lab/iu.test(input)) {
+        return null
+    }
     const parsed = parseLab(input)
 
     if (!parsed || !parsed.valid) return null
@@ -64,6 +67,9 @@ function parseLabString(
 function parseHwbWithCommaString(
     input: string,
 ): { r: number; g: number; b: number; a: number } | null {
+    if (!/^hwb/iu.test(input)) {
+        return null
+    }
     const parsed = parseHwb(input)
 
     if (!parsed || !parsed.valid || parsed.type !== "with-comma") return null
@@ -85,6 +91,9 @@ function parseHwbWithCommaString(
 function parseGrayString(
     input: string,
 ): { r: number; g: number; b: number; a: number } | null {
+    if (!/^gray/iu.test(input)) {
+        return null
+    }
     const parsed = parseGray(input)
 
     if (!parsed || !parsed.valid) return null
