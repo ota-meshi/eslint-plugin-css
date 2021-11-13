@@ -1,6 +1,6 @@
 import type { CSSObjectContext, CSSVisitorHandlers } from "../utils"
 import { createRule, defineCSSVisitor } from "../utils"
-import { isHex, toHexRGB, toHexRRGGBB } from "../utils/css-utils"
+import { parseHexColor } from "../utils/color"
 
 export default createRule("color-hex-style", {
     meta: {
@@ -49,14 +49,11 @@ export default createRule("color-hex-style", {
                             )
                                 return false
 
-                            if (type !== "word" || !isHex(textValue))
-                                return undefined
+                            if (type !== "word") return undefined
 
                             const expected =
-                                prefer === "RGB"
-                                    ? toHexRGB(textValue)
-                                    : toHexRRGGBB(textValue)
-                            if (expected === textValue) {
+                                parseHexColor(textValue).toHex(prefer)
+                            if (!expected || expected === textValue) {
                                 return undefined
                             }
 

@@ -175,6 +175,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 |:--------|:------------|:---|
 | [css/named-color](https://ota-meshi.github.io/eslint-plugin-css/rules/named-color.html) | enforce named colors | :wrench: |
 | [css/no-length-zero-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-length-zero-unit.html) | disallow units for zero lengths | :wrench: |
+| [css/no-useless-color-alpha](https://ota-meshi.github.io/eslint-plugin-css/rules/no-useless-color-alpha.html) | disallow unnecessary alpha-channel transparency value | :star::wrench: |
 | [css/prefer-reduce-shorthand-property-box-values](https://ota-meshi.github.io/eslint-plugin-css/rules/prefer-reduce-shorthand-property-box-values.html) | require reduction in box values of shorthand property | :wrench: |
 
 ### Stylistic Issues

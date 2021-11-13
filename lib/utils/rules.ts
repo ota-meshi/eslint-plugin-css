@@ -8,6 +8,7 @@ import noNumberTrailingZeros from "../rules/no-number-trailing-zeros"
 import noShorthandPropertyOverrides from "../rules/no-shorthand-property-overrides"
 import noUnknownProperty from "../rules/no-unknown-property"
 import noUnknownUnit from "../rules/no-unknown-unit"
+import noUselessColorAlpha from "../rules/no-useless-color-alpha"
 import numberLeadingZero from "../rules/number-leading-zero"
 import preferReduceShorthandPropertyBoxValues from "../rules/prefer-reduce-shorthand-property-box-values"
 import propertyCasing from "../rules/property-casing"
@@ -22,6 +23,7 @@ export const rules = [
     noShorthandPropertyOverrides,
     noUnknownProperty,
     noUnknownUnit,
+    noUselessColorAlpha,
     numberLeadingZero,
     preferReduceShorthandPropertyBoxValues,
     propertyCasing,

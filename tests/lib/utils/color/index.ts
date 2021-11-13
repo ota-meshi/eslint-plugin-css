@@ -1,5 +1,5 @@
 import assert from "assert"
-import { validColord } from "../../../lib/utils/colord"
+import { parseColor } from "../../../../lib/utils/color/index"
 
 const TESTS = [
     {
@@ -12,11 +12,11 @@ const TESTS = [
     },
 ]
 
-describe("colord validColord", () => {
+describe("colord parseColor", () => {
     for (const { code, output } of TESTS) {
         it(code, () => {
-            const result = validColord(code)
-            assert.strictEqual(result?.toHex(), output)
+            const result = parseColor(code)
+            assert.strictEqual(result.toHex(), output)
         })
     }
 })

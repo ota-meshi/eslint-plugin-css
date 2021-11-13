@@ -1,69 +1,27 @@
-import type {
-    CSSObjectContext,
-    CSSPropertyContext,
-    CSSVisitorHandlers,
-} from "../utils"
+import type { CSSObjectContext, CSSVisitorHandlers } from "../utils"
 import { createRule, defineCSSVisitor } from "../utils"
-import { isCamelCase, kebabCase } from "../utils/casing"
-import { toRegExp } from "../utils/regexp"
-import { parseColor, parseHexColor } from "../utils/color"
+import { parseColor } from "../utils/color"
 import valueParser from "postcss-value-parser"
 
-export default createRule("named-color", {
+export default createRule("no-useless-color-alpha", {
     meta: {
         docs: {
-            description: "enforce named colors",
+            description:
+                "disallow unnecessary alpha-channel transparency value",
             category: "Best Practices",
-            recommended: false,
-            stylelint: "color-named",
+            recommended: true,
+            stylelint: null,
         },
         fixable: "code",
-        schema: [
-            {
-                enum: ["always", "never"],
-            },
-            {
-                type: "object",
-                properties: {
-                    ignoreProperties: {
-                        type: "array",
-                        items: {
-                            type: "string",
-                        },
-                        uniqueItems: true,
-                        minItems: 1,
-                    },
-                },
-                additionalProperties: false,
-            },
-        ],
+        schema: [],
         messages: {
-            expected: "Expected '{{actual}}' to be '{{expected}}'.",
+            unexpected:
+                "The alpha value is 100% and does not need to be specified.",
         },
         type: "suggestion",
     },
+
     create(context) {
-        const option: "always" | "never" = context.options[0] || "always"
-        const ignoreProperties = [
-            ...(context.options[1]?.ignoreProperties ?? []),
-        ].map(toRegExp)
-
-        /** Checks whether given name is ignore */
-        function ignorePropName(property: CSSPropertyContext) {
-            const name = property.getName()
-            if (!name) {
-                return false
-            }
-
-            const names = [name.name]
-            if (isCamelCase(name.name)) {
-                const kebab = kebabCase(name.name)
-                names.push(kebab)
-            }
-
-            return ignoreProperties.some((r) => names.some((n) => r.test(n)))
-        }
-
         /**
          * Create visitor
          */
@@ -72,9 +30,6 @@ export default createRule("named-color", {
         ): CSSVisitorHandlers {
             return {
                 onProperty(property) {
-                    if (ignorePropName(property)) {
-                        return
-                    }
                     const value = property.getValue()
                     if (!value) {
                         return
@@ -89,32 +44,20 @@ export default createRule("named-color", {
                         )
                             return false
 
+                        if (type !== "word" && type !== "function")
+                            return undefined
+
                         const actual = valueParser.stringify(node)
-                        let expected: string
-                        if (option === "always") {
-                            if (type === "word") {
-                                expected =
-                                    parseHexColor(textValue).toName() || actual
-                            } else if (type === "function") {
-                                expected = parseColor(node).toName() || actual
-                            } else {
-                                return undefined
-                            }
-                        } else if (option === "never") {
-                            if (
-                                type !== "word" ||
-                                /[^A-Za-z]/u.test(textValue)
-                            ) {
-                                return undefined
-                            }
-                            expected = parseColor(node).toHex("RGB") || actual
-                        } else {
+                        const parsed = parseColor(actual)
+                        const alpha = parsed.getAlpha()
+
+                        if (alpha == null || alpha < 1) {
                             return undefined
                         }
+                        const expected = parsed.removeAlpha().toColorString()
                         if (expected === actual) {
                             return undefined
                         }
-
                         const sourceCode = context.getSourceCode()
                         const startIndex =
                             value.expression.range![0] +
@@ -130,11 +73,7 @@ export default createRule("named-color", {
                         context.report({
                             node: value.expression,
                             loc,
-                            messageId: "expected",
-                            data: {
-                                actual,
-                                expected,
-                            },
+                            messageId: "unexpected",
                             fix(fixer) {
                                 if (
                                     cssContext.isFixable(

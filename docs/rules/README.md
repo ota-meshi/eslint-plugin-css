@@ -25,6 +25,7 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 |:--------|:------------|:---|
 | [css/named-color](./named-color.md) | enforce named colors | :wrench: |
 | [css/no-length-zero-unit](./no-length-zero-unit.md) | disallow units for zero lengths | :wrench: |
+| [css/no-useless-color-alpha](./no-useless-color-alpha.md) | disallow unnecessary alpha-channel transparency value | :star::wrench: |
 | [css/prefer-reduce-shorthand-property-box-values](./prefer-reduce-shorthand-property-box-values.md) | require reduction in box values of shorthand property | :wrench: |
 
 ## Stylistic Issues

@@ -1,5 +1,6 @@
 import type { CSSObjectContext, CSSVisitorHandlers } from "../utils"
 import { createRule, defineCSSVisitor } from "../utils"
+import { parseHexColor } from "../utils/color"
 
 export default createRule("no-invalid-color-hex", {
     meta: {
@@ -46,7 +47,8 @@ export default createRule("no-invalid-color-hex", {
 
                             const hexValue = hexMatch[0]
 
-                            if (isValidHex(hexValue)) return undefined
+                            if (parseHexColor(hexValue).isValid())
+                                return undefined
 
                             const sourceCode = context.getSourceCode()
                             const startIndex =
@@ -83,8 +85,3 @@ export default createRule("no-invalid-color-hex", {
         })
     },
 })
-
-/** Checks whether the given hex is valid or not. */
-function isValidHex(hex: string) {
-    return /^#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/iu.test(hex)
-}
