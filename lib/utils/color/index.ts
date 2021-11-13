@@ -14,6 +14,7 @@ import { parseRgb } from "./rgb"
 import { parseInput } from "./parser"
 import type { HslData, InvalidHslData } from "./hsl"
 import { parseHsl } from "./hsl"
+import type { NumberWithUnit, NumberWithUnitWithComma } from "./data"
 
 abstract class AbsColor {
     protected colord?: Colord
@@ -39,7 +40,7 @@ abstract class AbsColor {
         if (!this.isValid()) {
             return null
         }
-        return this.toNameImpl()
+        return this.getColord().toName() ?? null
     }
 
     public abstract isValid(): boolean
@@ -50,12 +51,20 @@ abstract class AbsColor {
 
     public abstract toColorString(): string
 
-    protected abstract toHexImpl(): string | null
-
-    protected abstract toNameImpl(): string | null
+    protected toHexImpl() {
+        return this.getColord().toHex()
+    }
 
     protected getColord(): Colord {
-        return this.colord ?? (this.colord = parseColord(this.toColorString()))
+        return (
+            this.colord ??
+            (this.colord =
+                this.newColord() || parseColord(this.toColorString()))
+        )
+    }
+
+    protected newColord(): Colord | null {
+        return parseColord(this.toColorString())
     }
 }
 class InvalidColor extends AbsColor {
@@ -65,6 +74,8 @@ class InvalidColor extends AbsColor {
         super()
         this.input = input
     }
+
+    public readonly type = "invalid"
 
     public isValid() {
         return false
@@ -81,14 +92,6 @@ class InvalidColor extends AbsColor {
     public toColorString() {
         return this.input
     }
-
-    protected toHexImpl() {
-        return null
-    }
-
-    protected toNameImpl() {
-        return null
-    }
 }
 
 class ColorForColord extends AbsColor {
@@ -98,6 +101,8 @@ class ColorForColord extends AbsColor {
         super()
         this.input = input
     }
+
+    public readonly type = "unknown"
 
     public isValid() {
         return this.getColord().isValid()
@@ -114,14 +119,6 @@ class ColorForColord extends AbsColor {
     public toColorString() {
         return this.input
     }
-
-    protected toHexImpl() {
-        return this.getColord().toHex()
-    }
-
-    protected toNameImpl() {
-        return this.getColord().toName() ?? null
-    }
 }
 
 class ColorFromHex extends AbsColor {
@@ -132,6 +129,16 @@ class ColorFromHex extends AbsColor {
         this.hex = hex
     }
 
+    public readonly type = "hex"
+
+    public getRgb() {
+        return {
+            r: this.parseColor(this.hex.r),
+            g: this.parseColor(this.hex.g),
+            b: this.parseColor(this.hex.b),
+        }
+    }
+
     public isValid() {
         return true
     }
@@ -140,11 +147,7 @@ class ColorFromHex extends AbsColor {
         if (!this.hex.alpha) {
             return null
         }
-        const alpha = parseInt(this.hex.alpha, 16)
-        if (this.hex.alpha.length === 1) {
-            return alpha / 15
-        }
-        return alpha / 255
+        return this.parseColor(this.hex.alpha)
     }
 
     public removeAlpha(): Color {
@@ -158,15 +161,35 @@ class ColorFromHex extends AbsColor {
     }
 
     public toColorString() {
-        return this.toHexImpl()
-    }
-
-    protected toHexImpl(): string {
         return `#${this.hex.r}${this.hex.g}${this.hex.b}${this.hex.alpha || ""}`
     }
 
-    protected toNameImpl(): string | null {
-        return this.getColord().toName() ?? null
+    protected toHexImpl(): string {
+        return this.toColorString()
+    }
+
+    private parseColor(hex: string) {
+        const v = parseInt(hex, 16)
+        if (hex.length === 1) {
+            return v / 15
+        }
+        return v / 255
+    }
+
+    protected newColord() {
+        const rgb = this.getRgb()
+        const base = {
+            r: rgb.r * 255,
+            g: rgb.g * 255,
+            b: rgb.b * 255,
+        }
+        const alpha = this.getAlpha()
+        return alpha == null
+            ? parseColord(base)
+            : parseColord({
+                  ...base,
+                  a: alpha,
+              })
     }
 }
 
@@ -176,6 +199,16 @@ class ColorFromRgb extends AbsColor {
     public constructor(rgb: RgbData | InvalidRgbData) {
         super()
         this.rgb = rgb
+    }
+
+    public readonly type = "rgb"
+
+    public getRgb() {
+        return {
+            r: this.parseColor(this.rgb.r),
+            g: this.parseColor(this.rgb.g),
+            b: this.parseColor(this.rgb.b),
+        }
     }
 
     public isValid() {
@@ -200,12 +233,40 @@ class ColorFromRgb extends AbsColor {
         }${this.rgb.alpha || ""}${(this.rgb.extraArgs || []).join("")})`
     }
 
-    protected toHexImpl(): string {
-        return this.getColord().toHex()
+    protected newColord() {
+        const rgb = this.getRgb()
+        if (rgb.r != null && rgb.g != null && rgb.b != null) {
+            const base = {
+                r: rgb.r * 255,
+                g: rgb.g * 255,
+                b: rgb.b * 255,
+            }
+            const alpha = this.getAlpha()
+            return alpha == null
+                ? parseColord(base)
+                : parseColord({
+                      ...base,
+                      a: alpha,
+                  })
+        }
+        return null
     }
 
-    protected toNameImpl(): string | null {
-        return this.getColord().toName() ?? null
+    private parseColor(
+        value?:
+            | NumberWithUnit<"" | "%">
+            | NumberWithUnitWithComma<"" | "%">
+            | null,
+    ) {
+        if (!value || !value.valid) {
+            return null
+        }
+        const v = value.value
+        const num = v.unit === "%" ? v.number / 100 : v.number / 255
+        if (0 <= num && num <= 1) {
+            return num
+        }
+        return null
     }
 }
 class ColorFromHsl extends AbsColor {
@@ -215,6 +276,8 @@ class ColorFromHsl extends AbsColor {
         super()
         this.hsl = hsl
     }
+
+    public readonly type = "hsl"
 
     public isValid() {
         return this.hsl.valid && this.getColord().isValid()
@@ -239,14 +302,6 @@ class ColorFromHsl extends AbsColor {
             this.hsl.extraArgs || []
         ).join("")})`
     }
-
-    protected toHexImpl(): string {
-        return this.getColord().toHex()
-    }
-
-    protected toNameImpl(): string | null {
-        return this.getColord().toName() ?? null
-    }
 }
 class ColorFromHwb extends AbsColor {
     private readonly hwb: HwbData | InvalidHwbData
@@ -255,6 +310,8 @@ class ColorFromHwb extends AbsColor {
         super()
         this.hwb = hwb
     }
+
+    public readonly type = "hwb"
 
     public isValid() {
         return this.hwb.valid && this.getColord().isValid()
@@ -278,14 +335,6 @@ class ColorFromHwb extends AbsColor {
             this.hwb.extraArgs || []
         ).join("")})`
     }
-
-    protected toHexImpl(): string {
-        return this.getColord().toHex()
-    }
-
-    protected toNameImpl(): string | null {
-        return this.getColord().toName() ?? null
-    }
 }
 
 class ColorFromLab extends AbsColor {
@@ -295,6 +344,8 @@ class ColorFromLab extends AbsColor {
         super()
         this.lab = lab
     }
+
+    public readonly type = "lab"
 
     public isValid() {
         return this.lab.valid && this.getColord().isValid()
@@ -318,14 +369,6 @@ class ColorFromLab extends AbsColor {
             this.lab.extraArgs || []
         ).join("")})`
     }
-
-    protected toHexImpl(): string {
-        return this.getColord().toHex()
-    }
-
-    protected toNameImpl(): string | null {
-        return this.getColord().toName() ?? null
-    }
 }
 
 class ColorFromGray extends AbsColor {
@@ -335,6 +378,8 @@ class ColorFromGray extends AbsColor {
         super()
         this.gray = gray
     }
+
+    public readonly type = "gray"
 
     public isValid() {
         return this.gray.valid && this.getColord().isValid()
@@ -356,14 +401,6 @@ class ColorFromGray extends AbsColor {
             this.gray.alpha || ""
         }${(this.gray.extraArgs || []).join("")})`
     }
-
-    protected toHexImpl(): string {
-        return this.getColord().toHex()
-    }
-
-    protected toNameImpl(): string | null {
-        return this.getColord().toName() ?? null
-    }
 }
 
 export type Color =
@@ -375,13 +412,12 @@ export type Color =
     | ColorFromGray
     | ColorForColord
     | InvalidColor
+
 /**
  * Parse color
  */
 export function parseColor(input: postcssValueParser.Node | string): Color {
-    const text =
-        typeof input === "string" ? input : postcssValueParser.stringify(input)
-    const hex = parseHex(text)
+    const hex = parseHex(input)
     if (hex) {
         return new ColorFromHex(hex)
     }
@@ -409,7 +445,9 @@ export function parseColor(input: postcssValueParser.Node | string): Color {
             return new ColorFromGray(gray)
         }
     }
-    return new ColorForColord(text)
+    return new ColorForColord(
+        typeof input === "string" ? input : postcssValueParser.stringify(input),
+    )
 }
 /**
  * Parse color from hex

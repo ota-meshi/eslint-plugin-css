@@ -35,10 +35,7 @@ export { Colord }
 /**
  * Get Colord instance from given color
  */
-export function parseColord(input: string): Colord {
-    const colordInstance = colord(input)
-    return colordInstance
-}
+export const parseColord = colord
 
 /**
  * Parses a valid LAB CSS color function/string

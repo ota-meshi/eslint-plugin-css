@@ -1,3 +1,4 @@
+import type postcssValueParser from "postcss-value-parser"
 /**
  * Checks whether given string is hex.
  */
@@ -16,7 +17,15 @@ export type HexData = {
 /**
  * Checks whether given string is hex.
  */
-export function parseHex(hex: string): HexData | null {
+export function parseHex(
+    input: string | postcssValueParser.Node,
+): HexData | null {
+    const hex =
+        typeof input === "string"
+            ? input
+            : input.type === "word"
+            ? input.value
+            : ""
     if (!isHex(hex)) {
         return null
     }
