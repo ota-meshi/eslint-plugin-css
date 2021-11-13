@@ -15,6 +15,8 @@ import { parseInput } from "./parser"
 import type { HslData, InvalidHslData } from "./hsl"
 import { parseHsl } from "./hsl"
 import type { NumberWithUnit, NumberWithUnitWithComma } from "./data"
+import type { InvalidLchData, LchData } from "./lch"
+import { parseLch } from "./lch"
 
 abstract class AbsColor {
     protected colord?: Colord
@@ -370,6 +372,39 @@ class ColorFromLab extends AbsColor {
         ).join("")})`
     }
 }
+class ColorFromLch extends AbsColor {
+    private readonly lch: LchData | InvalidLchData
+
+    public constructor(lch: LchData | InvalidLchData) {
+        super()
+        this.lch = lch
+    }
+
+    public readonly type = "lch"
+
+    public isValid() {
+        return this.lch.valid && this.getColord().isValid()
+    }
+
+    public getAlpha() {
+        return this.lch.alpha?.value ?? null
+    }
+
+    public removeAlpha(): Color {
+        return new ColorFromLch({
+            ...this.lch,
+            alpha: null,
+        })
+    }
+
+    public toColorString() {
+        return `${this.lch.rawName}(${this.lch.lightness || ""}${
+            this.lch.chroma || ""
+        }${this.lch.hue || ""}${this.lch.alpha || ""}${(
+            this.lch.extraArgs || []
+        ).join("")})`
+    }
+}
 
 class ColorFromGray extends AbsColor {
     private readonly gray: GrayData | InvalidGrayData
@@ -409,6 +444,7 @@ export type Color =
     | ColorFromHsl
     | ColorFromHwb
     | ColorFromLab
+    | ColorFromLch
     | ColorFromGray
     | ColorForColord
     | InvalidColor
@@ -439,6 +475,10 @@ export function parseColor(input: postcssValueParser.Node | string): Color {
         const lab = parseLab(node)
         if (lab) {
             return new ColorFromLab(lab)
+        }
+        const lch = parseLch(node)
+        if (lch) {
+            return new ColorFromLch(lch)
         }
         const gray = parseGray(node)
         if (gray) {
