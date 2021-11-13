@@ -8,13 +8,7 @@ import type {
     NumberWithUnitWithComma,
     NumberWithUnitWithCommaValid,
 } from "./data"
-import {
-    isPercentRange,
-    parseAlphaArgument,
-    parseFunction,
-    parseMaybeNumberUnit,
-    parseNumberUnit,
-} from "./parser"
+import { isPercentRange, parseArgumentValues, parseFunction } from "./parser"
 
 export type BaseHslDataValid = {
     valid: true
@@ -60,23 +54,19 @@ export function parseHsl(
 
     let valid = true
 
-    const hue = parseNumberUnit(fn.arguments.shift(), [
-        "",
-        "deg",
-        "rad",
-        "grad",
-        "turn",
-    ])
-    const saturation = parseMaybeNumberUnit(fn.arguments, ["%"])
-    const lightness = parseMaybeNumberUnit(fn.arguments, ["%"])
+    const values = parseArgumentValues(fn.arguments, {
+        units1: ["", "deg", "rad", "grad", "turn"],
+        units2: ["%"],
+        units3: ["%"],
+    })
+
+    const hue = values?.value1 ?? null
+    const saturation = values?.value2 ?? null
+    const lightness = values?.value3 ?? null
     if (!isPercentRange(saturation) || !isPercentRange(lightness)) {
         valid = false
     }
-
-    const alpha = parseAlphaArgument(
-        fn.arguments,
-        saturation?.withComma && lightness?.withComma ? ["/", ","] : ["/"],
-    )
+    const alpha = values?.alpha ?? null
 
     if (
         valid &&
@@ -89,11 +79,7 @@ export function parseHsl(
         (!alpha || alpha.valid) &&
         fn.arguments.length === 0
     ) {
-        if (
-            !saturation.withComma &&
-            !lightness.withComma &&
-            (!alpha || alpha.div === "/")
-        ) {
+        if (!saturation.withComma && !lightness.withComma) {
             return {
                 valid: true,
                 rawName: fn.rawName,
@@ -104,11 +90,7 @@ export function parseHsl(
                 alpha,
             }
         }
-        if (
-            saturation.withComma &&
-            lightness.withComma &&
-            (!alpha || alpha.div === ",")
-        ) {
+        if (saturation.withComma && lightness.withComma) {
             return {
                 valid: true,
                 rawName: fn.rawName,
@@ -118,11 +100,6 @@ export function parseHsl(
                 lightness,
                 alpha,
             }
-        }
-
-        if (saturation.withComma !== lightness.withComma) {
-            // mixed comma
-            return null
         }
     }
 

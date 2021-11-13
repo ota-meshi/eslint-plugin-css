@@ -8,13 +8,7 @@ import type {
     NumberWithUnitWithComma,
     NumberWithUnitWithCommaValid,
 } from "./data"
-import {
-    isPercentRange,
-    parseAlphaArgument,
-    parseFunction,
-    parseMaybeNumberUnit,
-    parseNumberUnit,
-} from "./parser"
+import { isPercentRange, parseArgumentValues, parseFunction } from "./parser"
 
 export type BaseRgbDataValid<U extends "" | "%"> = {
     valid: true
@@ -65,18 +59,18 @@ export function parseRgb(
 
     let valid = true
 
-    const r = parseNumberUnit(fn.arguments.shift(), ["", "%"])
-    const g = parseMaybeNumberUnit(fn.arguments, ["", "%"])
-    const b = parseMaybeNumberUnit(fn.arguments, ["", "%"])
-
+    const values = parseArgumentValues(fn.arguments, {
+        units1: ["", "%"],
+        units2: ["", "%"],
+        units3: ["", "%"],
+    })
+    const r = values?.value1 ?? null
+    const g = values?.value2 ?? null
+    const b = values?.value3 ?? null
     if (!isValidColor(r) || !isValidColor(g) || !isValidColor(b)) {
         valid = false
     }
-
-    const alpha = parseAlphaArgument(
-        fn.arguments,
-        g?.withComma && b?.withComma ? ["/", ","] : ["/"],
-    )
+    const alpha = values?.alpha ?? null
     if (
         valid &&
         r &&
@@ -91,11 +85,6 @@ export function parseRgb(
         const result = genMaybeValid(fn.rawName, r.value.unit, r, g, b, alpha)
         if (result) {
             return result
-        }
-
-        if (g.withComma !== b.withComma) {
-            // mixed comma
-            return null
         }
     }
 
@@ -121,7 +110,7 @@ function genMaybeValid<U extends "" | "%">(
 ): RgbData | null {
     const uniUnit = unit as "%"
     if (isUnitEq(r, uniUnit) && isUnitEq(g, uniUnit) && isUnitEq(b, uniUnit)) {
-        if (!g.withComma && !b.withComma && (!alpha || alpha.div === "/")) {
+        if (!g.withComma && !b.withComma) {
             return {
                 valid: true,
                 rawName,
@@ -133,7 +122,7 @@ function genMaybeValid<U extends "" | "%">(
                 alpha,
             }
         }
-        if (g.withComma && b.withComma && (!alpha || alpha.div === ",")) {
+        if (g.withComma && b.withComma) {
             return {
                 valid: true,
                 rawName,

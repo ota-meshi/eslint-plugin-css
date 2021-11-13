@@ -8,13 +8,7 @@ import type {
     NumberWithUnitWithComma,
     NumberWithUnitWithCommaValid,
 } from "./data"
-import {
-    isPercentRange,
-    parseAlphaArgument,
-    parseFunction,
-    parseMaybeNumberUnit,
-    parseNumberUnit,
-} from "./parser"
+import { isPercentRange, parseArgumentValues, parseFunction } from "./parser"
 
 export type BaseHwbDataValid = {
     valid: true
@@ -60,23 +54,19 @@ export function parseHwb(
 
     let valid = true
 
-    const hue = parseNumberUnit(fn.arguments.shift(), [
-        "",
-        "deg",
-        "rad",
-        "grad",
-        "turn",
-    ])
-    const whiteness = parseMaybeNumberUnit(fn.arguments, ["%"])
-    const blackness = parseMaybeNumberUnit(fn.arguments, ["%"])
+    const values = parseArgumentValues(fn.arguments, {
+        units1: ["", "deg", "rad", "grad", "turn"],
+        units2: ["%"],
+        units3: ["%"],
+    })
+
+    const hue = values?.value1 ?? null
+    const whiteness = values?.value2 ?? null
+    const blackness = values?.value3 ?? null
     if (!isPercentRange(whiteness) || !isPercentRange(blackness)) {
         valid = false
     }
-
-    const alpha = parseAlphaArgument(
-        fn.arguments,
-        whiteness?.withComma && blackness?.withComma ? ["/", ","] : ["/"],
-    )
+    const alpha = values?.alpha ?? null
 
     if (
         valid &&
@@ -89,11 +79,7 @@ export function parseHwb(
         (!alpha || alpha.valid) &&
         fn.arguments.length === 0
     ) {
-        if (
-            !whiteness.withComma &&
-            !blackness.withComma &&
-            (!alpha || alpha.div === "/")
-        ) {
+        if (!whiteness.withComma && !blackness.withComma) {
             return {
                 valid: true,
                 rawName: fn.rawName,
@@ -104,11 +90,7 @@ export function parseHwb(
                 alpha,
             }
         }
-        if (
-            whiteness.withComma &&
-            blackness.withComma &&
-            (!alpha || alpha.div === ",")
-        ) {
+        if (whiteness.withComma && blackness.withComma) {
             return {
                 valid: true,
                 rawName: fn.rawName,
@@ -118,11 +100,6 @@ export function parseHwb(
                 blackness,
                 alpha,
             }
-        }
-
-        if (whiteness.withComma !== blackness.withComma) {
-            // mixed comma
-            return null
         }
     }
 

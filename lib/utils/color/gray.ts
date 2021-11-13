@@ -6,7 +6,12 @@ import type {
     NumberWithUnit,
     NumberWithUnitValid,
 } from "./data"
-import { parseAlphaArgument, parseFunction, parseNumberUnit } from "./parser"
+import {
+    isPercentRange,
+    parseAlphaArgument,
+    parseFunction,
+    parseNumberUnit,
+} from "./parser"
 
 export type GrayData = {
     valid: true
@@ -38,12 +43,7 @@ export function parseGray(
     let valid = true
 
     const lightness = parseNumberUnit(fn.arguments.shift(), ["", "%"])
-    if (
-        !lightness ||
-        !lightness.value ||
-        lightness.value.number < 0 ||
-        lightness.value.number > 100
-    ) {
+    if (!isPercentRange(lightness)) {
         valid = false
     }
     const alpha = parseAlphaArgument(fn.arguments, ["/", ","])

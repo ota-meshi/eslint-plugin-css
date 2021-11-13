@@ -60,6 +60,14 @@ export function parseFunction(
     }
 }
 
+export function parseNumberUnit<U extends Unit>(
+    input: FunctionArgument,
+    expectUnits: U[],
+): NumberWithUnit<U>
+export function parseNumberUnit<U extends Unit>(
+    input: FunctionArgument | undefined,
+    expectUnits: U[],
+): NumberWithUnit<U> | null
 /** Parse number unit */
 export function parseNumberUnit<U extends Unit>(
     input: FunctionArgument | undefined,
@@ -85,46 +93,6 @@ export function parseNumberUnit<U extends Unit>(
         string: data.number,
         unit: data.unit as U,
     })
-}
-
-/** Parse number unit maybe comma */
-export function parseMaybeNumberUnit<U extends Unit>(
-    functionArguments: FunctionArgument[],
-    expectUnits: U[],
-): NumberWithUnit<U> | NumberWithUnitWithComma<U> | null {
-    const next = functionArguments[0]
-    if (!next) {
-        return null
-    }
-    if (next.node.value === ",") {
-        return parseNumberUnitWithComma(functionArguments, expectUnits)
-    }
-    return parseNumberUnit(functionArguments.shift(), expectUnits)
-}
-
-/** Parse number unit with comma */
-export function parseNumberUnitWithComma<U extends Unit>(
-    functionArguments: FunctionArgument[],
-    expectUnits: U[],
-): NumberWithUnitWithComma<U> | null {
-    const next = functionArguments.shift()!
-    if (!next) {
-        return null
-    }
-    if (next.node.value !== ",") {
-        functionArguments.unshift(next)
-        return null
-    }
-    const valueNode = functionArguments.shift()!
-    if (!valueNode) {
-        functionArguments.unshift(next)
-        return null
-    }
-    const value = parseNumberUnit(valueNode, expectUnits)!
-    if (value.valid) {
-        return new NumberWithUnitWithCommaValid(next, value)
-    }
-    return new NumberWithUnitWithCommaInvalid(next, value)
 }
 
 /** Parse alpha arguments */
@@ -176,4 +144,123 @@ export function isPercentRange(
             node.value.number >= 0 &&
             node.value.number <= 100,
     )
+}
+
+type ParseArgumentValuesOption<
+    U1 extends Unit,
+    U2 extends Unit,
+    U3 extends Unit,
+> = {
+    units1: U1[]
+    units2: U2[]
+    units3: U3[]
+}
+
+/** Parse argument values */
+export function parseArgumentValues<
+    U1 extends Unit,
+    U2 extends Unit,
+    U3 extends Unit,
+>(
+    functionArguments: FunctionArgument[],
+    option: ParseArgumentValuesOption<U1, U2, U3>,
+):
+    | {
+          value1: NumberWithUnit<U1>
+          value2: NumberWithUnit<U2>
+          value3: NumberWithUnit<U3>
+          alpha: AlphaArgument | null
+      }
+    | {
+          value1: NumberWithUnit<U1>
+          value2: NumberWithUnitWithComma<U2>
+          value3: NumberWithUnitWithComma<U3>
+          alpha: AlphaArgument | null
+      }
+    | null {
+    if (functionArguments.length < 3) {
+        return null
+    }
+    const node = functionArguments[1]
+    if (node.node.value === ",") {
+        return parseArgumentValuesWithComma(functionArguments, option)
+    }
+    return parseArgumentValuesWithSpace(functionArguments, option)
+}
+
+/** Parse argument values */
+export function parseArgumentValuesWithSpace<
+    U1 extends Unit,
+    U2 extends Unit,
+    U3 extends Unit,
+>(
+    functionArguments: FunctionArgument[],
+    option: ParseArgumentValuesOption<U1, U2, U3>,
+): {
+    value1: NumberWithUnit<U1>
+    value2: NumberWithUnit<U2>
+    value3: NumberWithUnit<U3>
+    alpha: AlphaArgument | null
+} | null {
+    if (functionArguments.length < 3) {
+        return null
+    }
+
+    const n1 = parseNumberUnit(functionArguments.shift()!, option.units1)
+    const n2 = parseNumberUnit(functionArguments.shift()!, option.units2)
+    const n3 = parseNumberUnit(functionArguments.shift()!, option.units3)
+    const alpha = parseAlphaArgument(functionArguments, ["/"])
+
+    return {
+        value1: n1,
+        value2: n2,
+        value3: n3,
+        alpha,
+    }
+}
+
+/** Parse argument values */
+export function parseArgumentValuesWithComma<
+    U1 extends Unit,
+    U2 extends Unit,
+    U3 extends Unit,
+>(
+    functionArguments: FunctionArgument[],
+    option: ParseArgumentValuesOption<U1, U2, U3>,
+): {
+    value1: NumberWithUnit<U1>
+    value2: NumberWithUnitWithComma<U2>
+    value3: NumberWithUnitWithComma<U3>
+    alpha: AlphaArgument | null
+} | null {
+    if (functionArguments.length < 5) {
+        return null
+    }
+    if (
+        functionArguments[1].node.value !== "," ||
+        functionArguments[3].node.value !== "," ||
+        (functionArguments[5] && functionArguments[5].node.value !== ",")
+    ) {
+        return null
+    }
+
+    const n1 = parseNumberUnit(functionArguments.shift()!, option.units1)
+    const comma1 = functionArguments.shift()!
+    const n2 = parseNumberUnit(functionArguments.shift()!, option.units2)
+    const nc2 = n2.valid
+        ? new NumberWithUnitWithCommaValid(comma1, n2)
+        : new NumberWithUnitWithCommaInvalid(comma1, n2)
+    const comma2 = functionArguments.shift()!
+    const n3 = parseNumberUnit(functionArguments.shift()!, option.units3)
+    const nc3 = n3.valid
+        ? new NumberWithUnitWithCommaValid(comma2, n3)
+        : new NumberWithUnitWithCommaInvalid(comma2, n3)
+    const alpha = parseAlphaArgument(functionArguments, [","])
+
+    return {
+        value1: n1,
+        value2: nc2,
+        value3: nc3,
+        alpha,
+    }
 }

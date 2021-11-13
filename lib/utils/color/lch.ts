@@ -8,9 +8,8 @@ import type {
 } from "./data"
 import {
     isPercentRange,
-    parseAlphaArgument,
+    parseArgumentValuesWithSpace,
     parseFunction,
-    parseNumberUnit,
 } from "./parser"
 
 export type LchData = {
@@ -46,20 +45,18 @@ export function parseLch(
 
     let valid = true
 
-    const lightness = parseNumberUnit(fn.arguments.shift(), ["%"])
+    const values = parseArgumentValuesWithSpace(fn.arguments, {
+        units1: ["%"],
+        units2: [""],
+        units3: ["", "deg", "rad", "grad", "turn"],
+    })
+    const lightness = values?.value1 ?? null
     if (!isPercentRange(lightness)) {
         valid = false
     }
-    const chroma = parseNumberUnit(fn.arguments.shift(), [""])
-    const hue = parseNumberUnit(fn.arguments.shift(), [
-        "",
-        "deg",
-        "rad",
-        "grad",
-        "turn",
-    ])
-
-    const alpha = parseAlphaArgument(fn.arguments, ["/"])
+    const chroma = values?.value2 ?? null
+    const hue = values?.value3 ?? null
+    const alpha = values?.alpha ?? null
 
     if (
         valid &&
