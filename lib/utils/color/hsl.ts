@@ -1,4 +1,7 @@
+import type { Colord } from "colord"
 import type postcssValueParser from "postcss-value-parser"
+import { AbsColor } from "./color-class"
+import { parseColord } from "./colord"
 import type {
     AlphaArgument,
     AlphaArgumentValid,
@@ -10,6 +13,44 @@ import type {
 } from "./data"
 import { isPercentRange, parseArgumentValues, parseFunction } from "./parser"
 
+export class ColorFromHsl extends AbsColor {
+    private readonly hsl: HslData | InvalidHslData
+
+    public constructor(hsl: HslData | InvalidHslData) {
+        super()
+        this.hsl = hsl
+    }
+
+    public readonly type = "hsl"
+
+    public isValid(): boolean {
+        return (this.hsl.valid && this.getColord()?.isValid()) || false
+    }
+
+    public getAlpha(): number | null {
+        return this.hsl.alpha?.value ?? null
+    }
+
+    public removeAlpha(): ColorFromHsl {
+        return new ColorFromHsl({
+            ...this.hsl,
+            rawName: this.hsl.rawName.replace(/a$/iu, ""),
+            alpha: null,
+        })
+    }
+
+    public toColorString(): string {
+        return `${this.hsl.rawName}(${this.hsl.hue || ""}${
+            this.hsl.saturation || ""
+        }${this.hsl.lightness || ""}${this.hsl.alpha || ""}${(
+            this.hsl.extraArgs || []
+        ).join("")})`
+    }
+
+    protected newColord(): Colord {
+        return parseColord(this.toColorString())
+    }
+}
 export type BaseHslDataValid = {
     valid: true
     rawName: string

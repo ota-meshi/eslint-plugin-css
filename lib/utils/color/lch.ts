@@ -1,4 +1,7 @@
+import type { Colord } from "colord"
 import type postcssValueParser from "postcss-value-parser"
+import { AbsColor } from "./color-class"
+import { parseColord } from "./colord"
 import type {
     AlphaArgument,
     AlphaArgumentValid,
@@ -12,6 +15,43 @@ import {
     parseFunction,
 } from "./parser"
 
+export class ColorFromLch extends AbsColor {
+    private readonly lch: LchData | InvalidLchData
+
+    public constructor(lch: LchData | InvalidLchData) {
+        super()
+        this.lch = lch
+    }
+
+    public readonly type = "lch"
+
+    public isValid(): boolean {
+        return (this.lch.valid && this.getColord()?.isValid()) || false
+    }
+
+    public getAlpha(): number | null {
+        return this.lch.alpha?.value ?? null
+    }
+
+    public removeAlpha(): ColorFromLch {
+        return new ColorFromLch({
+            ...this.lch,
+            alpha: null,
+        })
+    }
+
+    public toColorString(): string {
+        return `${this.lch.rawName}(${this.lch.lightness || ""}${
+            this.lch.chroma || ""
+        }${this.lch.hue || ""}${this.lch.alpha || ""}${(
+            this.lch.extraArgs || []
+        ).join("")})`
+    }
+
+    protected newColord(): Colord {
+        return parseColord(this.toColorString())
+    }
+}
 export type LchData = {
     valid: true
     rawName: string

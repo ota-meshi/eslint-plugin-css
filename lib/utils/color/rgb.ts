@@ -1,4 +1,7 @@
+import type { Colord } from "./colord"
 import type postcssValueParser from "postcss-value-parser"
+import { AbsColor } from "./color-class"
+import { parseColord } from "./colord"
 import type {
     AlphaArgument,
     AlphaArgumentValid,
@@ -9,6 +12,83 @@ import type {
     NumberWithUnitWithCommaValid,
 } from "./data"
 import { isPercentRange, parseArgumentValues, parseFunction } from "./parser"
+
+export class ColorFromRgb extends AbsColor {
+    private readonly rgb: RgbData | InvalidRgbData
+
+    public constructor(rgb: RgbData | InvalidRgbData) {
+        super()
+        this.rgb = rgb
+    }
+
+    public readonly type = "rgb"
+
+    public getRgb(): { r: number | null; g: number | null; b: number | null } {
+        return {
+            r: this.parseColor(this.rgb.r),
+            g: this.parseColor(this.rgb.g),
+            b: this.parseColor(this.rgb.b),
+        }
+    }
+
+    public isValid(): boolean {
+        return (this.rgb.valid && this.getColord()?.isValid()) || false
+    }
+
+    public getAlpha(): number | null {
+        return this.rgb.alpha?.value ?? null
+    }
+
+    public removeAlpha(): ColorFromRgb {
+        return new ColorFromRgb({
+            ...this.rgb,
+            rawName: this.rgb.rawName.replace(/a$/iu, ""),
+            alpha: null,
+        })
+    }
+
+    public toColorString(): string {
+        return `${this.rgb.rawName}(${this.rgb.r || ""}${this.rgb.g || ""}${
+            this.rgb.b || ""
+        }${this.rgb.alpha || ""}${(this.rgb.extraArgs || []).join("")})`
+    }
+
+    protected newColord(): Colord | null {
+        const rgb = this.getRgb()
+        if (rgb.r != null && rgb.g != null && rgb.b != null) {
+            const base = {
+                r: rgb.r * 255,
+                g: rgb.g * 255,
+                b: rgb.b * 255,
+            }
+            const alpha = this.getAlpha()
+            return alpha == null
+                ? parseColord(base)
+                : parseColord({
+                      ...base,
+                      a: alpha,
+                  })
+        }
+        return null
+    }
+
+    private parseColor(
+        value?:
+            | NumberWithUnit<"" | "%">
+            | NumberWithUnitWithComma<"" | "%">
+            | null,
+    ) {
+        if (!value || !value.valid) {
+            return null
+        }
+        const v = value.value
+        const num = v.unit === "%" ? v.number / 100 : v.number / 255
+        if (0 <= num && num <= 1) {
+            return num
+        }
+        return null
+    }
+}
 
 export type BaseRgbDataValid<U extends "" | "%"> = {
     valid: true

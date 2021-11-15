@@ -1,4 +1,7 @@
+import type { Colord } from "./colord"
+import { parseColord } from "./colord"
 import type postcssValueParser from "postcss-value-parser"
+import { AbsColor } from "./color-class"
 import type {
     AlphaArgument,
     AlphaArgumentValid,
@@ -11,6 +14,53 @@ import {
     parseArgumentValuesWithSpace,
     parseFunction,
 } from "./parser"
+
+export class ColorFromLab extends AbsColor {
+    private readonly lab: LabData | InvalidLabData
+
+    public constructor(lab: LabData | InvalidLabData) {
+        super()
+        this.lab = lab
+    }
+
+    public readonly type = "lab"
+
+    public isValid(): boolean {
+        return (this.lab.valid && this.getColord()?.isValid()) || false
+    }
+
+    public getAlpha(): number | null {
+        return this.lab.alpha?.value ?? null
+    }
+
+    public removeAlpha(): ColorFromLab {
+        return new ColorFromLab({
+            ...this.lab,
+            alpha: null,
+        })
+    }
+
+    public toColorString(): string {
+        return `${this.lab.rawName}(${this.lab.lightness || ""}${
+            this.lab.a || ""
+        }${this.lab.b || ""}${this.lab.alpha || ""}${(
+            this.lab.extraArgs || []
+        ).join("")})`
+    }
+
+    protected newColord(): Colord | null {
+        const lab = this.lab
+        if (lab.valid) {
+            return parseColord({
+                l: lab.lightness.value.number,
+                a: lab.a.value.number,
+                b: lab.b.value.number,
+                alpha: lab.alpha?.value ?? undefined,
+            })
+        }
+        return null
+    }
+}
 
 export type LabData = {
     valid: true

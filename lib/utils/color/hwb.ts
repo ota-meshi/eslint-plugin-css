@@ -1,4 +1,7 @@
+import type { Colord } from "colord"
 import type postcssValueParser from "postcss-value-parser"
+import { AbsColor } from "./color-class"
+import { parseColord } from "./colord"
 import type {
     AlphaArgument,
     AlphaArgumentValid,
@@ -9,6 +12,58 @@ import type {
     NumberWithUnitWithCommaValid,
 } from "./data"
 import { isPercentRange, parseArgumentValues, parseFunction } from "./parser"
+
+export class ColorFromHwb extends AbsColor {
+    private readonly hwb: HwbData | InvalidHwbData
+
+    public constructor(hwb: HwbData | InvalidHwbData) {
+        super()
+        this.hwb = hwb
+    }
+
+    public readonly type = "hwb"
+
+    public isValid(): boolean {
+        return (this.hwb.valid && this.getColord()?.isValid()) || false
+    }
+
+    public getAlpha(): number | null {
+        return this.hwb.alpha?.value ?? null
+    }
+
+    public removeAlpha(): ColorFromHwb {
+        return new ColorFromHwb({
+            ...this.hwb,
+            alpha: null,
+        })
+    }
+
+    public toColorString(): string {
+        return `${this.hwb.rawName}(${this.hwb.hue || ""}${
+            this.hwb.whiteness || ""
+        }${this.hwb.blackness || ""}${this.hwb.alpha || ""}${(
+            this.hwb.extraArgs || []
+        ).join("")})`
+    }
+
+    protected newColord(): Colord | null {
+        const hwb = this.hwb
+        if (hwb.valid) {
+            return parseColord(
+                `hwb(${hwb.hue} ${
+                    hwb.whiteness.withComma
+                        ? hwb.whiteness.withoutComma()
+                        : hwb.whiteness
+                } ${
+                    hwb.blackness.withComma
+                        ? hwb.blackness.withoutComma()
+                        : hwb.blackness
+                }${hwb.alpha ? ` / ${hwb.alpha.toAlphaNString()}` : ""})`,
+            )
+        }
+        return null
+    }
+}
 
 export type BaseHwbDataValid = {
     valid: true
