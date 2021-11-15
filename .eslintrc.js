@@ -18,6 +18,7 @@ module.exports = {
         "plugin:regexp/recommended",
     ],
     rules: {
+        complexity: "off",
         "require-jsdoc": "error",
         "no-warning-comments": "warn",
         "no-lonely-if": "off",

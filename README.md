@@ -173,13 +173,16 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/named-color](https://ota-meshi.github.io/eslint-plugin-css/rules/named-color.html) | enforce named colors | :wrench: |
 | [css/no-length-zero-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-length-zero-unit.html) | disallow units for zero lengths | :wrench: |
+| [css/no-useless-color-alpha](https://ota-meshi.github.io/eslint-plugin-css/rules/no-useless-color-alpha.html) | disallow unnecessary alpha-channel transparency value | :star::wrench: |
 | [css/prefer-reduce-shorthand-property-box-values](https://ota-meshi.github.io/eslint-plugin-css/rules/prefer-reduce-shorthand-property-box-values.html) | require reduction in box values of shorthand property | :wrench: |
 
 ### Stylistic Issues
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
+| [css/color-hex-style](https://ota-meshi.github.io/eslint-plugin-css/rules/color-hex-style.html) | enforce hex color style | :wrench: |
 | [css/no-number-trailing-zeros](https://ota-meshi.github.io/eslint-plugin-css/rules/no-number-trailing-zeros.html) | disallow trailing zeros in numbers. | :wrench: |
 | [css/number-leading-zero](https://ota-meshi.github.io/eslint-plugin-css/rules/number-leading-zero.html) | require or disallow a leading zero for fractional numbers less than 1 | :wrench: |
 | [css/property-casing](https://ota-meshi.github.io/eslint-plugin-css/rules/property-casing.html) | enforce specific casing for CSS properties | :wrench: |

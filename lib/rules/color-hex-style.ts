@@ -2,26 +2,36 @@ import type { CSSObjectContext, CSSVisitorHandlers } from "../utils"
 import { createRule, defineCSSVisitor } from "../utils"
 import { parseHexColor } from "../utils/color"
 
-export default createRule("no-invalid-color-hex", {
+export default createRule("color-hex-style", {
     meta: {
         docs: {
-            description: "disallow invalid hex colors",
-            category: "Possible Errors",
-            recommended: true,
-            stylelint: "color-no-invalid-hex",
+            description: "enforce hex color style",
+            category: "Stylistic Issues",
+            recommended: false,
+            stylelint: "color-hex-length",
         },
-        schema: [],
+        fixable: "code",
+        schema: [
+            {
+                enum: ["RGB", "RRGGBB"],
+            },
+        ],
         messages: {
-            invalid: "Unexpected invalid hex color '{{hex}}'.",
+            expected: "Expected '{{actual}}' to be '{{expected}}'.",
         },
-        type: "problem",
+        type: "layout",
     },
     create(context) {
+        const option = context.options[0]
+        const prefer: "RGB" | "RRGGBB" = ["RGB", "RRGGBB"].includes(option)
+            ? option
+            : "RGB"
+
         /**
          * Create visitor
          */
         function createVisitor(
-            _cssContext: CSSObjectContext,
+            cssContext: CSSObjectContext,
         ): CSSVisitorHandlers {
             return {
                 onProperty(property) {
@@ -41,14 +51,11 @@ export default createRule("no-invalid-color-hex", {
 
                             if (type !== "word") return undefined
 
-                            const hexMatch = /^#[\dA-Za-z]+/u.exec(textValue)
-
-                            if (!hexMatch) return undefined
-
-                            const hexValue = hexMatch[0]
-
-                            if (parseHexColor(hexValue).isValid())
+                            const expected =
+                                parseHexColor(textValue).toHex(prefer)
+                            if (!expected || expected === textValue) {
                                 return undefined
+                            }
 
                             const sourceCode = context.getSourceCode()
                             const startIndex =
@@ -67,9 +74,27 @@ export default createRule("no-invalid-color-hex", {
                             context.report({
                                 node: value.expression,
                                 loc,
-                                messageId: "invalid",
+                                messageId: "expected",
                                 data: {
-                                    hex: hexValue,
+                                    actual: textValue,
+                                    expected,
+                                },
+                                fix(fixer) {
+                                    if (
+                                        cssContext.isFixable(
+                                            value.directExpression,
+                                        ) &&
+                                        sourceCode.text.slice(
+                                            startIndex,
+                                            endIndex,
+                                        ) === textValue
+                                    ) {
+                                        return fixer.replaceTextRange(
+                                            [startIndex, endIndex],
+                                            expected,
+                                        )
+                                    }
+                                    return null
                                 },
                             })
 

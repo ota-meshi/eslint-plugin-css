@@ -7,5 +7,6 @@ export = {
         "css/no-shorthand-property-overrides": "error",
         "css/no-unknown-property": "error",
         "css/no-unknown-unit": "error",
+        "css/no-useless-color-alpha": "error",
     },
 }

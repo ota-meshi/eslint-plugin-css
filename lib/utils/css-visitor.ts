@@ -231,14 +231,10 @@ function buildCSSVisitor(
             }
         }
 
-        /* eslint-disable complexity -- ignore */
         /**
          * Visit CSS object
          */
-        function visitObject(
-            /* eslint-enable complexity -- ignore */
-            object: ESTree.ObjectExpression,
-        ) {
+        function visitObject(object: ESTree.ObjectExpression) {
             if (ctx.on === "jsx-style" || ctx.on === "vue-style") {
                 if (visitor.onProperty) {
                     for (const prop of object.properties) {
