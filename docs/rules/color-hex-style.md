@@ -3,12 +3,12 @@ pageClass: "rule-details"
 sidebarDepth: 0
 title: "css/color-hex-style"
 description: "enforce hex color style"
+since: "v0.4.0"
 ---
 # css/color-hex-style
 
 > enforce hex color style
 
-- :exclamation: <badge text="This rule has not been released yet." vertical="middle" type="error"> ***This rule has not been released yet.*** </badge>
 - :wrench: The `--fix` option on the [command line](https://eslint.org/docs/user-guide/command-line-interface#fixing-problems) can automatically fix some of the problems reported by this rule.
 
 ## :book: Rule Details
@@ -61,6 +61,10 @@ var foo = <div
 - [Stylelint - color-hex-length]
 
 [Stylelint - color-hex-length]: https://stylelint.io/user-guide/rules/list/color-hex-length/
+
+## :rocket: Version
+
+This rule was introduced in eslint-plugin-css v0.4.0
 
 ## :mag: Implementation
 

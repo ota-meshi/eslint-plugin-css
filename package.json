@@ -1,6 +1,6 @@
 {
     "name": "eslint-plugin-css",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "An ESLint plugin that provides rules to verify CSS definition objects.",
     "engines": {
         "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
