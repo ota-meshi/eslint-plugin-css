@@ -606,7 +606,7 @@ function buildCSSVisitor(
                                 return parsed
                             }
                             return (parsed = postcssValueParser(
-                                String(val!.value),
+                                String(val.value),
                             ))
                         },
                     }
