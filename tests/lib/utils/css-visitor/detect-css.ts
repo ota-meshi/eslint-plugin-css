@@ -1,6 +1,6 @@
 /* global require -- global */
 import assert from "assert"
-import { defineCSSVisitor, createRule } from "../../../lib/utils"
+import { defineCSSVisitor, createRule } from "../../../../lib/utils"
 import { Linter } from "eslint"
 
 const testRule = createRule("detect-css", {
@@ -82,6 +82,31 @@ const TESTS = [
         `,
         count: 1,
     },
+    {
+        code: `
+        import styled from '@emotion/styled'
+    
+        styled.input({/*CSS*/})
+        `,
+        count: 0,
+    },
+    {
+        code: `
+        import styled from '@emotion/styled'
+    
+        styled.input({/*CSS*/})
+        `,
+        count: 1,
+        settings: {
+            css: {
+                target: {
+                    defineFunctions: {
+                        "@emotion/styled": [["default", "/^\\w+$/u"]],
+                    },
+                },
+            },
+        },
+    },
 ]
 
 describe("detect CSS objects", () => {
@@ -90,7 +115,7 @@ describe("detect CSS objects", () => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports -- ignore
     linter.defineParser("vue-eslint-parser", require("vue-eslint-parser"))
 
-    for (const { code, filename, count, parser } of TESTS) {
+    for (const { code, filename, count, parser, settings } of TESTS) {
         it(code, () => {
             const result = linter.verify(
                 code,
@@ -104,6 +129,7 @@ describe("detect CSS objects", () => {
                             jsx: true,
                         },
                     },
+                    settings,
                 },
                 filename || "test.js",
             )
