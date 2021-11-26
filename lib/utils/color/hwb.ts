@@ -2,29 +2,34 @@ import type { Colord } from "colord"
 import type postcssValueParser from "postcss-value-parser"
 import { AbsColor } from "./color-class"
 import { parseColord } from "./colord"
+import type { Unit } from "./data"
 import type {
     AlphaArgument,
     AlphaArgumentValid,
     FunctionArgument,
     NumberWithUnit,
-    NumberWithUnitValid,
-    NumberWithUnitWithComma,
-    NumberWithUnitWithCommaValid,
-} from "./data"
-import { isPercentRange, parseArgumentValues, parseFunction } from "./parser"
+    ValuesArgument,
+    ValuesArgumentComplete,
+} from "./parser"
+import {
+    parseNumberUnit,
+    isPercentRange,
+    parseArgumentValues,
+    parseFunction,
+} from "./parser"
 
 export class ColorFromHwb extends AbsColor {
-    private readonly hwb: HwbData | InvalidHwbData
+    private readonly hwb: HwbData | IncompleteHwbData
 
-    public constructor(hwb: HwbData | InvalidHwbData) {
+    public constructor(hwb: HwbData | IncompleteHwbData) {
         super()
         this.hwb = hwb
     }
 
     public readonly type = "hwb"
 
-    public isValid(): boolean {
-        return (this.hwb.valid && this.getColord()?.isValid()) || false
+    public isComplete(): boolean {
+        return (this.hwb.complete && this.getColord()?.isValid()) || false
     }
 
     public getAlpha(): number | null {
@@ -39,59 +44,50 @@ export class ColorFromHwb extends AbsColor {
     }
 
     public toColorString(): string {
-        return `${this.hwb.rawName}(${this.hwb.hue || ""}${
-            this.hwb.whiteness || ""
-        }${this.hwb.blackness || ""}${this.hwb.alpha || ""}${(
+        return `${this.hwb.rawName}(${this.hwb.hwb}${this.hwb.alpha || ""}${(
             this.hwb.extraArgs || []
         ).join("")})`
     }
 
     protected newColord(): Colord | null {
         const hwb = this.hwb
-        if (hwb.valid) {
+        if (hwb.complete) {
             return parseColord(
-                `hwb(${hwb.hue} ${
-                    hwb.whiteness.withComma
-                        ? hwb.whiteness.withoutComma()
-                        : hwb.whiteness
-                } ${
-                    hwb.blackness.withComma
-                        ? hwb.blackness.withoutComma()
-                        : hwb.blackness
-                }${hwb.alpha ? ` / ${hwb.alpha.toAlphaNString()}` : ""})`,
+                `hwb(${numberWithUnitToString(
+                    hwb.hwb.value.hue,
+                )} ${numberWithUnitToString(
+                    hwb.hwb.value.whiteness,
+                )} ${numberWithUnitToString(hwb.hwb.value.blackness)}${
+                    hwb.alpha ? ` / ${hwb.alpha.toAlphaString()}` : ""
+                })`,
             )
         }
         return null
     }
 }
 
-export type BaseHwbDataValid = {
-    valid: true
+/** NumberWithUnit to string */
+function numberWithUnitToString(nu: NumberWithUnit<Unit>) {
+    return `${nu.number}${nu.unit}`
+}
+
+export type HwbValue = {
+    hue: NumberWithUnit<"" | "deg" | "rad" | "grad" | "turn">
+    whiteness: NumberWithUnit<"%">
+    blackness: NumberWithUnit<"%">
+}
+
+export type HwbData = {
+    complete: true
     rawName: string
-    hue: NumberWithUnitValid<"" | "deg" | "rad" | "grad" | "turn">
-    whiteness: NumberWithUnitValid<"%"> | NumberWithUnitWithCommaValid<"%">
-    blackness: NumberWithUnitValid<"%"> | NumberWithUnitWithCommaValid<"%">
+    hwb: ValuesArgumentComplete<HwbValue>
     alpha: AlphaArgumentValid | null
     extraArgs?: undefined
 }
-export type HwbDataStandard = BaseHwbDataValid & {
-    type: "standard"
-    whiteness: NumberWithUnitValid<"%">
-    blackness: NumberWithUnitValid<"%">
-}
-export type HwbDataWithComma = BaseHwbDataValid & {
-    type: "with-comma" // e.g. hwb(194, 0%, 0%, .5)  https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/hwb()#syntax
-    whiteness: NumberWithUnitWithCommaValid<"%">
-    blackness: NumberWithUnitWithCommaValid<"%">
-}
-export type HwbData = HwbDataStandard | HwbDataWithComma
-
-export type InvalidHwbData = {
-    valid: false
+export type IncompleteHwbData = {
+    complete: false
     rawName: string
-    hue: NumberWithUnit<"" | "deg" | "rad" | "grad" | "turn"> | null
-    whiteness: NumberWithUnit<"%"> | NumberWithUnitWithComma<"%"> | null
-    blackness: NumberWithUnit<"%"> | NumberWithUnitWithComma<"%"> | null
+    hwb: ValuesArgument<HwbValue>
     alpha: AlphaArgument | null
     extraArgs: FunctionArgument[]
 }
@@ -101,69 +97,59 @@ export type InvalidHwbData = {
  */
 export function parseHwb(
     input: string | postcssValueParser.Node,
-): HwbData | InvalidHwbData | null {
+): HwbData | IncompleteHwbData | null {
     const fn = parseFunction(input, "hwb")
     if (fn == null) {
         return null
     }
 
-    let valid = true
-
     const values = parseArgumentValues(fn.arguments, {
-        units1: ["", "deg", "rad", "grad", "turn"],
-        units2: ["%"],
-        units3: ["%"],
+        argCount: 3,
+        generate: (tokens): HwbValue | null => {
+            if (tokens.length !== 3) {
+                return null
+            }
+            const hue = parseNumberUnit(tokens[0], [
+                "",
+                "deg",
+                "rad",
+                "grad",
+                "turn",
+            ])
+            const whiteness = parseNumberUnit(tokens[1], ["%"])
+            const blackness = parseNumberUnit(tokens[2], ["%"])
+            if (
+                !hue ||
+                !isPercentRange(whiteness) ||
+                !isPercentRange(blackness)
+            ) {
+                return null
+            }
+
+            return {
+                hue,
+                whiteness,
+                blackness,
+            }
+        },
     })
 
-    const hue = values?.value1 ?? null
-    const whiteness = values?.value2 ?? null
-    const blackness = values?.value3 ?? null
-    if (!isPercentRange(whiteness) || !isPercentRange(blackness)) {
-        valid = false
-    }
-    const alpha = values?.alpha ?? null
+    const hwb = values.values
+    const alpha = values.alpha
 
-    if (
-        valid &&
-        hue &&
-        hue.valid &&
-        whiteness &&
-        whiteness.valid &&
-        blackness &&
-        blackness.valid &&
-        (!alpha || alpha.valid) &&
-        fn.arguments.length === 0
-    ) {
-        if (!whiteness.withComma && !blackness.withComma) {
-            return {
-                valid: true,
-                rawName: fn.rawName,
-                type: "standard",
-                hue,
-                whiteness,
-                blackness,
-                alpha,
-            }
-        }
-        if (whiteness.withComma && blackness.withComma) {
-            return {
-                valid: true,
-                rawName: fn.rawName,
-                type: "with-comma",
-                hue,
-                whiteness,
-                blackness,
-                alpha,
-            }
+    if (hwb.complete && (!alpha || alpha.valid) && fn.arguments.length === 0) {
+        return {
+            complete: true,
+            rawName: fn.rawName,
+            hwb,
+            alpha,
         }
     }
 
     return {
-        valid: false,
+        complete: false,
         rawName: fn.rawName,
-        hue,
-        whiteness,
-        blackness,
+        hwb,
         alpha,
         extraArgs: fn.arguments,
     }

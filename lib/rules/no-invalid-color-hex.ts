@@ -47,7 +47,7 @@ export default createRule("no-invalid-color-hex", {
 
                             const hexValue = hexMatch[0]
 
-                            if (parseHexColor(hexValue).isValid())
+                            if (parseHexColor(hexValue).isComplete())
                                 return undefined
 
                             const sourceCode = context.getSourceCode()

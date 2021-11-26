@@ -1,19 +1,101 @@
 import postcssValueParser from "postcss-value-parser"
-import type {
-    AlphaArgument,
-    NumberWithUnit,
-    NumberWithUnitWithComma,
-    Unit,
-} from "./data"
-import {
-    NumberWithUnitWithCommaInvalid,
-    NumberWithUnitWithCommaValid,
-    AlphaArgumentValid,
-    AlphaArgumentInvalid,
-    NumberWithUnitInvalid,
-    NumberWithUnitValid,
-    FunctionArgument,
-} from "./data"
+import type { Unit } from "./data"
+
+export class FunctionArgument {
+    private readonly raws: Readonly<{ before: string; after: string }>
+
+    public readonly node: postcssValueParser.Node
+
+    public constructor(
+        before: postcssValueParser.Node[],
+        node: postcssValueParser.Node,
+        after?: postcssValueParser.Node[],
+    ) {
+        this.raws = {
+            before: before.map((n) => postcssValueParser.stringify(n)).join(""),
+            after:
+                after?.map((n) => postcssValueParser.stringify(n)).join("") ||
+                "",
+        }
+        this.node = node
+    }
+
+    public toString(): string {
+        return `${this.raws.before}${postcssValueParser.stringify(this.node)}${
+            this.raws.after
+        }`
+    }
+}
+
+export type AlphaArgument = AlphaArgumentValid | AlphaArgumentInvalid
+
+export abstract class AbsAlphaArgument<V extends number | null> {
+    private readonly div: FunctionArgument
+
+    private readonly tokens: FunctionArgument[]
+
+    public readonly value: V
+
+    public constructor(
+        div: FunctionArgument,
+        tokens: FunctionArgument[],
+        alpha: V,
+    ) {
+        this.div = div
+        this.tokens = tokens
+        this.value = alpha
+    }
+
+    public toAlphaString(): string {
+        return this.tokens.join("")
+    }
+
+    public toString(): string {
+        return `${this.div}${this.toAlphaString()}`
+    }
+}
+
+export class AlphaArgumentValid extends AbsAlphaArgument<number> {
+    public get valid(): true {
+        return true
+    }
+}
+export class AlphaArgumentInvalid extends AbsAlphaArgument<number | null> {
+    public get valid(): false {
+        return false
+    }
+}
+
+export type NumberWithUnit<U extends Unit> = { number: number; unit: U }
+
+export type ValuesArgument<V> =
+    | ValuesArgumentComplete<V>
+    | ValuesArgumentIncomplete
+abstract class AbsValuesArgument<V> {
+    private readonly tokens: FunctionArgument[]
+
+    public readonly value: V
+
+    public constructor(tokens: FunctionArgument[], value: V) {
+        this.tokens = tokens
+        this.value = value
+    }
+
+    public toString(): string {
+        return this.tokens.join("")
+    }
+}
+
+export class ValuesArgumentComplete<V> extends AbsValuesArgument<V> {
+    public readonly complete = true
+}
+export class ValuesArgumentIncomplete extends AbsValuesArgument<null> {
+    public readonly complete = false
+
+    public constructor(tokens: FunctionArgument[]) {
+        super(tokens, null)
+    }
+}
 
 /** Parse function */
 export function parseFunction(
@@ -60,14 +142,6 @@ export function parseFunction(
     }
 }
 
-export function parseNumberUnit<U extends Unit>(
-    input: FunctionArgument,
-    expectUnits: U[],
-): NumberWithUnit<U>
-export function parseNumberUnit<U extends Unit>(
-    input: FunctionArgument | undefined,
-    expectUnits: U[],
-): NumberWithUnit<U> | null
 /** Parse number unit */
 export function parseNumberUnit<U extends Unit>(
     input: FunctionArgument | undefined,
@@ -77,22 +151,21 @@ export function parseNumberUnit<U extends Unit>(
         return null
     }
     if (input.node.type !== "word") {
-        return new NumberWithUnitInvalid(input)
+        return null
     }
 
     const data = postcssValueParser.unit(input.node.value)
     if (!data) {
-        return new NumberWithUnitInvalid(input)
+        return null
     }
     if (!(expectUnits as string[]).includes(data.unit)) {
-        return new NumberWithUnitInvalid(input)
+        return null
     }
 
-    return new NumberWithUnitValid(input, {
+    return {
         number: Number(data.number),
-        string: data.number,
         unit: data.unit as U,
-    })
+    }
 }
 
 /** Parse alpha arguments */
@@ -100,24 +173,43 @@ export function parseAlphaArgument(
     functionArguments: FunctionArgument[],
     divMarks: string[],
 ): AlphaArgument | null {
-    if (functionArguments.length < 2) {
+    if (functionArguments.length < 1) {
         return null
     }
-    let alphaValue: number | null = null
     const div = functionArguments.shift()!
     if (!divMarks.includes(div.node.value)) {
         functionArguments.unshift(div)
         return null
     }
-    const alpha = parseNumberUnit(functionArguments.shift(), ["", "%"])!
-    if (!alpha.value) {
-        return new AlphaArgumentInvalid(div, alpha, null)
+    return parseAlphaArgument0(div, functionArguments)
+}
+
+/** Parse alpha arguments */
+function parseAlphaArgument0(
+    div: FunctionArgument,
+    functionArguments: FunctionArgument[],
+): AlphaArgument {
+    const tokens: FunctionArgument[] = []
+    const alphaNode = functionArguments.shift()
+    if (!alphaNode) {
+        return new AlphaArgumentInvalid(div, tokens, null)
     }
-    alphaValue = alpha.value.number / (alpha.value.unit === "%" ? 100 : 1)
-    if (alphaValue < 0 || alphaValue > 1) {
-        return new AlphaArgumentInvalid(div, alpha, alphaValue)
+    tokens.push(alphaNode)
+    while (functionArguments.length) {
+        tokens.push(functionArguments.shift()!)
     }
-    return new AlphaArgumentValid(div, alpha, alphaValue)
+    if (alphaNode.node.type !== "word") {
+        return new AlphaArgumentInvalid(div, tokens, null)
+    }
+    const alphaData = parseNumberUnit(alphaNode, ["", "%"])
+    if (!alphaData || (alphaData.unit !== "" && alphaData.unit !== "%")) {
+        return new AlphaArgumentInvalid(div, tokens, null)
+    }
+    const alphaValue = alphaData.number / (alphaData.unit === "%" ? 100 : 1)
+    if (alphaValue >= 0 && alphaValue <= 1) {
+        return new AlphaArgumentValid(div, tokens, alphaValue)
+    }
+    return new AlphaArgumentInvalid(div, tokens, alphaValue)
 }
 
 /** Parse input */
@@ -136,131 +228,117 @@ export function parseInput(
 
 /** Checks wether given node is between 0 and 100. */
 export function isPercentRange(
-    node: NumberWithUnit<"" | "%"> | NumberWithUnitWithComma<"" | "%"> | null,
-): boolean {
-    return Boolean(
-        node &&
-            node.value &&
-            node.value.number >= 0 &&
-            node.value.number <= 100,
-    )
+    node: NumberWithUnit<"" | "%"> | null,
+): node is NumberWithUnit<"" | "%"> {
+    return Boolean(node && node.number >= 0 && node.number <= 100)
 }
 
-type ParseArgumentValuesOption<
-    U1 extends Unit,
-    U2 extends Unit,
-    U3 extends Unit,
-> = {
-    units1: U1[]
-    units2: U2[]
-    units3: U3[]
+type ParseArgumentValuesOption<V> = {
+    generate: (args: FunctionArgument[]) => V | null
+}
+type ParseArgumentValuesWithCommaOption<V> = ParseArgumentValuesOption<V> & {
+    argCount: number
 }
 
 /** Parse argument values */
-export function parseArgumentValues<
-    U1 extends Unit,
-    U2 extends Unit,
-    U3 extends Unit,
->(
+export function parseArgumentValues<V>(
     functionArguments: FunctionArgument[],
-    option: ParseArgumentValuesOption<U1, U2, U3>,
-):
-    | {
-          value1: NumberWithUnit<U1>
-          value2: NumberWithUnit<U2>
-          value3: NumberWithUnit<U3>
-          alpha: AlphaArgument | null
-      }
-    | {
-          value1: NumberWithUnit<U1>
-          value2: NumberWithUnitWithComma<U2>
-          value3: NumberWithUnitWithComma<U3>
-          alpha: AlphaArgument | null
-      }
-    | null {
-    if (functionArguments.length < 3) {
-        return null
-    }
-    const node = functionArguments[1]
-    if (node.node.value === ",") {
+    option: ParseArgumentValuesWithCommaOption<V>,
+): {
+    values: ValuesArgument<V>
+    alpha: AlphaArgument | null
+} {
+    if (functionArguments.some((t) => t.node.value === ",")) {
         return parseArgumentValuesWithComma(functionArguments, option)
     }
     return parseArgumentValuesWithSpace(functionArguments, option)
 }
 
 /** Parse argument values */
-export function parseArgumentValuesWithSpace<
-    U1 extends Unit,
-    U2 extends Unit,
-    U3 extends Unit,
->(
+export function parseArgumentValuesWithSpace<V>(
     functionArguments: FunctionArgument[],
-    option: ParseArgumentValuesOption<U1, U2, U3>,
+    option: ParseArgumentValuesOption<V>,
 ): {
-    value1: NumberWithUnit<U1>
-    value2: NumberWithUnit<U2>
-    value3: NumberWithUnit<U3>
+    values: ValuesArgument<V>
     alpha: AlphaArgument | null
-} | null {
-    if (functionArguments.length < 3) {
-        return null
+} {
+    let alpha: AlphaArgument | null = null
+    const tokens: FunctionArgument[] = []
+    while (functionArguments.length) {
+        const token = functionArguments.shift()!
+        if (token.node.value === "/") {
+            alpha = parseAlphaArgument0(token, functionArguments)
+            break
+        }
+        tokens.push(token)
     }
 
-    const n1 = parseNumberUnit(functionArguments.shift()!, option.units1)
-    const n2 = parseNumberUnit(functionArguments.shift()!, option.units2)
-    const n3 = parseNumberUnit(functionArguments.shift()!, option.units3)
-    const alpha = parseAlphaArgument(functionArguments, ["/"])
-
+    if (tokens.length) {
+        const value = option.generate(tokens)
+        if (value) {
+            return {
+                values: new ValuesArgumentComplete(tokens, value),
+                alpha,
+            }
+        }
+    }
     return {
-        value1: n1,
-        value2: n2,
-        value3: n3,
+        values: new ValuesArgumentIncomplete(tokens),
         alpha,
     }
 }
 
 /** Parse argument values */
-export function parseArgumentValuesWithComma<
-    U1 extends Unit,
-    U2 extends Unit,
-    U3 extends Unit,
->(
+export function parseArgumentValuesWithComma<V>(
     functionArguments: FunctionArgument[],
-    option: ParseArgumentValuesOption<U1, U2, U3>,
+    option: ParseArgumentValuesWithCommaOption<V>,
 ): {
-    value1: NumberWithUnit<U1>
-    value2: NumberWithUnitWithComma<U2>
-    value3: NumberWithUnitWithComma<U3>
+    values: ValuesArgument<V>
     alpha: AlphaArgument | null
-} | null {
-    if (functionArguments.length < 5) {
-        return null
-    }
-    if (
-        functionArguments[1].node.value !== "," ||
-        functionArguments[3].node.value !== "," ||
-        (functionArguments[5] && functionArguments[5].node.value !== ",")
-    ) {
-        return null
+} {
+    let commaCount = 0
+
+    let alpha: AlphaArgument | null = null
+    const tokens: FunctionArgument[] = []
+    while (functionArguments.length) {
+        const token = functionArguments.shift()!
+        if (token.node.value === ",") {
+            commaCount++
+            if (commaCount >= option.argCount) {
+                alpha = parseAlphaArgument0(token, functionArguments)
+                break
+            }
+        }
+        tokens.push(token)
     }
 
-    const n1 = parseNumberUnit(functionArguments.shift()!, option.units1)
-    const comma1 = functionArguments.shift()!
-    const n2 = parseNumberUnit(functionArguments.shift()!, option.units2)
-    const nc2 = n2.valid
-        ? new NumberWithUnitWithCommaValid(comma1, n2)
-        : new NumberWithUnitWithCommaInvalid(comma1, n2)
-    const comma2 = functionArguments.shift()!
-    const n3 = parseNumberUnit(functionArguments.shift()!, option.units3)
-    const nc3 = n3.valid
-        ? new NumberWithUnitWithCommaValid(comma2, n3)
-        : new NumberWithUnitWithCommaInvalid(comma2, n3)
-    const alpha = parseAlphaArgument(functionArguments, [","])
-
+    if (tokens.length) {
+        const argumentTokens: FunctionArgument[] = []
+        let validComma = true
+        let comma = false
+        for (const token of tokens) {
+            if (comma) {
+                if (token.node.value !== ",") {
+                    validComma = false
+                    break
+                }
+            } else {
+                argumentTokens.push(token)
+            }
+            comma = !comma
+        }
+        if (validComma) {
+            const value = option.generate(argumentTokens)
+            if (value) {
+                return {
+                    values: new ValuesArgumentComplete(tokens, value),
+                    alpha,
+                }
+            }
+        }
+    }
     return {
-        value1: n1,
-        value2: nc2,
-        value3: nc3,
+        values: new ValuesArgumentIncomplete(tokens),
         alpha,
     }
 }

@@ -21,7 +21,7 @@ export class ColorFromHex extends AbsColor {
         }
     }
 
-    public isValid(): boolean {
+    public isComplete(): boolean {
         return true
     }
 

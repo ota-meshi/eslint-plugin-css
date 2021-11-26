@@ -6,7 +6,7 @@ export abstract class AbsColor {
     public toHex(
         format?: "RGB" | "RRGGBB" | "default" | null | undefined,
     ): string | null {
-        if (!this.isValid()) {
+        if (!this.isComplete()) {
             return null
         }
         const hex = this.toHexImpl()
@@ -21,13 +21,13 @@ export abstract class AbsColor {
     }
 
     public toName(): string | null {
-        if (!this.isValid()) {
+        if (!this.isComplete()) {
             return null
         }
         return this.toNameImpl() ?? null
     }
 
-    public abstract isValid(): boolean
+    public abstract isComplete(): boolean
 
     public abstract getAlpha(): number | null
 

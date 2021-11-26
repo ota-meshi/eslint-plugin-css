@@ -29,6 +29,13 @@ tester.run("no-useless-color-alpha", rule as any, {
             `,
             parser: require.resolve("vue-eslint-parser"),
         },
+        `
+        var a = <div style={
+            {
+                color: 'rgb(from var(--bg-color) r g b / 80%)'
+            }
+        } />
+        `,
     ],
     invalid: [
         {
@@ -220,6 +227,30 @@ tester.run("no-useless-color-alpha", rule as any, {
                 "The alpha value is 100% and does not need to be specified.",
                 "The alpha value is 100% and does not need to be specified.",
                 "The alpha value is 100% and does not need to be specified.",
+            ],
+        },
+        {
+            code: `
+            var a = <div style={
+                {
+                    color: 'rgb(from var(--bg-color) r g b / 100%)'
+                }
+            } />
+            `,
+            output: `
+            var a = <div style={
+                {
+                    color: 'rgb(from var(--bg-color) r g b)'
+                }
+            } />
+            `,
+            errors: [
+                {
+                    message:
+                        "The alpha value is 100% and does not need to be specified.",
+                    line: 4,
+                    column: 29,
+                },
             ],
         },
     ],

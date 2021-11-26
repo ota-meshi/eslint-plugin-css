@@ -21,7 +21,7 @@ class InvalidColor extends AbsColor {
 
     public readonly type = "invalid"
 
-    public isValid() {
+    public isComplete() {
         return false
     }
 
@@ -60,7 +60,7 @@ class ColorForColord extends AbsColor {
                 : "unknown")
     }
 
-    public isValid() {
+    public isComplete() {
         return this.getColord()?.isValid() || false
     }
 

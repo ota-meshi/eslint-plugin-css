@@ -2,31 +2,34 @@ import type { Colord } from "./colord"
 import { parseColord } from "./colord"
 import type postcssValueParser from "postcss-value-parser"
 import { AbsColor } from "./color-class"
+
 import type {
     AlphaArgument,
     AlphaArgumentValid,
     FunctionArgument,
     NumberWithUnit,
-    NumberWithUnitValid,
-} from "./data"
+    ValuesArgument,
+    ValuesArgumentComplete,
+} from "./parser"
 import {
     isPercentRange,
     parseArgumentValuesWithSpace,
     parseFunction,
+    parseNumberUnit,
 } from "./parser"
 
 export class ColorFromLab extends AbsColor {
-    private readonly lab: LabData | InvalidLabData
+    private readonly lab: LabData | IncompleteLabData
 
-    public constructor(lab: LabData | InvalidLabData) {
+    public constructor(lab: LabData | IncompleteLabData) {
         super()
         this.lab = lab
     }
 
     public readonly type = "lab"
 
-    public isValid(): boolean {
-        return (this.lab.valid && this.getColord()?.isValid()) || false
+    public isComplete(): boolean {
+        return (this.lab.complete && this.getColord()?.isValid()) || false
     }
 
     public getAlpha(): number | null {
@@ -41,20 +44,18 @@ export class ColorFromLab extends AbsColor {
     }
 
     public toColorString(): string {
-        return `${this.lab.rawName}(${this.lab.lightness || ""}${
-            this.lab.a || ""
-        }${this.lab.b || ""}${this.lab.alpha || ""}${(
+        return `${this.lab.rawName}(${this.lab.lab}${this.lab.alpha || ""}${(
             this.lab.extraArgs || []
         ).join("")})`
     }
 
     protected newColord(): Colord | null {
         const lab = this.lab
-        if (lab.valid) {
+        if (lab.complete) {
             return parseColord({
-                l: lab.lightness.value.number,
-                a: lab.a.value.number,
-                b: lab.b.value.number,
+                l: lab.lab.value.lightness.number,
+                a: lab.lab.value.a.number,
+                b: lab.lab.value.b.number,
                 alpha: lab.alpha?.value ?? undefined,
             })
         }
@@ -62,22 +63,24 @@ export class ColorFromLab extends AbsColor {
     }
 }
 
+export type LabValue = {
+    lightness: NumberWithUnit<"%">
+    a: NumberWithUnit<"">
+    b: NumberWithUnit<"">
+}
+
 export type LabData = {
-    valid: true
+    complete: true
     rawName: string
-    lightness: NumberWithUnitValid<"%">
-    a: NumberWithUnitValid<"">
-    b: NumberWithUnitValid<"">
+    lab: ValuesArgumentComplete<LabValue>
     alpha: AlphaArgumentValid | null
     extraArgs?: undefined
 }
 
-export type InvalidLabData = {
-    valid: false
+export type IncompleteLabData = {
+    complete: false
     rawName: string
-    lightness: NumberWithUnit<"%"> | null
-    a: NumberWithUnit<""> | null
-    b: NumberWithUnit<""> | null
+    lab: ValuesArgument<LabValue>
     alpha: AlphaArgument | null
     extraArgs: FunctionArgument[]
 }
@@ -87,55 +90,51 @@ export type InvalidLabData = {
  */
 export function parseLab(
     input: string | postcssValueParser.Node,
-): LabData | InvalidLabData | null {
+): LabData | IncompleteLabData | null {
     const fn = parseFunction(input, "lab")
     if (fn == null) {
         return null
     }
 
-    let valid = true
-
     const values = parseArgumentValuesWithSpace(fn.arguments, {
-        units1: ["%"],
-        units2: [""],
-        units3: [""],
+        generate: (tokens): LabValue | null => {
+            if (tokens.length !== 3) {
+                return null
+            }
+            const lightness = parseNumberUnit(tokens[0], ["%"])
+            if (!isPercentRange(lightness)) {
+                return null
+            }
+            const a = parseNumberUnit(tokens[1], [""])
+            const b = parseNumberUnit(tokens[2], [""])
+            if (!a || !b) {
+                return null
+            }
+
+            return {
+                lightness,
+                a,
+                b,
+            }
+        },
     })
 
-    const lightness = values?.value1 ?? null
-    if (!isPercentRange(lightness)) {
-        valid = false
-    }
-    const a = values?.value2 ?? null
-    const b = values?.value3 ?? null
-    const alpha = values?.alpha ?? null
+    const lab = values.values
+    const alpha = values.alpha
 
-    if (
-        valid &&
-        lightness &&
-        lightness.valid &&
-        a &&
-        a.valid &&
-        b &&
-        b.valid &&
-        (!alpha || alpha.valid) &&
-        fn.arguments.length === 0
-    ) {
+    if (lab.complete && (!alpha || alpha.valid) && fn.arguments.length === 0) {
         return {
-            valid: true,
+            complete: true,
             rawName: fn.rawName,
-            lightness,
-            a,
-            b,
+            lab,
             alpha,
         }
     }
 
     return {
-        valid: false,
+        complete: false,
         rawName: fn.rawName,
-        lightness,
-        a,
-        b,
+        lab,
         alpha,
         extraArgs: fn.arguments,
     }

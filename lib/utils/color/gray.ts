@@ -7,27 +7,28 @@ import type {
     AlphaArgumentValid,
     FunctionArgument,
     NumberWithUnit,
-    NumberWithUnitValid,
-} from "./data"
+    ValuesArgument,
+    ValuesArgumentComplete,
+} from "./parser"
 import {
+    parseArgumentValues,
     isPercentRange,
-    parseAlphaArgument,
     parseFunction,
     parseNumberUnit,
 } from "./parser"
 
 export class ColorFromGray extends AbsColor {
-    private readonly gray: GrayData | InvalidGrayData
+    private readonly gray: GrayData | IncompleteGrayData
 
-    public constructor(gray: GrayData | InvalidGrayData) {
+    public constructor(gray: GrayData | IncompleteGrayData) {
         super()
         this.gray = gray
     }
 
     public readonly type = "gray"
 
-    public isValid(): boolean {
-        return (this.gray.valid && this.getColord()?.isValid()) || false
+    public isComplete(): boolean {
+        return (this.gray.complete && this.getColord()?.isValid()) || false
     }
 
     public getAlpha(): number | null {
@@ -42,14 +43,14 @@ export class ColorFromGray extends AbsColor {
     }
 
     public toColorString(): string {
-        return `${this.gray.rawName}(${this.gray.lightness || ""}${
+        return `${this.gray.rawName}(${this.gray.lightness}${
             this.gray.alpha || ""
         }${(this.gray.extraArgs || []).join("")})`
     }
 
     protected newColord(): Colord | null {
         const gray = this.gray
-        if (gray.valid) {
+        if (gray.complete) {
             return parseColord({
                 l: gray.lightness.value.number,
                 a: 0,
@@ -61,18 +62,19 @@ export class ColorFromGray extends AbsColor {
     }
 }
 
+export type LightnessValue = NumberWithUnit<"" | "%">
 export type GrayData = {
-    valid: true
+    complete: true
     rawName: string
-    lightness: NumberWithUnitValid<"" | "%">
+    lightness: ValuesArgumentComplete<LightnessValue>
     alpha: AlphaArgumentValid | null
     extraArgs?: undefined
 }
 
-export type InvalidGrayData = {
-    valid: false
+export type IncompleteGrayData = {
+    complete: false
     rawName: string
-    lightness: NumberWithUnit<"" | "%"> | null
+    lightness: ValuesArgument<LightnessValue>
     alpha: AlphaArgument | null
     extraArgs: FunctionArgument[]
 }
@@ -82,29 +84,36 @@ export type InvalidGrayData = {
  */
 export function parseGray(
     input: string | postcssValueParser.Node,
-): GrayData | InvalidGrayData | null {
+): GrayData | IncompleteGrayData | null {
     const fn = parseFunction(input, "gray")
     if (fn == null) {
         return null
     }
 
-    let valid = true
+    const values = parseArgumentValues(fn.arguments, {
+        argCount: 1,
+        generate: (tokens): LightnessValue | null => {
+            if (tokens.length !== 1) {
+                return null
+            }
+            const lightness = parseNumberUnit(tokens[0], ["", "%"])
+            if (!isPercentRange(lightness)) {
+                return null
+            }
 
-    const lightness = parseNumberUnit(fn.arguments.shift(), ["", "%"])
-    if (!isPercentRange(lightness)) {
-        valid = false
-    }
-    const alpha = parseAlphaArgument(fn.arguments, ["/", ","])
+            return lightness
+        },
+    })
+    const lightness = values.values
+    const alpha = values.alpha
 
     if (
-        valid &&
-        lightness &&
-        lightness.valid &&
+        lightness.complete &&
         (!alpha || alpha.valid) &&
         fn.arguments.length === 0
     ) {
         return {
-            valid: true,
+            complete: true,
             rawName: fn.rawName,
             lightness,
             alpha,
@@ -112,7 +121,7 @@ export function parseGray(
     }
 
     return {
-        valid: false,
+        complete: false,
         rawName: fn.rawName,
         lightness,
         alpha,
