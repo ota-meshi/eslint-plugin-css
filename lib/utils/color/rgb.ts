@@ -7,32 +7,44 @@ import type {
     AlphaArgumentValid,
     FunctionArgument,
     NumberWithUnit,
-    NumberWithUnitValid,
-    NumberWithUnitWithComma,
-    NumberWithUnitWithCommaValid,
-} from "./data"
-import { isPercentRange, parseArgumentValues, parseFunction } from "./parser"
+    ValuesArgument,
+    ValuesArgumentComplete,
+} from "./parser"
+import {
+    parseNumberUnit,
+    isPercentRange,
+    parseArgumentValues,
+    parseFunction,
+} from "./parser"
 
 export class ColorFromRgb extends AbsColor {
-    private readonly rgb: RgbData | InvalidRgbData
+    private readonly rgb: RgbData | IncompleteRgbData
 
-    public constructor(rgb: RgbData | InvalidRgbData) {
+    public constructor(rgb: RgbData | IncompleteRgbData) {
         super()
         this.rgb = rgb
     }
 
     public readonly type = "rgb"
 
-    public getRgb(): { r: number | null; g: number | null; b: number | null } {
+    public getRgb(): {
+        r: number | null
+        g: number | null
+        b: number | null
+    } | null {
+        const rgb = this.rgb.rgb
+        if (!rgb.value) {
+            return null
+        }
         return {
-            r: this.parseColor(this.rgb.r),
-            g: this.parseColor(this.rgb.g),
-            b: this.parseColor(this.rgb.b),
+            r: this.parseColor(rgb.value.r),
+            g: this.parseColor(rgb.value.g),
+            b: this.parseColor(rgb.value.b),
         }
     }
 
-    public isValid(): boolean {
-        return (this.rgb.valid && this.getColord()?.isValid()) || false
+    public isComplete(): boolean {
+        return (this.rgb.complete && this.getColord()?.isValid()) || false
     }
 
     public getAlpha(): number | null {
@@ -48,14 +60,14 @@ export class ColorFromRgb extends AbsColor {
     }
 
     public toColorString(): string {
-        return `${this.rgb.rawName}(${this.rgb.r || ""}${this.rgb.g || ""}${
-            this.rgb.b || ""
-        }${this.rgb.alpha || ""}${(this.rgb.extraArgs || []).join("")})`
+        return `${this.rgb.rawName}(${this.rgb.rgb}${this.rgb.alpha || ""}${(
+            this.rgb.extraArgs || []
+        ).join("")})`
     }
 
     protected newColord(): Colord | null {
         const rgb = this.getRgb()
-        if (rgb.r != null && rgb.g != null && rgb.b != null) {
+        if (rgb && rgb.r != null && rgb.g != null && rgb.b != null) {
             const base = {
                 r: rgb.r * 255,
                 g: rgb.g * 255,
@@ -72,17 +84,11 @@ export class ColorFromRgb extends AbsColor {
         return null
     }
 
-    private parseColor(
-        value?:
-            | NumberWithUnit<"" | "%">
-            | NumberWithUnitWithComma<"" | "%">
-            | null,
-    ) {
-        if (!value || !value.valid) {
+    private parseColor(value?: NumberWithUnit<"" | "%"> | null) {
+        if (!value) {
             return null
         }
-        const v = value.value
-        const num = v.unit === "%" ? v.number / 100 : v.number / 255
+        const num = value.unit === "%" ? value.number / 100 : value.number / 255
         if (0 <= num && num <= 1) {
             return num
         }
@@ -90,38 +96,26 @@ export class ColorFromRgb extends AbsColor {
     }
 }
 
-export type BaseRgbDataValid<U extends "" | "%"> = {
-    valid: true
-    rawName: string
+export type RgbValue<U extends "" | "%"> = {
+    r: NumberWithUnit<U>
+    g: NumberWithUnit<U>
+    b: NumberWithUnit<U>
     unit: U
-    r: NumberWithUnitValid<U>
-    g: NumberWithUnitValid<U> | NumberWithUnitWithCommaValid<U>
-    b: NumberWithUnitValid<U> | NumberWithUnitWithCommaValid<U>
+}
+
+export type RgbDataValid<U extends "" | "%"> = {
+    complete: true
+    rawName: string
+    rgb: ValuesArgumentComplete<RgbValue<U>>
     alpha: AlphaArgumentValid | null
     extraArgs?: undefined
 }
-export type RgbDataStandard<U extends "" | "%"> = BaseRgbDataValid<U> & {
-    type: "standard"
-    g: NumberWithUnitValid<U>
-    b: NumberWithUnitValid<U>
-}
-export type RgbDataWithComma<U extends "" | "%"> = BaseRgbDataValid<U> & {
-    type: "with-comma"
-    g: NumberWithUnitWithCommaValid<U>
-    b: NumberWithUnitWithCommaValid<U>
-}
-export type RgbData =
-    | RgbDataStandard<"">
-    | RgbDataWithComma<"">
-    | RgbDataStandard<"%">
-    | RgbDataWithComma<"%">
+export type RgbData = RgbDataValid<""> | RgbDataValid<"%">
 
-export type InvalidRgbData = {
-    valid: false
+export type IncompleteRgbData = {
+    complete: false
     rawName: string
-    r: NumberWithUnit<"" | "%"> | null
-    g: NumberWithUnit<"" | "%"> | NumberWithUnitWithComma<"" | "%"> | null
-    b: NumberWithUnit<"" | "%"> | NumberWithUnitWithComma<"" | "%"> | null
+    rgb: ValuesArgument<RgbValue<"" | "%">>
     alpha: AlphaArgument | null
     extraArgs: FunctionArgument[]
 }
@@ -131,112 +125,64 @@ export type InvalidRgbData = {
  */
 export function parseRgb(
     input: string | postcssValueParser.Node,
-): RgbData | InvalidRgbData | null {
+): RgbData | IncompleteRgbData | null {
     const fn = parseFunction(input, ["rgb", "rgba"])
     if (fn == null) {
         return null
     }
 
-    let valid = true
-
     const values = parseArgumentValues(fn.arguments, {
-        units1: ["", "%"],
-        units2: ["", "%"],
-        units3: ["", "%"],
+        argCount: 3,
+        generate: (tokens): RgbValue<""> | RgbValue<"%"> | null => {
+            if (tokens.length !== 3) {
+                return null
+            }
+            const r = parseNumberUnit(tokens[0], ["", "%"])
+            if (!isValidColor(r)) {
+                return null
+            }
+            const g = parseNumberUnit(tokens[1], [r.unit])
+            const b = parseNumberUnit(tokens[2], [r.unit])
+            if (!isValidColor(g) || !isValidColor(b)) {
+                return null
+            }
+
+            return {
+                r,
+                g,
+                b,
+                unit: r.unit,
+            } as RgbValue<""> | RgbValue<"%">
+        },
     })
-    const r = values?.value1 ?? null
-    const g = values?.value2 ?? null
-    const b = values?.value3 ?? null
-    if (!isValidColor(r) || !isValidColor(g) || !isValidColor(b)) {
-        valid = false
-    }
-    const alpha = values?.alpha ?? null
-    if (
-        valid &&
-        r &&
-        r.valid &&
-        g &&
-        g.valid &&
-        b &&
-        b.valid &&
-        (!alpha || alpha.valid) &&
-        fn.arguments.length === 0
-    ) {
-        const result = genMaybeValid(fn.rawName, r.value.unit, r, g, b, alpha)
-        if (result) {
-            return result
-        }
+    const rgb = values.values
+    const alpha = values.alpha
+    if (rgb.complete && (!alpha || alpha.valid) && fn.arguments.length === 0) {
+        return {
+            complete: true,
+            rawName: fn.rawName,
+            rgb,
+            alpha,
+        } as RgbData
     }
 
     return {
-        valid: false,
+        complete: false,
         rawName: fn.rawName,
-        r,
-        g,
-        b,
+        rgb,
         alpha,
         extraArgs: fn.arguments,
     }
 }
 
 /** Checks wether given node is in valid color range. */
-function genMaybeValid<U extends "" | "%">(
-    rawName: string,
-    unit: U,
-    r: NumberWithUnitValid<"" | "%">,
-    g: NumberWithUnitValid<"" | "%"> | NumberWithUnitWithCommaValid<"" | "%">,
-    b: NumberWithUnitValid<"" | "%"> | NumberWithUnitWithCommaValid<"" | "%">,
-    alpha: AlphaArgumentValid | null,
-): RgbData | null {
-    const uniUnit = unit as "%"
-    if (isUnitEq(r, uniUnit) && isUnitEq(g, uniUnit) && isUnitEq(b, uniUnit)) {
-        if (!g.withComma && !b.withComma) {
-            return {
-                valid: true,
-                rawName,
-                unit: uniUnit,
-                type: "standard",
-                r,
-                g,
-                b,
-                alpha,
-            }
-        }
-        if (g.withComma && b.withComma) {
-            return {
-                valid: true,
-                rawName,
-                unit: uniUnit,
-                type: "with-comma",
-                r,
-                g,
-                b,
-                alpha,
-            }
-        }
+function isValidColor<U extends "" | "%">(
+    node: NumberWithUnit<U> | null,
+): node is NumberWithUnit<U> {
+    if (!node) {
+        return false
     }
-    return null
-}
-
-/** Checks wether given node have given unit. */
-function isUnitEq<U extends "" | "%">(
-    node:
-        | NumberWithUnitValid<"" | "%">
-        | NumberWithUnitWithCommaValid<"" | "%">,
-    unit: U,
-): node is NumberWithUnitValid<U> | NumberWithUnitWithCommaValid<U> {
-    return unit === node.value.unit
-}
-
-/** Checks wether given node is in valid color range. */
-function isValidColor(
-    node: NumberWithUnit<"" | "%"> | NumberWithUnitWithComma<"" | "%"> | null,
-): boolean {
-    return Boolean(
-        node &&
-            node.value &&
-            (node.value.unit === "%"
-                ? isPercentRange(node)
-                : node.value.number >= 0 && node.value.number <= 255),
-    )
+    return node.unit === "%"
+        ? isPercentRange(node)
+        : node.number >= 0 && node.number <= 255
 }

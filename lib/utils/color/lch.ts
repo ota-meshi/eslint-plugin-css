@@ -7,26 +7,28 @@ import type {
     AlphaArgumentValid,
     FunctionArgument,
     NumberWithUnit,
-    NumberWithUnitValid,
-} from "./data"
+    ValuesArgument,
+    ValuesArgumentComplete,
+} from "./parser"
 import {
+    parseNumberUnit,
     isPercentRange,
     parseArgumentValuesWithSpace,
     parseFunction,
 } from "./parser"
 
 export class ColorFromLch extends AbsColor {
-    private readonly lch: LchData | InvalidLchData
+    private readonly lch: LchData | IncompleteLchData
 
-    public constructor(lch: LchData | InvalidLchData) {
+    public constructor(lch: LchData | IncompleteLchData) {
         super()
         this.lch = lch
     }
 
     public readonly type = "lch"
 
-    public isValid(): boolean {
-        return (this.lch.valid && this.getColord()?.isValid()) || false
+    public isComplete(): boolean {
+        return (this.lch.complete && this.getColord()?.isValid()) || false
     }
 
     public getAlpha(): number | null {
@@ -41,9 +43,7 @@ export class ColorFromLch extends AbsColor {
     }
 
     public toColorString(): string {
-        return `${this.lch.rawName}(${this.lch.lightness || ""}${
-            this.lch.chroma || ""
-        }${this.lch.hue || ""}${this.lch.alpha || ""}${(
+        return `${this.lch.rawName}(${this.lch.lch}${this.lch.alpha || ""}${(
             this.lch.extraArgs || []
         ).join("")})`
     }
@@ -52,22 +52,24 @@ export class ColorFromLch extends AbsColor {
         return parseColord(this.toColorString())
     }
 }
+
+export type LchValue = {
+    lightness: NumberWithUnit<"%">
+    chroma: NumberWithUnit<"">
+    hue: NumberWithUnit<"" | "deg" | "rad" | "grad" | "turn">
+}
 export type LchData = {
-    valid: true
+    complete: true
     rawName: string
-    lightness: NumberWithUnitValid<"%">
-    chroma: NumberWithUnitValid<"">
-    hue: NumberWithUnitValid<"" | "deg" | "rad" | "grad" | "turn">
+    lch: ValuesArgumentComplete<LchValue>
     alpha: AlphaArgumentValid | null
     extraArgs?: undefined
 }
 
-export type InvalidLchData = {
-    valid: false
+export type IncompleteLchData = {
+    complete: false
     rawName: string
-    lightness: NumberWithUnit<"%"> | null
-    chroma: NumberWithUnit<""> | null
-    hue: NumberWithUnit<"" | "deg" | "rad" | "grad" | "turn"> | null
+    lch: ValuesArgument<LchValue>
     alpha: AlphaArgument | null
     extraArgs: FunctionArgument[]
 }
@@ -77,54 +79,56 @@ export type InvalidLchData = {
  */
 export function parseLch(
     input: string | postcssValueParser.Node,
-): LchData | InvalidLchData | null {
+): LchData | IncompleteLchData | null {
     const fn = parseFunction(input, "lch")
     if (fn == null) {
         return null
     }
 
-    let valid = true
-
     const values = parseArgumentValuesWithSpace(fn.arguments, {
-        units1: ["%"],
-        units2: [""],
-        units3: ["", "deg", "rad", "grad", "turn"],
-    })
-    const lightness = values?.value1 ?? null
-    if (!isPercentRange(lightness)) {
-        valid = false
-    }
-    const chroma = values?.value2 ?? null
-    const hue = values?.value3 ?? null
-    const alpha = values?.alpha ?? null
+        generate: (tokens): LchValue | null => {
+            if (tokens.length !== 3) {
+                return null
+            }
+            const lightness = parseNumberUnit(tokens[0], ["%"])
+            if (!isPercentRange(lightness)) {
+                return null
+            }
+            const chroma = parseNumberUnit(tokens[1], [""])
+            const hue = parseNumberUnit(tokens[2], [
+                "",
+                "deg",
+                "rad",
+                "grad",
+                "turn",
+            ])
+            if (!chroma || !hue) {
+                return null
+            }
 
-    if (
-        valid &&
-        lightness &&
-        lightness.valid &&
-        chroma &&
-        chroma.valid &&
-        hue &&
-        hue.valid &&
-        (!alpha || alpha.valid) &&
-        fn.arguments.length === 0
-    ) {
+            return {
+                lightness,
+                chroma,
+                hue,
+            }
+        },
+    })
+    const lch = values.values
+    const alpha = values.alpha
+
+    if (lch.complete && (!alpha || alpha.valid) && fn.arguments.length === 0) {
         return {
-            valid: true,
+            complete: true,
             rawName: fn.rawName,
-            lightness,
-            chroma,
-            hue,
+            lch,
             alpha,
         }
     }
 
     return {
-        valid: false,
+        complete: false,
         rawName: fn.rawName,
-        lightness,
-        chroma,
-        hue,
+        lch,
         alpha,
         extraArgs: fn.arguments,
     }

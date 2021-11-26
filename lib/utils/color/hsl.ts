@@ -7,24 +7,28 @@ import type {
     AlphaArgumentValid,
     FunctionArgument,
     NumberWithUnit,
-    NumberWithUnitValid,
-    NumberWithUnitWithComma,
-    NumberWithUnitWithCommaValid,
-} from "./data"
-import { isPercentRange, parseArgumentValues, parseFunction } from "./parser"
+    ValuesArgument,
+    ValuesArgumentComplete,
+} from "./parser"
+import {
+    isPercentRange,
+    parseArgumentValues,
+    parseFunction,
+    parseNumberUnit,
+} from "./parser"
 
 export class ColorFromHsl extends AbsColor {
-    private readonly hsl: HslData | InvalidHslData
+    private readonly hsl: HslData | IncompleteHslData
 
-    public constructor(hsl: HslData | InvalidHslData) {
+    public constructor(hsl: HslData | IncompleteHslData) {
         super()
         this.hsl = hsl
     }
 
     public readonly type = "hsl"
 
-    public isValid(): boolean {
-        return (this.hsl.valid && this.getColord()?.isValid()) || false
+    public isComplete(): boolean {
+        return (this.hsl.complete && this.getColord()?.isValid()) || false
     }
 
     public getAlpha(): number | null {
@@ -40,9 +44,7 @@ export class ColorFromHsl extends AbsColor {
     }
 
     public toColorString(): string {
-        return `${this.hsl.rawName}(${this.hsl.hue || ""}${
-            this.hsl.saturation || ""
-        }${this.hsl.lightness || ""}${this.hsl.alpha || ""}${(
+        return `${this.hsl.rawName}(${this.hsl.hsl}${this.hsl.alpha || ""}${(
             this.hsl.extraArgs || []
         ).join("")})`
     }
@@ -51,33 +53,25 @@ export class ColorFromHsl extends AbsColor {
         return parseColord(this.toColorString())
     }
 }
-export type BaseHslDataValid = {
-    valid: true
+
+export type HslValue = {
+    hue: NumberWithUnit<"" | "deg" | "rad" | "grad" | "turn">
+    saturation: NumberWithUnit<"%">
+    lightness: NumberWithUnit<"%">
+}
+
+export type HslData = {
+    complete: true
     rawName: string
-    hue: NumberWithUnitValid<"" | "deg" | "rad" | "grad" | "turn">
-    saturation: NumberWithUnitValid<"%"> | NumberWithUnitWithCommaValid<"%">
-    lightness: NumberWithUnitValid<"%"> | NumberWithUnitWithCommaValid<"%">
+    hsl: ValuesArgumentComplete<HslValue>
     alpha: AlphaArgumentValid | null
     extraArgs?: undefined
 }
-export type HslDataStandard = BaseHslDataValid & {
-    type: "standard"
-    saturation: NumberWithUnitValid<"%">
-    lightness: NumberWithUnitValid<"%">
-}
-export type HslDataWithComma = BaseHslDataValid & {
-    type: "with-comma"
-    saturation: NumberWithUnitWithCommaValid<"%">
-    lightness: NumberWithUnitWithCommaValid<"%">
-}
-export type HslData = HslDataStandard | HslDataWithComma
 
-export type InvalidHslData = {
-    valid: false
+export type IncompleteHslData = {
+    complete: false
     rawName: string
-    hue: NumberWithUnit<"" | "deg" | "rad" | "grad" | "turn"> | null
-    saturation: NumberWithUnit<"%"> | NumberWithUnitWithComma<"%"> | null
-    lightness: NumberWithUnit<"%"> | NumberWithUnitWithComma<"%"> | null
+    hsl: ValuesArgument<HslValue>
     alpha: AlphaArgument | null
     extraArgs: FunctionArgument[]
 }
@@ -87,69 +81,59 @@ export type InvalidHslData = {
  */
 export function parseHsl(
     input: string | postcssValueParser.Node,
-): HslData | InvalidHslData | null {
+): HslData | IncompleteHslData | null {
     const fn = parseFunction(input, ["hsl", "hsla"])
     if (fn == null) {
         return null
     }
 
-    let valid = true
-
     const values = parseArgumentValues(fn.arguments, {
-        units1: ["", "deg", "rad", "grad", "turn"],
-        units2: ["%"],
-        units3: ["%"],
+        argCount: 3,
+        generate: (tokens): HslValue | null => {
+            if (tokens.length !== 3) {
+                return null
+            }
+            const hue = parseNumberUnit(tokens[0], [
+                "",
+                "deg",
+                "rad",
+                "grad",
+                "turn",
+            ])
+            const saturation = parseNumberUnit(tokens[1], ["%"])
+            const lightness = parseNumberUnit(tokens[2], ["%"])
+            if (
+                !hue ||
+                !isPercentRange(saturation) ||
+                !isPercentRange(lightness)
+            ) {
+                return null
+            }
+
+            return {
+                hue,
+                saturation,
+                lightness,
+            }
+        },
     })
 
-    const hue = values?.value1 ?? null
-    const saturation = values?.value2 ?? null
-    const lightness = values?.value3 ?? null
-    if (!isPercentRange(saturation) || !isPercentRange(lightness)) {
-        valid = false
-    }
-    const alpha = values?.alpha ?? null
+    const hsl = values.values
+    const alpha = values.alpha
 
-    if (
-        valid &&
-        hue &&
-        hue.valid &&
-        saturation &&
-        saturation.valid &&
-        lightness &&
-        lightness.valid &&
-        (!alpha || alpha.valid) &&
-        fn.arguments.length === 0
-    ) {
-        if (!saturation.withComma && !lightness.withComma) {
-            return {
-                valid: true,
-                rawName: fn.rawName,
-                type: "standard",
-                hue,
-                saturation,
-                lightness,
-                alpha,
-            }
-        }
-        if (saturation.withComma && lightness.withComma) {
-            return {
-                valid: true,
-                rawName: fn.rawName,
-                type: "with-comma",
-                hue,
-                saturation,
-                lightness,
-                alpha,
-            }
+    if (hsl.complete && (!alpha || alpha.valid) && fn.arguments.length === 0) {
+        return {
+            complete: true,
+            rawName: fn.rawName,
+            hsl,
+            alpha,
         }
     }
 
     return {
-        valid: false,
+        complete: false,
         rawName: fn.rawName,
-        hue,
-        saturation,
-        lightness,
+        hsl,
         alpha,
         extraArgs: fn.arguments,
     }
