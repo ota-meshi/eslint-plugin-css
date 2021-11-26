@@ -84,10 +84,7 @@ export class ColorFromRgb extends AbsColor {
         return null
     }
 
-    private parseColor(value?: NumberWithUnit<"" | "%"> | null) {
-        if (!value) {
-            return null
-        }
+    private parseColor(value: NumberWithUnit<"" | "%">) {
         const num = value.unit === "%" ? value.number / 100 : value.number / 255
         if (0 <= num && num <= 1) {
             return num

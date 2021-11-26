@@ -230,6 +230,29 @@ tester.run("no-useless-color-alpha", rule as any, {
             ],
         },
         {
+            filename: "test.vue",
+            code: `
+            <template>
+                <div :style="{
+                    color: 'lch(29.2345% 44.2 27/100%)',
+                    backgroundColor: 'lch(29.2345% 44.2 27/99%)',
+                }"/>
+            </template>
+            `,
+            output: `
+            <template>
+                <div :style="{
+                    color: 'lch(29.2345% 44.2 27)',
+                    backgroundColor: 'lch(29.2345% 44.2 27/99%)',
+                }"/>
+            </template>
+            `,
+            parser: require.resolve("vue-eslint-parser"),
+            errors: [
+                "The alpha value is 100% and does not need to be specified.",
+            ],
+        },
+        {
             code: `
             var a = <div style={
                 {
