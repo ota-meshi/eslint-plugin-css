@@ -29,6 +29,35 @@ tester.run("no-unknown-unit", rule as any, {
             `,
             parser: require.resolve("vue-eslint-parser"),
         },
+        {
+            code: `
+            var a = <div style={
+                {
+                    height: '10pixels'
+                }
+            } />
+            `,
+            options: [{ ignoreUnits: ["pixels"] }],
+        },
+        {
+            code: `
+            var a = <div style={
+                {
+                    height: 'calc(10pixels)'
+                }
+            } />
+            `,
+            options: [{ ignoreFunctions: ["calc"] }],
+        },
+        // ignore image-resolution, image-set
+        `
+        var a = <div style={
+            {
+                'image-resolution': '1x',
+                'background-image': "image-set('img-1x.jpg' 1x, 'img-2x.jpg' 2x, 'img-3x.jpg' 3x)"
+            }
+        } />
+        `,
     ],
     invalid: [
         {
@@ -66,6 +95,21 @@ tester.run("no-unknown-unit", rule as any, {
                     column: 30,
                     endLine: 4,
                     endColumn: 38,
+                },
+            ],
+        },
+        {
+            code: `
+            var a = <div style={
+                {
+                    height: 'calc(10pixels)'
+                }
+            } />
+            `,
+            errors: [
+                {
+                    message: "Unexpected unknown unit 'pixels'.",
+                    line: 4,
                 },
             ],
         },

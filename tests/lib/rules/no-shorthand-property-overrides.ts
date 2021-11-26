@@ -30,6 +30,22 @@ tester.run("no-shorthand-property-overrides", rule as any, {
             `,
             parser: require.resolve("vue-eslint-parser"),
         },
+        `
+        // @css
+        var a = {
+                'background-repeat': 'repeat',
+                [background]: 'green',
+            }
+        `,
+        `
+        // @css
+        var a = {
+                'background-repeat': 'repeat',
+                foo: {
+                    background: 'green'
+                }
+            }
+        `,
     ],
     invalid: [
         {
@@ -67,6 +83,25 @@ tester.run("no-shorthand-property-overrides", rule as any, {
                         "Unexpected shorthand 'background' after 'backgroundRepeat'.",
                     line: 5,
                     column: 21,
+                },
+            ],
+        },
+        {
+            code: `
+            // @css
+            var a = {
+                    'background-repeat': 'repeat',
+                    background: 'green',
+                    foo: {
+                        background: 'green'
+                    }
+                }
+            `,
+            errors: [
+                {
+                    message:
+                        "Unexpected shorthand 'background' after 'background-repeat'.",
+                    line: 5,
                 },
             ],
         },

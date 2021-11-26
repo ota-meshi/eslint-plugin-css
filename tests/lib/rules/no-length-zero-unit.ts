@@ -29,20 +29,32 @@ tester.run("no-length-zero-unit", rule as any, {
             `,
             parser: require.resolve("vue-eslint-parser"),
         },
+        {
+            code: `
+            var a = <div style={
+                {
+                    transform: 'translate(120px, 0px)'
+                }
+            } />
+            `,
+            options: [{ ignoreFunctions: ["translate"] }],
+        },
     ],
     invalid: [
         {
             code: `
             var a = <div style={
                 {
-                    top: '0px'
+                    top: '0px',
+                    left: '0px',
                 }
             } />
             `,
             output: `
             var a = <div style={
                 {
-                    top: '0'
+                    top: '0',
+                    left: '0',
                 }
             } />
             `,
@@ -53,6 +65,13 @@ tester.run("no-length-zero-unit", rule as any, {
                     column: 28,
                     endLine: 4,
                     endColumn: 30,
+                },
+                {
+                    message: "Unexpected unit.",
+                    line: 5,
+                    column: 29,
+                    endLine: 5,
+                    endColumn: 31,
                 },
             ],
         },
@@ -80,6 +99,53 @@ tester.run("no-length-zero-unit", rule as any, {
                     column: 28,
                     endLine: 4,
                     endColumn: 30,
+                },
+            ],
+        },
+        {
+            code: `
+            var a = <div style={
+                {
+                    top: '0px',
+                    left: '0px',
+                }
+            } />
+            `,
+            output: `
+            var a = <div style={
+                {
+                    top: '0px',
+                    left: '0',
+                }
+            } />
+            `,
+            options: [{ ignoreProperties: ["top"] }],
+            errors: [
+                {
+                    message: "Unexpected unit.",
+                    line: 5,
+                },
+            ],
+        },
+        {
+            code: `
+            var a = <div style={
+                {
+                    transform: 'translate(120px, 0px)'
+                }
+            } />
+            `,
+            output: `
+            var a = <div style={
+                {
+                    transform: 'translate(120px, 0)'
+                }
+            } />
+            `,
+            errors: [
+                {
+                    message: "Unexpected unit.",
+                    line: 4,
                 },
             ],
         },

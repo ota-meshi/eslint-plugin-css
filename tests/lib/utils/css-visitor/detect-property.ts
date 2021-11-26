@@ -175,6 +175,43 @@ const TESTS = [
         keys: ["width", "height"],
         values: ["42=42", "v=101"],
     },
+    {
+        code: `
+        const v = v
+        const jsx = <div
+            style={ {...v} }
+        />`,
+        keys: [],
+        values: [],
+    },
+    {
+        code: `
+        const v = v
+        const jsx = <div
+            style={ { height: v } }
+        />`,
+        keys: ["height"],
+        values: [],
+    },
+    {
+        code: `
+        var v = {width: 42}
+        var v = {height: 42}
+        const jsx = <div
+            style={ {...v} }
+        />`,
+        keys: [],
+        values: [],
+    },
+    {
+        code: `
+        let v = {width: 42}
+        const jsx = <div
+            style={ {...v} }
+        />`,
+        keys: [],
+        values: [],
+    },
 ]
 
 describe("detect CSS properties", () => {

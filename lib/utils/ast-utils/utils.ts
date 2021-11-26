@@ -39,12 +39,12 @@ export function findVariable(
 /**
  * Get the value of a given node if it's a constant of string.
  */
-export function getStringIfConstant(
-    context: Rule.RuleContext,
-    node: Node,
-): string | null {
-    return eslintUtils.getStringIfConstant(node, getScope(context, node))
-}
+// export function getStringIfConstant(
+//     context: Rule.RuleContext,
+//     node: Node,
+// ): string | null {
+//     return eslintUtils.getStringIfConstant(node, getScope(context, node))
+// }
 
 /**
  * Get the property name of a given nodes.
