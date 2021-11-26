@@ -7,15 +7,13 @@ export class FunctionArgument {
     public readonly node: postcssValueParser.Node
 
     public constructor(
-        before: postcssValueParser.Node[],
+        before: string,
         node: postcssValueParser.Node,
-        after?: postcssValueParser.Node[],
+        after?: string,
     ) {
         this.raws = {
-            before: before.map((n) => postcssValueParser.stringify(n)).join(""),
-            after:
-                after?.map((n) => postcssValueParser.stringify(n)).join("") ||
-                "",
+            before,
+            after: after || "",
         }
         this.node = node
     }
@@ -117,22 +115,22 @@ export function parseFunction(
         return null
     }
     const argumentList: {
-        before: postcssValueParser.Node[]
+        before: string
         node: postcssValueParser.Node
-        after?: postcssValueParser.Node[]
+        after?: string
     }[] = []
-    let before: postcssValueParser.Node[] = []
+    let before = node.before
     for (const argNode of node.nodes) {
         if (argNode.type !== "comment" && argNode.type !== "space") {
             argumentList.push({ before, node: argNode })
-            before = []
+            before = ""
         } else {
-            before.push(argNode)
+            before += postcssValueParser.stringify(argNode)
         }
     }
 
-    if (before.length > 0 && argumentList.length > 0) {
-        argumentList[argumentList.length - 1].after = before
+    if (argumentList.length > 0) {
+        argumentList[argumentList.length - 1].after = `${before}${node.after}`
     }
     return {
         rawName: node.value,
@@ -169,23 +167,7 @@ export function parseNumberUnit<U extends Unit>(
 }
 
 /** Parse alpha arguments */
-export function parseAlphaArgument(
-    functionArguments: FunctionArgument[],
-    divMarks: string[],
-): AlphaArgument | null {
-    if (functionArguments.length < 1) {
-        return null
-    }
-    const div = functionArguments.shift()!
-    if (!divMarks.includes(div.node.value)) {
-        functionArguments.unshift(div)
-        return null
-    }
-    return parseAlphaArgument0(div, functionArguments)
-}
-
-/** Parse alpha arguments */
-function parseAlphaArgument0(
+function parseAlphaArgument(
     div: FunctionArgument,
     functionArguments: FunctionArgument[],
 ): AlphaArgument {
@@ -195,14 +177,14 @@ function parseAlphaArgument0(
         return new AlphaArgumentInvalid(div, tokens, null)
     }
     tokens.push(alphaNode)
-    while (functionArguments.length) {
-        tokens.push(functionArguments.shift()!)
-    }
-    if (alphaNode.node.type !== "word") {
+    if (functionArguments.length) {
+        while (functionArguments.length) {
+            tokens.push(functionArguments.shift()!)
+        }
         return new AlphaArgumentInvalid(div, tokens, null)
     }
     const alphaData = parseNumberUnit(alphaNode, ["", "%"])
-    if (!alphaData || (alphaData.unit !== "" && alphaData.unit !== "%")) {
+    if (!alphaData) {
         return new AlphaArgumentInvalid(div, tokens, null)
     }
     const alphaValue = alphaData.number / (alphaData.unit === "%" ? 100 : 1)
@@ -267,7 +249,7 @@ export function parseArgumentValuesWithSpace<V>(
     while (functionArguments.length) {
         const token = functionArguments.shift()!
         if (token.node.value === "/") {
-            alpha = parseAlphaArgument0(token, functionArguments)
+            alpha = parseAlphaArgument(token, functionArguments)
             break
         }
         tokens.push(token)
@@ -305,7 +287,7 @@ export function parseArgumentValuesWithComma<V>(
         if (token.node.value === ",") {
             commaCount++
             if (commaCount >= option.argCount) {
-                alpha = parseAlphaArgument0(token, functionArguments)
+                alpha = parseAlphaArgument(token, functionArguments)
                 break
             }
         }

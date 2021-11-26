@@ -3,7 +3,15 @@ import { parseColor } from "../../../../lib/utils/color/index"
 
 const TESTS = [
     {
+        code: "rgb( 255 0 0 )",
+        output: "#ff0000",
+    },
+    {
         code: "rgb(255, 0, 0)",
+        output: "#ff0000",
+    },
+    {
+        code: "rgb(/*1*/255/*2*/, /*3*/0/*4*/,/*5*/ 0/*6*/)",
         output: "#ff0000",
     },
     {
@@ -19,6 +27,14 @@ const TESTS = [
         output: "#ff000080",
     },
     {
+        code: "rgb(255 0 0 / 50%)",
+        output: "#ff000080",
+    },
+    {
+        code: "rgb(255, 0 0)",
+        output: null,
+    },
+    {
         code: "rgb(255 0 0 .5)",
         output: null,
     },
@@ -32,6 +48,22 @@ const TESTS = [
     },
     {
         code: "rgb(101% 0% 0%)",
+        output: null,
+    },
+    {
+        code: "rgb(255 0 0 / )",
+        output: null,
+    },
+    {
+        code: "rgb(255 0 0 / .5 100%)",
+        output: null,
+    },
+    {
+        code: "rgb(255 0 0 / 30px)",
+        output: null,
+    },
+    {
+        code: "rgb(255 0 0 / 120%)",
         output: null,
     },
     {
@@ -69,6 +101,7 @@ describe("colord parseColor", () => {
         it(code, () => {
             const result = parseColor(code)
             assert.strictEqual(result.toHex(), output)
+            assert.strictEqual(result.toColorString(), code)
         })
     }
 })
