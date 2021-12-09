@@ -50,7 +50,7 @@
     "dependencies": {
         "colord": "^2.9.1",
         "eslint-utils": "^3.0.0",
-        "known-css-properties": "^0.23.0",
+        "known-css-properties": "^0.24.0",
         "postcss-value-parser": "^4.1.0"
     },
     "peerDependencies": {
