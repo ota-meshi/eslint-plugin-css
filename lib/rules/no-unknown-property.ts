@@ -1,6 +1,5 @@
 import type { CSSObjectContext, CSSVisitorHandlers } from "../utils"
 import { createRule, defineCSSVisitor } from "../utils"
-// @ts-expect-error -- ignore
 import { all as allKnownCSSProperties } from "known-css-properties"
 import { hasVendorPrefix } from "../utils/css-utils"
 import { toRegExp } from "../utils/regexp"
