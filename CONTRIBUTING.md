@@ -49,23 +49,23 @@ The following steps will walk you through the process of creating a new rule.
 
     Fill in the rule's meta information in the `meta` object. This includes a short description, its category, type, and more.
 
-    Note: Do not set `recommended: true`. This will add your rule to the `css/recommended` configuration. We view additions to the `css/recommended` configuration as breaking changes. If you want your rule to be included in the `css/recommended` configuration in the next major release, leave the generated TODO comment as is.
+    Note: Do not set `recommended: true` and  `standard: true`. This will add your rule to the `css/recommended` and `css/standard` configuration. We view additions to the configuration as breaking changes. If you want your rule to be included in the configuration in the next major release, leave the generated TODO comment as is.
 
     Once you added a short description and the category, run `npm run update`. This will update a few generated files to include your rule in the website and more.
 
-1.  Implement your rule:
+2.  Implement your rule:
 
     The `createVisitor` function will be where you implement your rule. The `cssContext` object contains information and methods that you will need for static analysis, reporting, and fixing. Use `messageId`s for report and suggestion messages.
 
     The [`no-length-zero-unit`](./lib/rules/no-length-zero-unit.ts) and [`no-number-trailing-zeros`](./lib/rules/no-number-trailing-zeros.ts) rules are good examples to see how we usually implement rules.
 
-1.  Test your rule:
+3.  Test your rule:
 
     Add test for every feature and option of your rule. (We use [ESLint's `RuleTester`](https://eslint.org/docs/developer-guide/nodejs-api#ruletester) for testing rules.)
 
     Use `npm test` to run all tests.
 
-1.  Document your rule:
+4.  Document your rule:
 
     The documentation should contain a description of the rule and the problem it detects/solves, examples, all features, all options, and any additional information relevant to the rule.
 

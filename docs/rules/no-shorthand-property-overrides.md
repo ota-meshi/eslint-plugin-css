@@ -9,7 +9,7 @@ since: "v0.3.0"
 
 > disallow shorthand properties that override related longhand properties
 
-- :gear: This rule is included in `"plugin:css/recommended"`.
+- :gear: This rule is included in `"plugin:css/recommended"` and `"plugin:css/standard"`.
 
 ## :book: Rule Details
 

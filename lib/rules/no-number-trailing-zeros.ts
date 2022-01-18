@@ -7,6 +7,7 @@ export default createRule("no-number-trailing-zeros", {
             description: "disallow trailing zeros in numbers.",
             category: "Stylistic Issues",
             recommended: false,
+            standard: true,
             stylelint: "number-no-trailing-zeros",
         },
         fixable: "code",

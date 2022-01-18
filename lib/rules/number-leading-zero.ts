@@ -8,6 +8,7 @@ export default createRule("number-leading-zero", {
                 "require or disallow a leading zero for fractional numbers less than 1",
             category: "Stylistic Issues",
             recommended: false,
+            standard: true,
             stylelint: "number-leading-zero",
         },
         fixable: "code",

@@ -67,7 +67,13 @@ class DocFile {
             meta: {
                 fixable,
                 deprecated,
-                docs: { ruleId, description, recommended, replacedBy },
+                docs: {
+                    ruleId,
+                    description,
+                    recommended,
+                    standard,
+                    replacedBy,
+                },
             },
         } = this.rule
         const title = `# ${ruleId}\n\n> ${description}`
@@ -89,7 +95,11 @@ class DocFile {
         } else {
             if (recommended) {
                 notes.push(
-                    '- :gear: This rule is included in `"plugin:css/recommended"`.',
+                    '- :gear: This rule is included in `"plugin:css/recommended"` and `"plugin:css/standard"`.',
+                )
+            } else if (standard) {
+                notes.push(
+                    '- :gear: This rule is included in `"plugin:css/standard"`.',
                 )
             }
         }

@@ -15,6 +15,9 @@ export function createRule(
             ...rule.meta,
             docs: {
                 ...rule.meta.docs,
+                standard: Boolean(
+                    rule.meta.docs.recommended || rule.meta.docs.standard,
+                ),
                 url: `https://ota-meshi.github.io/eslint-plugin-css/rules/${ruleName}.html`,
                 ruleId: `css/${ruleName}`,
                 ruleName,

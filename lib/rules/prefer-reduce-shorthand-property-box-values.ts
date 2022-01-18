@@ -55,6 +55,7 @@ export default createRule("prefer-reduce-shorthand-property-box-values", {
                 "require reduction in box values of shorthand property",
             category: "Best Practices",
             recommended: false,
+            standard: true,
             stylelint: "shorthand-property-no-redundant-values",
         },
         fixable: "code",

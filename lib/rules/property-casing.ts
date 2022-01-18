@@ -9,6 +9,7 @@ export default createRule("property-casing", {
             description: "enforce specific casing for CSS properties",
             category: "Stylistic Issues",
             recommended: false,
+            standard: true,
             stylelint: null,
         },
         fixable: "code",
