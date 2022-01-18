@@ -39,6 +39,23 @@ module.exports = {
 }
 ```
 
+### The standard configuration
+
+The `plugin:css/standard` config enables a subset of [the rules](../rules/README.md) and superset of `plugin:css/recommended` config that apply a subjective style.
+*See [lib/configs/standard.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/standard.ts) for more details.*
+
+```js
+// .eslintrc.js
+module.exports = {
+    "plugins": [
+        "css"
+    ],
+    "extends": [
+        "plugin:css/standard"
+    ]
+}
+```
+
 ### Advanced Configuration
 
 Override/add specific rules configurations. *See also: [http://eslint.org/docs/user-guide/configuring](http://eslint.org/docs/user-guide/configuring)*.

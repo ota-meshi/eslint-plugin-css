@@ -75,9 +75,11 @@ function createTable(
 
     for (const { meta } of tableRules) {
         const recommended = meta.docs.recommended ? ":star:" : ""
+        const standard =
+            !meta.docs.recommended && meta.docs.standard ? ":lipstick:" : ""
         const fixable = meta.fixable ? ":wrench:" : ""
         const deprecated = meta.deprecated ? ":warning:" : ""
-        const mark = `${recommended}${fixable}${deprecated}`
+        const mark = `${recommended}${standard}${fixable}${deprecated}`
 
         const link = `[${meta.docs.ruleId}](${buildRulePath(
             meta.docs.ruleName || "",

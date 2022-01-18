@@ -9,7 +9,7 @@ since: "v0.2.0"
 
 > disallow invalid hex colors
 
-- :gear: This rule is included in `"plugin:css/recommended"`.
+- :gear: This rule is included in `"plugin:css/recommended"` and `"plugin:css/standard"`.
 
 ## :book: Rule Details
 

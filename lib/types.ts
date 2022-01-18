@@ -18,6 +18,7 @@ export interface RuleMetaData {
         description: string
         category: RuleCategory
         recommended: boolean
+        standard: boolean
         url: string
         ruleId: string
         ruleName: string
@@ -42,6 +43,7 @@ export interface PartialRuleMetaData {
         description: string
         category: RuleCategory
         recommended: boolean
+        standard?: boolean
         replacedBy?: string[]
         default?: "error" | "warn"
         stylelint: string | null

@@ -9,7 +9,7 @@ since: "v0.1.0"
 
 > disallow unknown properties
 
-- :gear: This rule is included in `"plugin:css/recommended"`.
+- :gear: This rule is included in `"plugin:css/recommended"` and `"plugin:css/standard"`.
 
 ## :book: Rule Details
 

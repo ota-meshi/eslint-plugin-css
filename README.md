@@ -80,6 +80,23 @@ module.exports = {
 }
 ```
 
+### The standard configuration
+
+The `plugin:css/standard` config enables a subset of [the rules](#white_check_mark-rules) and superset of `plugin:css/recommended` config that apply a subjective style.
+*See [lib/configs/standard.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/standard.ts) for more details.*
+
+```js
+// .eslintrc.js
+module.exports = {
+    "plugins": [
+        "css"
+    ],
+    "extends": [
+        "plugin:css/standard"
+    ]
+}
+```
+
 ### Advanced Configuration
 
 Override/add specific rules configurations. *See also: [http://eslint.org/docs/user-guide/configuring](http://eslint.org/docs/user-guide/configuring)*.
@@ -154,8 +171,9 @@ const myStyle = {
 
 <!--RULES_SECTION_START-->
 
-The `--fix` option on the [command line](https://eslint.org/docs/user-guide/command-line-interface#fixing-problems) automatically fixes problems reported by rules which have a wrench :wrench: below.
-The rules with the following star :star: are included in the `plugin:css/recommended` config.
+The `--fix` option on the [command line](https://eslint.org/docs/user-guide/command-line-interface#fixing-problems) automatically fixes problems reported by rules which have a wrench :wrench: below.  
+The rules with the following star :star: are included in the `plugin:css/recommended` config and the `plugin:css/standard` config.  
+The rules with the following lipstick :lipstick: are included in the `plugin:css/standard` config.
 
 <!--RULES_TABLE_START-->
 
@@ -174,18 +192,18 @@ The rules with the following star :star: are included in the `plugin:css/recomme
 | Rule ID | Description |    |
 |:--------|:------------|:---|
 | [css/named-color](https://ota-meshi.github.io/eslint-plugin-css/rules/named-color.html) | enforce named colors | :wrench: |
-| [css/no-length-zero-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-length-zero-unit.html) | disallow units for zero lengths | :wrench: |
+| [css/no-length-zero-unit](https://ota-meshi.github.io/eslint-plugin-css/rules/no-length-zero-unit.html) | disallow units for zero lengths | :lipstick::wrench: |
 | [css/no-useless-color-alpha](https://ota-meshi.github.io/eslint-plugin-css/rules/no-useless-color-alpha.html) | disallow unnecessary alpha-channel transparency value | :star::wrench: |
-| [css/prefer-reduce-shorthand-property-box-values](https://ota-meshi.github.io/eslint-plugin-css/rules/prefer-reduce-shorthand-property-box-values.html) | require reduction in box values of shorthand property | :wrench: |
+| [css/prefer-reduce-shorthand-property-box-values](https://ota-meshi.github.io/eslint-plugin-css/rules/prefer-reduce-shorthand-property-box-values.html) | require reduction in box values of shorthand property | :lipstick::wrench: |
 
 ### Stylistic Issues
 
 | Rule ID | Description |    |
 |:--------|:------------|:---|
-| [css/color-hex-style](https://ota-meshi.github.io/eslint-plugin-css/rules/color-hex-style.html) | enforce hex color style | :wrench: |
-| [css/no-number-trailing-zeros](https://ota-meshi.github.io/eslint-plugin-css/rules/no-number-trailing-zeros.html) | disallow trailing zeros in numbers. | :wrench: |
-| [css/number-leading-zero](https://ota-meshi.github.io/eslint-plugin-css/rules/number-leading-zero.html) | require or disallow a leading zero for fractional numbers less than 1 | :wrench: |
-| [css/property-casing](https://ota-meshi.github.io/eslint-plugin-css/rules/property-casing.html) | enforce specific casing for CSS properties | :wrench: |
+| [css/color-hex-style](https://ota-meshi.github.io/eslint-plugin-css/rules/color-hex-style.html) | enforce hex color style | :lipstick::wrench: |
+| [css/no-number-trailing-zeros](https://ota-meshi.github.io/eslint-plugin-css/rules/no-number-trailing-zeros.html) | disallow trailing zeros in numbers. | :lipstick::wrench: |
+| [css/number-leading-zero](https://ota-meshi.github.io/eslint-plugin-css/rules/number-leading-zero.html) | require or disallow a leading zero for fractional numbers less than 1 | :lipstick::wrench: |
+| [css/property-casing](https://ota-meshi.github.io/eslint-plugin-css/rules/property-casing.html) | enforce specific casing for CSS properties | :lipstick::wrench: |
 
 <!--RULES_TABLE_END-->
 <!--RULES_SECTION_END-->
@@ -215,7 +233,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ### Development Tools
 
 - `npm test` runs tests and measures coverage.
-- `npm run update` runs in order to update readme and recommended configuration.
+- `npm run update` runs in order to update readme and configurations.
 - `npm run new [new rule name]` runs to create the files needed for the new rule.
 - `npm run docs:watch` starts the website locally.
 

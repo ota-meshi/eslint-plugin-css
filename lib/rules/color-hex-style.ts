@@ -8,6 +8,7 @@ export default createRule("color-hex-style", {
             description: "enforce hex color style",
             category: "Stylistic Issues",
             recommended: false,
+            standard: true,
             stylelint: "color-hex-length",
         },
         fixable: "code",

@@ -56,7 +56,7 @@ for (const k of Object.keys(coreRules)) {
         category: `eslint-core-rules@${rule.meta.type}`,
         ruleId: k,
         url: rule.meta.docs.url,
-        init: plugin.configs.recommended.rules[k] || "off",
+        init: plugin.configs.standard.rules[k] || "off",
     })
 }
 
