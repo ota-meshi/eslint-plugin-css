@@ -13,7 +13,7 @@ describe("Integration with eslint-plugin-css", () => {
     it("should lint without crash", async () => {
         const eslint = new ESLint({
             cwd: TEST_CWD,
-            plugins: { "eslint-plugin-css": plugin },
+            plugins: { "eslint-plugin-css": plugin as never },
         })
         const results = await eslint.lintFiles(["test.js"])
 
