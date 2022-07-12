@@ -63,7 +63,7 @@
     "@types/eslint": "^8.0.0",
     "@types/eslint-scope": "^3.7.1",
     "@types/eslint-utils": "^3.0.0",
-    "@types/estree": "^0.0.52",
+    "@types/estree": "^1.0.0",
     "@types/jsdom": "^16.2.13",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.10.1",
