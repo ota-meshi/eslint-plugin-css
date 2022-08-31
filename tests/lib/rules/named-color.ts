@@ -1,36 +1,36 @@
-import { RuleTester } from "eslint"
-import rule from "../../../lib/rules/named-color"
+import { RuleTester } from "eslint";
+import rule from "../../../lib/rules/named-color";
 
 const tester = new RuleTester({
-    parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: "module",
-        ecmaFeatures: { jsx: true },
-    },
-})
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: "module",
+    ecmaFeatures: { jsx: true },
+  },
+});
 
 tester.run("named-color", rule as any, {
-    valid: [
-        `
+  valid: [
+    `
         var a = <div style={
             {
                 color: 'red'
             }
         } />
         `,
-        {
-            filename: "test.vue",
-            code: `
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: 'red'
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-        },
-        {
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     color: '#f00',
@@ -39,11 +39,11 @@ tester.run("named-color", rule as any, {
                 }
             } />
             `,
-            options: ["never"],
-        },
-        {
-            filename: "test.vue",
-            code: `
+      options: ["never"],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: '#f00',
@@ -52,13 +52,13 @@ tester.run("named-color", rule as any, {
                 }"/>
             </template>
             `,
-            options: ["never"],
-            parser: require.resolve("vue-eslint-parser"),
-        },
-    ],
-    invalid: [
-        {
-            code: `
+      options: ["never"],
+      parser: require.resolve("vue-eslint-parser"),
+    },
+  ],
+  invalid: [
+    {
+      code: `
             var a = <div style={
                 {
                     color: '#f00',
@@ -67,7 +67,7 @@ tester.run("named-color", rule as any, {
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     color: 'red',
@@ -76,42 +76,42 @@ tester.run("named-color", rule as any, {
                 }
             } />
             `,
-            errors: [
-                {
-                    message: "Expected '#f00' to be 'red'.",
-                    line: 4,
-                    column: 29,
-                },
-                {
-                    message: "Expected '#f00f' to be 'red'.",
-                    line: 5,
-                    column: 39,
-                },
-                {
-                    message: "Expected '#ff0000' to be 'red'.",
-                    line: 6,
-                    column: 35,
-                },
-                {
-                    message: "Expected 'rgb(255, 0, 0)' to be 'red'.",
-                    line: 6,
-                    column: 43,
-                },
-                {
-                    message: "Expected 'rgb(100%, 0%, 0%)' to be 'red'.",
-                    line: 6,
-                    column: 58,
-                },
-                {
-                    message: "Expected 'rgba(255, 0, 0, 1)' to be 'red'.",
-                    line: 6,
-                    column: 76,
-                },
-            ],
+      errors: [
+        {
+          message: "Expected '#f00' to be 'red'.",
+          line: 4,
+          column: 29,
         },
         {
-            filename: "test.vue",
-            code: `
+          message: "Expected '#f00f' to be 'red'.",
+          line: 5,
+          column: 39,
+        },
+        {
+          message: "Expected '#ff0000' to be 'red'.",
+          line: 6,
+          column: 35,
+        },
+        {
+          message: "Expected 'rgb(255, 0, 0)' to be 'red'.",
+          line: 6,
+          column: 43,
+        },
+        {
+          message: "Expected 'rgb(100%, 0%, 0%)' to be 'red'.",
+          line: 6,
+          column: 58,
+        },
+        {
+          message: "Expected 'rgba(255, 0, 0, 1)' to be 'red'.",
+          line: 6,
+          column: 76,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: '#f00',
@@ -120,7 +120,7 @@ tester.run("named-color", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: 'red',
@@ -129,38 +129,38 @@ tester.run("named-color", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                {
-                    message: "Expected '#f00' to be 'red'.",
-                    line: 4,
-                    column: 29,
-                },
-                {
-                    message: "Expected '#f00f' to be 'red'.",
-                    line: 5,
-                    column: 39,
-                },
-                {
-                    message: "Expected 'hsl(0, 0%, 0%)' to be 'black'.",
-                    line: 6,
-                    column: 35,
-                },
-                {
-                    message: "Expected 'hwb(0, 0%, 100%)' to be 'black'.",
-                    line: 6,
-                    column: 50,
-                },
-                {
-                    message: "Expected 'gray(100)' to be 'white'.",
-                    line: 6,
-                    column: 67,
-                },
-            ],
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        {
+          message: "Expected '#f00' to be 'red'.",
+          line: 4,
+          column: 29,
         },
         {
-            filename: "test.vue",
-            code: `
+          message: "Expected '#f00f' to be 'red'.",
+          line: 5,
+          column: 39,
+        },
+        {
+          message: "Expected 'hsl(0, 0%, 0%)' to be 'black'.",
+          line: 6,
+          column: 35,
+        },
+        {
+          message: "Expected 'hwb(0, 0%, 100%)' to be 'black'.",
+          line: 6,
+          column: 50,
+        },
+        {
+          message: "Expected 'gray(100)' to be 'white'.",
+          line: 6,
+          column: 67,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: 'hwb(0 0% 100%)',
@@ -169,7 +169,7 @@ tester.run("named-color", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: 'black',
@@ -178,64 +178,64 @@ tester.run("named-color", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                "Expected 'hwb(0 0% 100%)' to be 'black'.",
-                "Expected 'hsl(0deg 100% 50%)' to be 'red'.",
-                "Expected 'hwb(0 0% 100%)' to be 'black'.",
-                "Expected 'lab(100% 0 0)' to be 'white'.",
-                "Expected 'lab(100% 0 0 / 1)' to be 'white'.",
-            ],
-        },
-        {
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        "Expected 'hwb(0 0% 100%)' to be 'black'.",
+        "Expected 'hsl(0deg 100% 50%)' to be 'red'.",
+        "Expected 'hwb(0 0% 100%)' to be 'black'.",
+        "Expected 'lab(100% 0 0)' to be 'white'.",
+        "Expected 'lab(100% 0 0 / 1)' to be 'white'.",
+      ],
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     color: 'red'
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     color: '#f00'
                 }
             } />
             `,
-            options: ["never"],
-            errors: [
-                {
-                    message: "Expected 'red' to be '#f00'.",
-                    line: 4,
-                    column: 29,
-                },
-            ],
-        },
+      options: ["never"],
+      errors: [
         {
-            filename: "test.vue",
-            code: `
+          message: "Expected 'red' to be '#f00'.",
+          line: 4,
+          column: 29,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: 'red'
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: '#f00'
                 }"/>
             </template>
             `,
-            options: ["never"],
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                {
-                    message: "Expected 'red' to be '#f00'.",
-                    line: 4,
-                    column: 29,
-                },
-            ],
+      options: ["never"],
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        {
+          message: "Expected 'red' to be '#f00'.",
+          line: 4,
+          column: 29,
         },
-    ],
-})
+      ],
+    },
+  ],
+});

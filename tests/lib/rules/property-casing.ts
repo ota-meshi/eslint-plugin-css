@@ -1,36 +1,36 @@
-import { RuleTester } from "eslint"
-import rule from "../../../lib/rules/property-casing"
+import { RuleTester } from "eslint";
+import rule from "../../../lib/rules/property-casing";
 
 const tester = new RuleTester({
-    parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: "module",
-        ecmaFeatures: { jsx: true },
-    },
-})
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: "module",
+    ecmaFeatures: { jsx: true },
+  },
+});
 
 tester.run("property-casing", rule as any, {
-    valid: [
-        `
+  valid: [
+    `
         var a = <div style={
             {
                 backgroundColor: 'red'
             }
         } />
         `,
-        {
-            filename: "test.vue",
-            code: `
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     backgroundColor: 'red'
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-        },
-        {
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     '-moz-transform': 'scale(2)',
@@ -41,10 +41,10 @@ tester.run("property-casing", rule as any, {
                 }
             } />
             `,
-            options: ["kebab-case"],
-        },
-        {
-            code: `
+      options: ["kebab-case"],
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     'MozTransform': 'scale(2)',
@@ -55,138 +55,138 @@ tester.run("property-casing", rule as any, {
                 }
             } />
             `,
-            options: ["camelCase"],
-        },
-    ],
-    invalid: [
-        {
-            code: `
+      options: ["camelCase"],
+    },
+  ],
+  invalid: [
+    {
+      code: `
             var a = <div style={
                 {
                     'background-color': 'red'
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     'backgroundColor': 'red'
                 }
             } />
             `,
-            errors: [
-                {
-                    message: "'background-color' is not in camelCase.",
-                    line: 4,
-                    column: 21,
-                    endLine: 4,
-                    endColumn: 39,
-                },
-            ],
-        },
+      errors: [
         {
-            filename: "test.vue",
-            code: `
+          message: "'background-color' is not in camelCase.",
+          line: 4,
+          column: 21,
+          endLine: 4,
+          endColumn: 39,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     'background-color': 'red'
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     'backgroundColor': 'red'
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                {
-                    message: "'background-color' is not in camelCase.",
-                    line: 4,
-                    column: 21,
-                    endLine: 4,
-                    endColumn: 39,
-                },
-            ],
-        },
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
         {
-            code: `
+          message: "'background-color' is not in camelCase.",
+          line: 4,
+          column: 21,
+          endLine: 4,
+          endColumn: 39,
+        },
+      ],
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     'backgroundColor': 'red'
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     'background-color': 'red'
                 }
             } />
             `,
-            options: ["kebab-case"],
-            errors: [
-                {
-                    message: "'backgroundColor' is not in kebab-case.",
-                    line: 4,
-                    column: 21,
-                    endLine: 4,
-                    endColumn: 38,
-                },
-            ],
-        },
+      options: ["kebab-case"],
+      errors: [
         {
-            filename: "test.vue",
-            code: `
+          message: "'backgroundColor' is not in kebab-case.",
+          line: 4,
+          column: 21,
+          endLine: 4,
+          endColumn: 38,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     'backgroundColor': 'red'
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     'background-color': 'red'
                 }"/>
             </template>
             `,
-            options: ["kebab-case"],
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                {
-                    message: "'backgroundColor' is not in kebab-case.",
-                    line: 4,
-                    column: 21,
-                    endLine: 4,
-                    endColumn: 38,
-                },
-            ],
-        },
+      options: ["kebab-case"],
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
         {
-            code: `
+          message: "'backgroundColor' is not in kebab-case.",
+          line: 4,
+          column: 21,
+          endLine: 4,
+          endColumn: 38,
+        },
+      ],
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     backgroundColor: 'red'
                 }
             } />
             `,
-            output: null,
-            options: ["kebab-case"],
-            errors: [
-                {
-                    message: "'backgroundColor' is not in kebab-case.",
-                    line: 4,
-                    column: 21,
-                    endLine: 4,
-                    endColumn: 36,
-                },
-            ],
-        },
+      output: null,
+      options: ["kebab-case"],
+      errors: [
         {
-            code: `
+          message: "'backgroundColor' is not in kebab-case.",
+          line: 4,
+          column: 21,
+          endLine: 4,
+          endColumn: 36,
+        },
+      ],
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     '-moz-transform': 'scale(2)',
@@ -197,7 +197,7 @@ tester.run("property-casing", rule as any, {
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     'MozTransform': 'scale(2)',
@@ -208,15 +208,15 @@ tester.run("property-casing", rule as any, {
                 }
             } />
             `,
-            errors: [
-                "'-moz-transform' is not in camelCase.",
-                "'-ms-transform' is not in camelCase.",
-                "'-o-transform' is not in camelCase.",
-                "'-webkit-transform' is not in camelCase.",
-            ],
-        },
-        {
-            code: `
+      errors: [
+        "'-moz-transform' is not in camelCase.",
+        "'-ms-transform' is not in camelCase.",
+        "'-o-transform' is not in camelCase.",
+        "'-webkit-transform' is not in camelCase.",
+      ],
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     'MozTransform': 'scale(2)',
@@ -227,7 +227,7 @@ tester.run("property-casing", rule as any, {
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     '-moz-transform': 'scale(2)',
@@ -238,17 +238,17 @@ tester.run("property-casing", rule as any, {
                 }
             } />
             `,
-            options: ["kebab-case"],
-            errors: [
-                "'MozTransform' is not in kebab-case.",
-                "'msTransform' is not in kebab-case.",
-                "'OTransform' is not in kebab-case.",
-                "'WebkitTransform' is not in kebab-case.",
-            ],
-        },
-        {
-            filename: "test.vue",
-            code: `
+      options: ["kebab-case"],
+      errors: [
+        "'MozTransform' is not in kebab-case.",
+        "'msTransform' is not in kebab-case.",
+        "'OTransform' is not in kebab-case.",
+        "'WebkitTransform' is not in kebab-case.",
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="[
                     {
@@ -260,7 +260,7 @@ tester.run("property-casing", rule as any, {
                 ]"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="[
                     {
@@ -272,14 +272,14 @@ tester.run("property-casing", rule as any, {
                 ]"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                "'background-color' is not in camelCase.",
-                "'border-color' is not in camelCase.",
-            ],
-        },
-        {
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        "'background-color' is not in camelCase.",
+        "'border-color' is not in camelCase.",
+      ],
+    },
+    {
+      code: `
             import styled from 'styled-components'
             const Box = styled.div({
                 'border-color': 'red',
@@ -293,7 +293,7 @@ tester.run("property-casing", rule as any, {
                 }
             });
             `,
-            output: `
+      output: `
             import styled from 'styled-components'
             const Box = styled.div({
                 'borderColor': 'red',
@@ -307,14 +307,14 @@ tester.run("property-casing", rule as any, {
                 }
             });
             `,
-            errors: [
-                "'border-color' is not in camelCase.",
-                "'background-color' is not in camelCase.",
-                "'background-color' is not in camelCase.",
-            ],
-        },
-        {
-            code: `
+      errors: [
+        "'border-color' is not in camelCase.",
+        "'background-color' is not in camelCase.",
+        "'background-color' is not in camelCase.",
+      ],
+    },
+    {
+      code: `
             import {css} from 'styled-components'
             css({
                 "selector-kebab": {
@@ -322,7 +322,7 @@ tester.run("property-casing", rule as any, {
                 }
             });
             `,
-            output: `
+      output: `
             import {css} from 'styled-components'
             css({
                 "selector-kebab": {
@@ -330,7 +330,7 @@ tester.run("property-casing", rule as any, {
                 }
             });
             `,
-            errors: ["'border-color' is not in camelCase."],
-        },
-    ],
-})
+      errors: ["'border-color' is not in camelCase."],
+    },
+  ],
+});
