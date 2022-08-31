@@ -1,7 +1,7 @@
-import assert from "assert"
+import assert from "assert";
 
 describe("_", () => {
-    it(`_`, () => {
-        assert.strictEqual("_", "_")
-    })
-})
+  it(`_`, () => {
+    assert.strictEqual("_", "_");
+  });
+});

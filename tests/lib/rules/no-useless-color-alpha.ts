@@ -1,96 +1,94 @@
-import { RuleTester } from "eslint"
-import rule from "../../../lib/rules/no-useless-color-alpha"
+import { RuleTester } from "eslint";
+import rule from "../../../lib/rules/no-useless-color-alpha";
 
 const tester = new RuleTester({
-    parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: "module",
-        ecmaFeatures: { jsx: true },
-    },
-})
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: "module",
+    ecmaFeatures: { jsx: true },
+  },
+});
 
 tester.run("no-useless-color-alpha", rule as any, {
-    valid: [
-        `
+  valid: [
+    `
         var a = <div style={
             {
                 color: '#fff'
             }
         } />
         `,
-        {
-            filename: "test.vue",
-            code: `
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: '#ffffff'
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-        },
-        `
+      parser: require.resolve("vue-eslint-parser"),
+    },
+    `
         var a = <div style={
             {
                 color: 'rgb(from var(--bg-color) r g b / 80%)'
             }
         } />
         `,
-    ],
-    invalid: [
-        {
-            code: `
+  ],
+  invalid: [
+    {
+      code: `
             var a = <div style={
                 {
                     color: '#ffff'
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     color: '#fff'
                 }
             } />
             `,
-            errors: [
-                {
-                    message:
-                        "The alpha value is 100% and does not need to be specified.",
-                    line: 4,
-                    column: 29,
-                },
-            ],
-        },
+      errors: [
         {
-            filename: "test.vue",
-            code: `
+          message: "The alpha value is 100% and does not need to be specified.",
+          line: 4,
+          column: 29,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: '#ffffffff'
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: '#ffffff'
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                {
-                    message:
-                        "The alpha value is 100% and does not need to be specified.",
-                    line: 4,
-                    column: 29,
-                },
-            ],
-        },
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
         {
-            filename: "test.vue",
-            code: `
+          message: "The alpha value is 100% and does not need to be specified.",
+          line: 4,
+          column: 29,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: 'rgb(255 255 255 / 100%)',
@@ -100,7 +98,7 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: 'rgb(255 255 255)',
@@ -110,17 +108,17 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-            ],
-        },
-        {
-            filename: "test.vue",
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: 'hsl(100, 100%, 50%)',
@@ -130,7 +128,7 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: 'hsl(100, 100%, 50%)',
@@ -140,17 +138,17 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-            ],
-        },
-        {
-            filename: "test.vue",
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: 'hwb(194 0% 0% / .5)',
@@ -159,7 +157,7 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: 'hwb(194 0% 0% / .5)',
@@ -168,16 +166,16 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-            ],
-        },
-        {
-            filename: "test.vue",
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: 'lab(52.2345% 40.1645 59.9971 / .5)',
@@ -186,7 +184,7 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: 'lab(52.2345% 40.1645 59.9971 / .5)',
@@ -195,15 +193,15 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-            ],
-        },
-        {
-            filename: "test.vue",
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: 'gray(100/1)',
@@ -212,7 +210,7 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: 'gray(100)',
@@ -221,17 +219,17 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-                "The alpha value is 100% and does not need to be specified.",
-            ],
-        },
-        {
-            filename: "test.vue",
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+        "The alpha value is 100% and does not need to be specified.",
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: 'lch(29.2345% 44.2 27/100%)',
@@ -239,7 +237,7 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: 'lch(29.2345% 44.2 27)',
@@ -247,34 +245,31 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                "The alpha value is 100% and does not need to be specified.",
-            ],
-        },
-        {
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+      errors: ["The alpha value is 100% and does not need to be specified."],
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     color: 'rgb(from var(--bg-color) r g b / 100%)'
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     color: 'rgb(from var(--bg-color) r g b)'
                 }
             } />
             `,
-            errors: [
-                {
-                    message:
-                        "The alpha value is 100% and does not need to be specified.",
-                    line: 4,
-                    column: 29,
-                },
-            ],
+      errors: [
+        {
+          message: "The alpha value is 100% and does not need to be specified.",
+          line: 4,
+          column: 29,
         },
-    ],
-})
+      ],
+    },
+  ],
+});

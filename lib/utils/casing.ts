@@ -3,7 +3,7 @@
  * @param {string} str
  */
 function hasSymbols(str: string) {
-    return /[!"#%&'()*+,./:;<=>?@[\\\]^`{|}]/u.exec(str) // without " ", "$", "-" and "_"
+  return /[!"#%&'()*+,./:;<=>?@[\\\]^`{|}]/u.exec(str); // without " ", "$", "-" and "_"
 }
 
 /**
@@ -11,7 +11,7 @@ function hasSymbols(str: string) {
  * @param {string} str
  */
 function hasUpper(str: string) {
-    return /[A-Z]/u.exec(str)
+  return /[A-Z]/u.exec(str);
 }
 
 /**
@@ -20,10 +20,10 @@ function hasUpper(str: string) {
  * @return {string}
  */
 export function kebabCase(str: string): string {
-    return str
-        .replace(/\B(?<c>[A-Z])/gu, "-$<c>")
-        .toLowerCase()
-        .replace(/^(?<vender>apple|moz|ms|o|wap|webkit)-/u, "-$<vender>-")
+  return str
+    .replace(/\B(?<c>[A-Z])/gu, "-$<c>")
+    .toLowerCase()
+    .replace(/^(?<vender>apple|moz|ms|o|wap|webkit)-/u, "-$<vender>-");
 }
 
 /**
@@ -31,10 +31,10 @@ export function kebabCase(str: string): string {
  * @param {string} str
  */
 export function isKebabCase(str: string): boolean {
-    if (hasUpper(str) || hasSymbols(str) || /_|--|\s/u.test(str)) {
-        return false
-    }
-    return true
+  if (hasUpper(str) || hasSymbols(str) || /_|--|\s/u.test(str)) {
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -43,9 +43,9 @@ export function isKebabCase(str: string): boolean {
  * @return {string} Converted string
  */
 export function camelCase(str: string): string {
-    return str
-        .replace(/-(?<c>\w)/gu, (_, c) => (c ? c.toUpperCase() : ""))
-        .replace(/^Ms[A-Z]/u, (ms) => `m${ms.slice(1)}`)
+  return str
+    .replace(/-(?<c>\w)/gu, (_, c) => (c ? c.toUpperCase() : ""))
+    .replace(/^Ms[A-Z]/u, (ms) => `m${ms.slice(1)}`);
 }
 
 /**
@@ -53,41 +53,41 @@ export function camelCase(str: string): string {
  * @param {string} str
  */
 export function isCamelCase(str: string): boolean {
-    if (
-        hasSymbols(str) ||
-        /[\s\-_]/u.test(str) // kebab or snake or space
-    ) {
-        return false
-    }
-    return true
+  if (
+    hasSymbols(str) ||
+    /[\s\-_]/u.test(str) // kebab or snake or space
+  ) {
+    return false;
+  }
+  return true;
 }
 
 const convertersMap = {
-    "kebab-case": kebabCase,
-    camelCase,
-}
+  "kebab-case": kebabCase,
+  camelCase,
+};
 
 const checkersMap = {
-    "kebab-case": isKebabCase,
-    camelCase: isCamelCase,
-}
+  "kebab-case": isKebabCase,
+  camelCase: isCamelCase,
+};
 
 /**
  * Return case checker
  */
 export function getChecker(
-    name: "camelCase" | "kebab-case",
+  name: "camelCase" | "kebab-case"
 ): (str: string) => boolean {
-    return checkersMap[name] || isCamelCase
+  return checkersMap[name] || isCamelCase;
 }
 
 /**
  * Return case converter
  */
 export function getConverter(
-    name: "camelCase" | "kebab-case",
+  name: "camelCase" | "kebab-case"
 ): (str: string) => string {
-    return convertersMap[name] || camelCase
+  return convertersMap[name] || camelCase;
 }
 
 /**
@@ -95,12 +95,12 @@ export function getConverter(
  * If the converted result is not the correct case, the original value is returned.
  */
 export function getExactConverter(
-    name: "camelCase" | "kebab-case",
+  name: "camelCase" | "kebab-case"
 ): (str: string) => string {
-    const converter = getConverter(name)
-    const checker = getChecker(name)
-    return (str) => {
-        const result = converter(str)
-        return checker(result) ? result : str /* cannot convert */
-    }
+  const converter = getConverter(name);
+  const checker = getChecker(name);
+  return (str) => {
+    const result = converter(str);
+    return checker(result) ? result : str; /* cannot convert */
+  };
 }

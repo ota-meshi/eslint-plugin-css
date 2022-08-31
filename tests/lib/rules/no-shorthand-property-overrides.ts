@@ -1,26 +1,26 @@
-import { RuleTester } from "eslint"
-import rule from "../../../lib/rules/no-shorthand-property-overrides"
+import { RuleTester } from "eslint";
+import rule from "../../../lib/rules/no-shorthand-property-overrides";
 
 const tester = new RuleTester({
-    parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: "module",
-        ecmaFeatures: { jsx: true },
-    },
-})
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: "module",
+    ecmaFeatures: { jsx: true },
+  },
+});
 
 tester.run("no-shorthand-property-overrides", rule as any, {
-    valid: [
-        `
+  valid: [
+    `
         var a = <div style={
             {
                 background: 'green'
             }
         } />
         `,
-        {
-            filename: "test.vue",
-            code: `
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     'background-repeat': 'repeat',
@@ -28,16 +28,16 @@ tester.run("no-shorthand-property-overrides", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-        },
-        `
+      parser: require.resolve("vue-eslint-parser"),
+    },
+    `
         // @css
         var a = {
                 'background-repeat': 'repeat',
                 [background]: 'green',
             }
         `,
-        `
+    `
         // @css
         var a = {
                 'background-repeat': 'repeat',
@@ -46,10 +46,10 @@ tester.run("no-shorthand-property-overrides", rule as any, {
                 }
             }
         `,
-    ],
-    invalid: [
-        {
-            code: `
+  ],
+  invalid: [
+    {
+      code: `
             var a = <div style={
                 {
                     'background-repeat': 'repeat',
@@ -57,18 +57,18 @@ tester.run("no-shorthand-property-overrides", rule as any, {
                 }
             } />
             `,
-            errors: [
-                {
-                    message:
-                        "Unexpected shorthand 'background' after 'background-repeat'.",
-                    line: 5,
-                    column: 21,
-                },
-            ],
-        },
+      errors: [
         {
-            filename: "test.vue",
-            code: `
+          message:
+            "Unexpected shorthand 'background' after 'background-repeat'.",
+          line: 5,
+          column: 21,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     'backgroundRepeat': 'repeat',
@@ -76,18 +76,18 @@ tester.run("no-shorthand-property-overrides", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                {
-                    message:
-                        "Unexpected shorthand 'background' after 'backgroundRepeat'.",
-                    line: 5,
-                    column: 21,
-                },
-            ],
-        },
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
         {
-            code: `
+          message:
+            "Unexpected shorthand 'background' after 'backgroundRepeat'.",
+          line: 5,
+          column: 21,
+        },
+      ],
+    },
+    {
+      code: `
             // @css
             var a = {
                     'background-repeat': 'repeat',
@@ -97,13 +97,13 @@ tester.run("no-shorthand-property-overrides", rule as any, {
                     }
                 }
             `,
-            errors: [
-                {
-                    message:
-                        "Unexpected shorthand 'background' after 'background-repeat'.",
-                    line: 5,
-                },
-            ],
+      errors: [
+        {
+          message:
+            "Unexpected shorthand 'background' after 'background-repeat'.",
+          line: 5,
         },
-    ],
-})
+      ],
+    },
+  ],
+});

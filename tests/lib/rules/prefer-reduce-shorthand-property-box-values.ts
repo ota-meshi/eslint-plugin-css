@@ -1,38 +1,38 @@
-import { RuleTester } from "eslint"
-import rule from "../../../lib/rules/prefer-reduce-shorthand-property-box-values"
+import { RuleTester } from "eslint";
+import rule from "../../../lib/rules/prefer-reduce-shorthand-property-box-values";
 
 const tester = new RuleTester({
-    parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: "module",
-        ecmaFeatures: { jsx: true },
-    },
-})
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: "module",
+    ecmaFeatures: { jsx: true },
+  },
+});
 
 tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
-    valid: [
-        `
+  valid: [
+    `
         var a = <div style={
             {
                 padding: '8px'
             }
         } />
         `,
-        {
-            filename: "test.vue",
-            code: `
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     padding: '8px'
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-        },
-    ],
-    invalid: [
-        {
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+    },
+  ],
+  invalid: [
+    {
+      code: `
             var a = <div style={
                 {
                     padding: '8px 8px',
@@ -41,7 +41,7 @@ tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     padding: '8px',
@@ -50,30 +50,28 @@ tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
                 }
             } />
             `,
-            errors: [
-                {
-                    message:
-                        "Unexpected longhand value '8px 8px' instead of '8px'.",
-                    line: 4,
-                    column: 31,
-                },
-                {
-                    message:
-                        "Unexpected longhand value '8px 8px 8px' instead of '8px'.",
-                    line: 5,
-                    column: 30,
-                },
-                {
-                    message:
-                        "Unexpected longhand value 'red red red red' instead of 'red'.",
-                    line: 6,
-                    column: 37,
-                },
-            ],
+      errors: [
+        {
+          message: "Unexpected longhand value '8px 8px' instead of '8px'.",
+          line: 4,
+          column: 31,
         },
         {
-            filename: "test.vue",
-            code: `
+          message: "Unexpected longhand value '8px 8px 8px' instead of '8px'.",
+          line: 5,
+          column: 30,
+        },
+        {
+          message:
+            "Unexpected longhand value 'red red red red' instead of 'red'.",
+          line: 6,
+          column: 37,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     padding: '8px 8px',
@@ -82,7 +80,7 @@ tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     padding: '8px',
@@ -91,27 +89,26 @@ tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                {
-                    message:
-                        "Unexpected longhand value '8px 8px' instead of '8px'.",
-                    line: 4,
-                    column: 31,
-                },
-                {
-                    message:
-                        "Unexpected longhand value '8px 16px 8px' instead of '8px 16px'.",
-                    line: 5,
-                    column: 30,
-                },
-                {
-                    message:
-                        "Unexpected longhand value 'red #fff blue #fff' instead of 'red #fff blue'.",
-                    line: 6,
-                    column: 37,
-                },
-            ],
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        {
+          message: "Unexpected longhand value '8px 8px' instead of '8px'.",
+          line: 4,
+          column: 31,
         },
-    ],
-})
+        {
+          message:
+            "Unexpected longhand value '8px 16px 8px' instead of '8px 16px'.",
+          line: 5,
+          column: 30,
+        },
+        {
+          message:
+            "Unexpected longhand value 'red #fff blue #fff' instead of 'red #fff blue'.",
+          line: 6,
+          column: 37,
+        },
+      ],
+    },
+  ],
+});

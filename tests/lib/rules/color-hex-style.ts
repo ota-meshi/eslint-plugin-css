@@ -1,17 +1,17 @@
-import { RuleTester } from "eslint"
-import rule from "../../../lib/rules/color-hex-style"
+import { RuleTester } from "eslint";
+import rule from "../../../lib/rules/color-hex-style";
 
 const tester = new RuleTester({
-    parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: "module",
-        ecmaFeatures: { jsx: true },
-    },
-})
+  parserOptions: {
+    ecmaVersion: 2020,
+    sourceType: "module",
+    ecmaFeatures: { jsx: true },
+  },
+});
 
 tester.run("color-hex-style", rule as any, {
-    valid: [
-        `
+  valid: [
+    `
         var a = <div style={
             {
                 color: '#fff',
@@ -20,9 +20,9 @@ tester.run("color-hex-style", rule as any, {
             }
         } />
         `,
-        {
-            filename: "test.vue",
-            code: `
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: '#fff',
@@ -31,10 +31,10 @@ tester.run("color-hex-style", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-        },
-        {
-            code: `
+      parser: require.resolve("vue-eslint-parser"),
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     color: '#ffffff',
@@ -43,11 +43,11 @@ tester.run("color-hex-style", rule as any, {
                 }
             } />
             `,
-            options: ["RRGGBB"],
-        },
-        {
-            filename: "test.vue",
-            code: `
+      options: ["RRGGBB"],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: '#ffffff',
@@ -56,13 +56,13 @@ tester.run("color-hex-style", rule as any, {
                 }"/>
             </template>
             `,
-            options: ["RRGGBB"],
-            parser: require.resolve("vue-eslint-parser"),
-        },
-    ],
-    invalid: [
-        {
-            code: `
+      options: ["RRGGBB"],
+      parser: require.resolve("vue-eslint-parser"),
+    },
+  ],
+  invalid: [
+    {
+      code: `
             var a = <div style={
                 {
                     color: '#ffffff',
@@ -71,7 +71,7 @@ tester.run("color-hex-style", rule as any, {
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     color: '#fff',
@@ -80,27 +80,27 @@ tester.run("color-hex-style", rule as any, {
                 }
             } />
             `,
-            errors: [
-                {
-                    message: "Expected '#ffffff' to be '#fff'.",
-                    line: 4,
-                    column: 29,
-                },
-                {
-                    message: "Expected '#00FF00' to be '#0F0'.",
-                    line: 5,
-                    column: 39,
-                },
-                {
-                    message: "Expected '#00FF00fF' to be '#0F0f'.",
-                    line: 6,
-                    column: 35,
-                },
-            ],
+      errors: [
+        {
+          message: "Expected '#ffffff' to be '#fff'.",
+          line: 4,
+          column: 29,
         },
         {
-            filename: "test.vue",
-            code: `
+          message: "Expected '#00FF00' to be '#0F0'.",
+          line: 5,
+          column: 39,
+        },
+        {
+          message: "Expected '#00FF00fF' to be '#0F0f'.",
+          line: 6,
+          column: 35,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: '#ffffff',
@@ -109,7 +109,7 @@ tester.run("color-hex-style", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: '#fff',
@@ -118,27 +118,27 @@ tester.run("color-hex-style", rule as any, {
                 }"/>
             </template>
             `,
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                {
-                    message: "Expected '#ffffff' to be '#fff'.",
-                    line: 4,
-                    column: 29,
-                },
-                {
-                    message: "Expected '#00FF00' to be '#0F0'.",
-                    line: 5,
-                    column: 39,
-                },
-                {
-                    message: "Expected '#00FF00fF' to be '#0F0f'.",
-                    line: 6,
-                    column: 35,
-                },
-            ],
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        {
+          message: "Expected '#ffffff' to be '#fff'.",
+          line: 4,
+          column: 29,
         },
         {
-            code: `
+          message: "Expected '#00FF00' to be '#0F0'.",
+          line: 5,
+          column: 39,
+        },
+        {
+          message: "Expected '#00FF00fF' to be '#0F0f'.",
+          line: 6,
+          column: 35,
+        },
+      ],
+    },
+    {
+      code: `
             var a = <div style={
                 {
                     color: '#fff',
@@ -147,7 +147,7 @@ tester.run("color-hex-style", rule as any, {
                 }
             } />
             `,
-            output: `
+      output: `
             var a = <div style={
                 {
                     color: '#ffffff',
@@ -156,28 +156,28 @@ tester.run("color-hex-style", rule as any, {
                 }
             } />
             `,
-            options: ["RRGGBB"],
-            errors: [
-                {
-                    message: "Expected '#fff' to be '#ffffff'.",
-                    line: 4,
-                    column: 29,
-                },
-                {
-                    message: "Expected '#0F0' to be '#00FF00'.",
-                    line: 5,
-                    column: 39,
-                },
-                {
-                    message: "Expected '#0F0f' to be '#00FF00ff'.",
-                    line: 6,
-                    column: 35,
-                },
-            ],
+      options: ["RRGGBB"],
+      errors: [
+        {
+          message: "Expected '#fff' to be '#ffffff'.",
+          line: 4,
+          column: 29,
         },
         {
-            filename: "test.vue",
-            code: `
+          message: "Expected '#0F0' to be '#00FF00'.",
+          line: 5,
+          column: 39,
+        },
+        {
+          message: "Expected '#0F0f' to be '#00FF00ff'.",
+          line: 6,
+          column: 35,
+        },
+      ],
+    },
+    {
+      filename: "test.vue",
+      code: `
             <template>
                 <div :style="{
                     color: '#fff',
@@ -186,7 +186,7 @@ tester.run("color-hex-style", rule as any, {
                 }"/>
             </template>
             `,
-            output: `
+      output: `
             <template>
                 <div :style="{
                     color: '#ffffff',
@@ -195,25 +195,25 @@ tester.run("color-hex-style", rule as any, {
                 }"/>
             </template>
             `,
-            options: ["RRGGBB"],
-            parser: require.resolve("vue-eslint-parser"),
-            errors: [
-                {
-                    message: "Expected '#fff' to be '#ffffff'.",
-                    line: 4,
-                    column: 29,
-                },
-                {
-                    message: "Expected '#0F0' to be '#00FF00'.",
-                    line: 5,
-                    column: 39,
-                },
-                {
-                    message: "Expected '#0F0f' to be '#00FF00ff'.",
-                    line: 6,
-                    column: 35,
-                },
-            ],
+      options: ["RRGGBB"],
+      parser: require.resolve("vue-eslint-parser"),
+      errors: [
+        {
+          message: "Expected '#fff' to be '#ffffff'.",
+          line: 4,
+          column: 29,
         },
-    ],
-})
+        {
+          message: "Expected '#0F0' to be '#00FF00'.",
+          line: 5,
+          column: 39,
+        },
+        {
+          message: "Expected '#0F0f' to be '#00FF00ff'.",
+          line: 6,
+          column: 35,
+        },
+      ],
+    },
+  ],
+});

@@ -1,4 +1,4 @@
-const RE_REGEXP_STR = /^\/(?<source>[^/]+)\/(?<flags>.*)$/u
+const RE_REGEXP_STR = /^\/(?<source>[^/]+)\/(?<flags>.*)$/u;
 
 /**
  * Convert a string to the `RegExp`.
@@ -9,11 +9,11 @@ const RE_REGEXP_STR = /^\/(?<source>[^/]+)\/(?<flags>.*)$/u
  * @returns Returns the `RegExp`.
  */
 export function toRegExp(string: string): { test: (str: string) => boolean } {
-    const parts = RE_REGEXP_STR.exec(string)
-    if (parts) {
-        return new RegExp(parts.groups!.source, parts.groups!.flags)
-    }
-    return { test: (str) => str === string }
+  const parts = RE_REGEXP_STR.exec(string);
+  if (parts) {
+    return new RegExp(parts.groups!.source, parts.groups!.flags);
+  }
+  return { test: (str) => str === string };
 }
 
 /**
@@ -22,5 +22,5 @@ export function toRegExp(string: string): { test: (str: string) => boolean } {
  * @returns {boolean}
  */
 export function isRegExp(string: string): boolean {
-    return Boolean(RE_REGEXP_STR.test(string))
+  return Boolean(RE_REGEXP_STR.test(string));
 }

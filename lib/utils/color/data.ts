@@ -1,1 +1,1 @@
-export type Unit = "" | "%" | "deg" | "rad" | "grad" | "turn"
+export type Unit = "" | "%" | "deg" | "rad" | "grad" | "turn";

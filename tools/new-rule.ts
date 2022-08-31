@@ -1,28 +1,28 @@
-import path from "path"
-import fs from "fs"
-import cp from "child_process"
-const logger = console
+import path from "path";
+import fs from "fs";
+import cp from "child_process";
+const logger = console;
 
 // main
-;((ruleId) => {
-    if (ruleId == null) {
-        logger.error("Usage: npm run new <RuleID>")
-        process.exitCode = 1
-        return
-    }
-    if (!/^[\w-]+$/u.test(ruleId)) {
-        logger.error("Invalid RuleID '%s'.", ruleId)
-        process.exitCode = 1
-        return
-    }
+((ruleId) => {
+  if (ruleId == null) {
+    logger.error("Usage: npm run new <RuleID>");
+    process.exitCode = 1;
+    return;
+  }
+  if (!/^[\w-]+$/u.test(ruleId)) {
+    logger.error("Invalid RuleID '%s'.", ruleId);
+    process.exitCode = 1;
+    return;
+  }
 
-    const ruleFile = path.resolve(__dirname, `../lib/rules/${ruleId}.ts`)
-    const testFile = path.resolve(__dirname, `../tests/lib/rules/${ruleId}.ts`)
-    const docFile = path.resolve(__dirname, `../docs/rules/${ruleId}.md`)
+  const ruleFile = path.resolve(__dirname, `../lib/rules/${ruleId}.ts`);
+  const testFile = path.resolve(__dirname, `../tests/lib/rules/${ruleId}.ts`);
+  const docFile = path.resolve(__dirname, `../docs/rules/${ruleId}.md`);
 
-    fs.writeFileSync(
-        ruleFile,
-        `import type { Expression } from "estree"
+  fs.writeFileSync(
+    ruleFile,
+    `import type { Expression } from "estree"
 import type { CSSObjectContext, CSSVisitorHandlers } from "../utils"
 import { createRule, defineCSSVisitor } from "../utils"
 
@@ -56,11 +56,11 @@ export default createRule("${ruleId}", {
         })
     },
 })
-`,
-    )
-    fs.writeFileSync(
-        testFile,
-        `import { RuleTester } from "eslint"
+`
+  );
+  fs.writeFileSync(
+    testFile,
+    `import { RuleTester } from "eslint"
 import rule from "../../../lib/rules/${ruleId}"
 
 const tester = new RuleTester({
@@ -136,11 +136,11 @@ tester.run("${ruleId}", rule as any, {
     ],
 })
         
-`,
-    )
-    fs.writeFileSync(
-        docFile,
-        `#  (css/${ruleId})
+`
+  );
+  fs.writeFileSync(
+    docFile,
+    `#  (css/${ruleId})
 
 > description
 
@@ -190,10 +190,10 @@ var foo = <div
 
 -
 
-`,
-    )
+`
+  );
 
-    cp.execSync(`code "${ruleFile}"`)
-    cp.execSync(`code "${testFile}"`)
-    cp.execSync(`code "${docFile}"`)
-})(process.argv[2])
+  cp.execSync(`code "${ruleFile}"`);
+  cp.execSync(`code "${testFile}"`);
+  cp.execSync(`code "${docFile}"`);
+})(process.argv[2]);
