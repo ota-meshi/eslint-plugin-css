@@ -88,7 +88,7 @@
     "nyc": "^15.1.0",
     "prettier": "~2.8.0",
     "raw-loader": "^4.0.2",
-    "stylelint": "^14.0.0",
+    "stylelint": "^15.0.0",
     "stylelint-config-recommended-vue": "^1.0.0",
     "stylelint-config-standard": "^29.0.0",
     "stylelint-stylus": "^0.18.0",
