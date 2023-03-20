@@ -5,6 +5,7 @@ title: "css/no-useless-color-alpha"
 description: "disallow unnecessary alpha-channel transparency value"
 since: "v0.4.0"
 ---
+
 # css/no-useless-color-alpha
 
 > disallow unnecessary alpha-channel transparency value

@@ -5,6 +5,7 @@ title: "css/named-color"
 description: "enforce named colors"
 since: "v0.4.0"
 ---
+
 # css/named-color
 
 > enforce named colors

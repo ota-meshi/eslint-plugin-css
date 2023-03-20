@@ -5,6 +5,7 @@ title: "css/no-unknown-property"
 description: "disallow unknown properties"
 since: "v0.1.0"
 ---
+
 # css/no-unknown-property
 
 > disallow unknown properties
