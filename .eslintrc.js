@@ -54,6 +54,23 @@ module.exports = {
     "regexp/prefer-result-array-groups": "error",
     "regexp/sort-character-class-elements": "error",
     "regexp/unicode-escape": "error",
+
+    // Repo rule
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["/regexpp", "/regexpp/*"],
+            message: "Please use `@eslint-community/regexpp` instead.",
+          },
+          {
+            group: ["/eslint-utils", "/eslint-utils/*"],
+            message: "Please use `@eslint-community/eslint-utils` instead.",
+          },
+        ],
+      },
+    ],
   },
   overrides: [
     {
