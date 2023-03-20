@@ -5,6 +5,7 @@ title: "css/prefer-reduce-shorthand-property-box-values"
 description: "require reduction in box values of shorthand property"
 since: "v0.3.0"
 ---
+
 # css/prefer-reduce-shorthand-property-box-values
 
 > require reduction in box values of shorthand property

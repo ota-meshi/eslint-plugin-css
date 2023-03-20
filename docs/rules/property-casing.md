@@ -5,6 +5,7 @@ title: "css/property-casing"
 description: "enforce specific casing for CSS properties"
 since: "v0.1.0"
 ---
+
 # css/property-casing
 
 > enforce specific casing for CSS properties

@@ -5,6 +5,7 @@ title: "css/no-dupe-properties"
 description: "disallow duplicate properties"
 since: "v0.2.0"
 ---
+
 # css/no-dupe-properties
 
 > disallow duplicate properties

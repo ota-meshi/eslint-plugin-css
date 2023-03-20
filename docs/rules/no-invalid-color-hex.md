@@ -5,6 +5,7 @@ title: "css/no-invalid-color-hex"
 description: "disallow invalid hex colors"
 since: "v0.2.0"
 ---
+
 # css/no-invalid-color-hex
 
 > disallow invalid hex colors

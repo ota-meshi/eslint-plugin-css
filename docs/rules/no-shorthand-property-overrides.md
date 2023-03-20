@@ -5,6 +5,7 @@ title: "css/no-shorthand-property-overrides"
 description: "disallow shorthand properties that override related longhand properties"
 since: "v0.3.0"
 ---
+
 # css/no-shorthand-property-overrides
 
 > disallow shorthand properties that override related longhand properties

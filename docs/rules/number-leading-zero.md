@@ -5,6 +5,7 @@ title: "css/number-leading-zero"
 description: "require or disallow a leading zero for fractional numbers less than 1"
 since: "v0.3.0"
 ---
+
 # css/number-leading-zero
 
 > require or disallow a leading zero for fractional numbers less than 1

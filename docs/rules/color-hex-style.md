@@ -5,6 +5,7 @@ title: "css/color-hex-style"
 description: "enforce hex color style"
 since: "v0.4.0"
 ---
+
 # css/color-hex-style
 
 > enforce hex color style

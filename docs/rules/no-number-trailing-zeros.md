@@ -5,6 +5,7 @@ title: "css/no-number-trailing-zeros"
 description: "disallow trailing zeros in numbers."
 since: "v0.3.0"
 ---
+
 # css/no-number-trailing-zeros
 
 > disallow trailing zeros in numbers.
