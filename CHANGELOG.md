@@ -1,5 +1,11 @@
 # eslint-plugin-css
 
+## 0.8.0
+
+### Minor Changes
+
+- [#87](https://github.com/ota-meshi/eslint-plugin-css/pull/87) [`c4cc0db`](https://github.com/ota-meshi/eslint-plugin-css/commit/c4cc0db50d67ce2989f8b4ae690613b2deca2531) Thanks [@ota-meshi](https://github.com/ota-meshi)! - feat: export meta object
+
 ## 0.7.0
 
 ### Minor Changes
