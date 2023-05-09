@@ -3,6 +3,7 @@ import { rules as ruleList } from "./utils/rules";
 import recommended from "./configs/recommended";
 import standard from "./configs/standard";
 import all from "./configs/all";
+import * as meta from "./meta";
 
 const configs = {
   recommended,
@@ -16,6 +17,7 @@ const rules = ruleList.reduce((obj, r) => {
 }, {} as { [key: string]: RuleModule });
 
 export = {
+  meta,
   configs,
   rules,
 };
