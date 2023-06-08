@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import type { DOMWindow } from "jsdom";
 import { JSDOM } from "jsdom";
+import { isHTMLTableElement } from "./lib/dom-util";
 
 const filePath = path.resolve(
   __dirname,
@@ -41,13 +42,16 @@ function collectValues(window: DOMWindow): Record<string, string> {
   const table = window.document.querySelector(".named-color-table");
 
   const results: Record<string, string> = {};
+  if (!isHTMLTableElement(table)) {
+    return results;
+  }
   for (const row of table.rows) {
-    if (row.parentElement.tagName !== "TBODY") {
+    if (row.parentElement?.tagName !== "TBODY") {
       continue;
     }
     let name: string | undefined, hex: string | undefined;
     for (const cell of row.cells) {
-      const val = cell.textContent.trim();
+      const val = cell.textContent?.trim() || "";
       if (/^[a-z]+$/u.test(val)) {
         name = val;
       }
