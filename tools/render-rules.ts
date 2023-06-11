@@ -102,7 +102,7 @@ function createDeprecationTable(
       meta.docs.ruleName || ""
     )})`;
 
-    const replacedRules = meta.docs.replacedBy || [];
+    const replacedRules = meta.replacedBy || [];
     const replacedBy = replacedRules
       .map((name) => `[css/${name}](${buildRulePath(name)})`)
       .join(", ");
