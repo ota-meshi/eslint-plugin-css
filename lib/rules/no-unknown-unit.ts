@@ -48,7 +48,7 @@ export default createRule("no-unknown-unit", {
       ...(context.options[0]?.ignoreFunctions ?? []),
     ].map(toRegExp);
     const ignoreUnits = [...(context.options[0]?.ignoreUnits ?? [])].map(
-      toRegExp
+      toRegExp,
     );
 
     /**
@@ -62,7 +62,7 @@ export default createRule("no-unknown-unit", {
             return;
           }
           const parsedValue = valueParser(
-            String(value.value).replace(/\*/gu, ",")
+            String(value.value).replace(/\*/gu, ","),
           );
 
           parsedValue.walk((node) => {
@@ -90,7 +90,7 @@ export default createRule("no-unknown-unit", {
               const imageSet = parsedValue.nodes.find(
                 (n) =>
                   n.type === "function" &&
-                  stripVendorPrefix(n.value) === "image-set"
+                  stripVendorPrefix(n.value) === "image-set",
               ) as FunctionNode | undefined;
 
               if (imageSet) {

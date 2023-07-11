@@ -86,7 +86,7 @@ export default createRule("number-leading-zero", {
                   ) {
                     return fixer.insertTextBeforeRange(
                       [startIndex, endIndex],
-                      "0"
+                      "0",
                     );
                   }
                   return null;
@@ -94,7 +94,7 @@ export default createRule("number-leading-zero", {
               });
             } else if (option === "never") {
               const match = /(?:\D|^)(?<zero>0+)(?<decimal>\.\d+)/u.exec(
-                node.value
+                node.value,
               );
 
               if (match === null) {

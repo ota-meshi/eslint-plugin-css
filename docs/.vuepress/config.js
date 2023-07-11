@@ -41,15 +41,15 @@ module.exports = {
         alias: {
           esquery: path.resolve(
             __dirname,
-            "../../node_modules/esquery/dist/esquery.min.js"
+            "../../node_modules/esquery/dist/esquery.min.js",
           ),
           "eslint-visitor-keys$": path.resolve(
             __dirname,
-            "./shim/eslint-visitor-keys"
+            "./shim/eslint-visitor-keys",
           ),
           "@eslint/eslintrc/universal": path.resolve(
             __dirname,
-            "../../node_modules/@eslint/eslintrc/dist/eslintrc-universal.cjs"
+            "../../node_modules/@eslint/eslintrc/dist/eslintrc-universal.cjs",
           ),
         },
       },

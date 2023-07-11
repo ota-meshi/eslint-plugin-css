@@ -18,7 +18,7 @@ fs.writeFileSync(
           .join(",\n")}
     },
 }
-`
+`,
 );
 fs.writeFileSync(
   path.resolve(__dirname, "../lib/configs/standard.ts"),
@@ -35,7 +35,7 @@ fs.writeFileSync(
           .join(",\n")}
     },
 }
-`
+`,
 );
 
 // Format files.

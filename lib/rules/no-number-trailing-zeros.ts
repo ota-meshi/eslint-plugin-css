@@ -44,7 +44,7 @@ export default createRule("no-number-trailing-zeros", {
               return undefined;
             }
             const match = /\.(?<num>\d{0,100}?)(?<zeros>0+)(?:\D|$)/u.exec(
-              node.value
+              node.value,
             );
 
             if (match == null) {

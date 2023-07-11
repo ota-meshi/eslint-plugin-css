@@ -94,7 +94,7 @@ export type HexData = {
  * Checks whether given string is hex.
  */
 export function parseHex(
-  input: string | postcssValueParser.Node
+  input: string | postcssValueParser.Node,
 ): HexData | null {
   const hex =
     typeof input === "string"

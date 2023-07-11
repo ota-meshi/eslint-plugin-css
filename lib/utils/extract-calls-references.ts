@@ -81,10 +81,10 @@ export type CallReference = {
 export function* extractCallReferences(
   node: ImportDeclaration,
   functionPaths: string[][],
-  context: Rule.RuleContext
+  context: Rule.RuleContext,
 ): Iterable<CallReference> {
   const paths = new TargetPaths(
-    functionPaths.map((define) => ({ define, target: define }))
+    functionPaths.map((define) => ({ define, target: define })),
   );
   for (const specifier of node.specifiers) {
     const variable = findVariable(context, specifier.local);
@@ -96,7 +96,7 @@ export function* extractCallReferences(
         variable,
         "default",
         paths,
-        context
+        context,
       );
     } else if (specifier.type === "ImportNamespaceSpecifier") {
       yield* extractCallReferencesForVariable(variable, null, paths, context);
@@ -105,7 +105,7 @@ export function* extractCallReferences(
         variable,
         specifier.imported.name,
         paths,
-        context
+        context,
       );
     }
   }
@@ -116,7 +116,7 @@ function* extractCallReferencesForVariable(
   variable: Scope.Variable,
   name: string | null,
   paths: TargetPaths,
-  context: Rule.RuleContext
+  context: Rule.RuleContext,
 ) {
   for (const reference of variable.references) {
     if (!reference.isRead()) {
@@ -126,7 +126,7 @@ function* extractCallReferencesForVariable(
       reference.identifier,
       name,
       paths,
-      context
+      context,
     );
   }
 }
@@ -136,7 +136,7 @@ function* extractCallReferencesForExpression(
   expression: Expression,
   name: string | null,
   paths: TargetPaths,
-  context: Rule.RuleContext
+  context: Rule.RuleContext,
 ): Iterable<CallReference> {
   let node = expression;
   let parent = getParent(node);
@@ -167,7 +167,7 @@ function* extractCallReferencesForExpression(
         parent,
         memberName,
         nextPaths,
-        context
+        context,
       );
     }
   } else if (parent.type === "VariableDeclarator") {
@@ -190,7 +190,7 @@ function* extractCallReferencesForExpression(
         parent,
         `${name}()`,
         paths,
-        context
+        context,
       );
     }
   }
@@ -201,7 +201,7 @@ function* extractCallReferencesForPattern(
   pattern: Pattern,
   name: string | null,
   paths: TargetPaths,
-  context: Rule.RuleContext
+  context: Rule.RuleContext,
 ): Iterable<CallReference> {
   let target = pattern;
   while (target.type === "AssignmentPattern") {
@@ -228,14 +228,14 @@ function* extractCallReferencesForPattern(
           prop.value,
           propName,
           paths,
-          context
+          context,
         );
       } else if (prop.type === "RestElement") {
         yield* extractCallReferencesForPattern(
           prop.argument,
           name,
           paths,
-          context
+          context,
         );
       }
     }

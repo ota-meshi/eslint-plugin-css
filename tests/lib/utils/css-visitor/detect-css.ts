@@ -131,7 +131,7 @@ describe("detect CSS objects", () => {
           },
           settings,
         },
-        filename || "test.js"
+        filename || "test.js",
       );
       assert.strictEqual(result.length, count);
       for (const { message } of result) {

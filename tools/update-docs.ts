@@ -29,7 +29,7 @@ function pickSince(content: string): string | null | Promise<string> {
   const fileIntro = /^---\n(?<content>.*\n)+---\n*/u.exec(content);
   if (fileIntro) {
     const since = /since: "?(?<version>v\d+\.\d+\.\d+)"?/u.exec(
-      fileIntro.groups!.content
+      fileIntro.groups!.content,
     );
     if (since) {
       return since.groups!.version;
@@ -83,12 +83,12 @@ class DocFile {
     if (deprecated) {
       if (replacedBy) {
         const replacedRules = replacedBy.map(
-          (name) => `[css/${name}](${name}.md) rule`
+          (name) => `[css/${name}](${name}.md) rule`,
         );
         notes.push(
           `- :warning: This rule was **deprecated** and replaced by ${formatItems(
-            replacedRules
-          )}.`
+            replacedRules,
+          )}.`,
         );
       } else {
         notes.push("- :warning: This rule was **deprecated**.");
@@ -96,27 +96,27 @@ class DocFile {
     } else {
       if (recommended) {
         notes.push(
-          '- :gear: This rule is included in `"plugin:css/recommended"` and `"plugin:css/standard"`.'
+          '- :gear: This rule is included in `"plugin:css/recommended"` and `"plugin:css/standard"`.',
         );
       } else if (standard) {
         notes.push(
-          '- :gear: This rule is included in `"plugin:css/standard"`.'
+          '- :gear: This rule is included in `"plugin:css/standard"`.',
         );
       }
     }
     if (fixable) {
       notes.push(
-        "- :wrench: The `--fix` option on the [command line](https://eslint.org/docs/user-guide/command-line-interface#fixing-problems) can automatically fix some of the problems reported by this rule."
+        "- :wrench: The `--fix` option on the [command line](https://eslint.org/docs/user-guide/command-line-interface#fixing-problems) can automatically fix some of the problems reported by this rule.",
       );
     }
     if (hasSuggestions) {
       notes.push(
-        "- :bulb: Some problems reported by this rule are manually fixable by editor [suggestions](https://eslint.org/docs/developer-guide/working-with-rules#providing-suggestions)."
+        "- :bulb: Some problems reported by this rule are manually fixable by editor [suggestions](https://eslint.org/docs/developer-guide/working-with-rules#providing-suggestions).",
       );
     }
     if (!this.since) {
       notes.unshift(
-        `- :exclamation: <badge text="This rule has not been released yet." vertical="middle" type="error"> **_This rule has not been released yet._** </badge>`
+        `- :exclamation: <badge text="This rule has not been released yet." vertical="middle" type="error"> **_This rule has not been released yet._** </badge>`,
       );
     }
 
@@ -131,7 +131,7 @@ class DocFile {
     if (headerPattern.test(this.content)) {
       this.content = this.content.replace(
         headerPattern,
-        header.replace(/\$/gu, "$$$$")
+        header.replace(/\$/gu, "$$$$"),
       );
     } else {
       this.content = `${header}${this.content.trim()}\n`;
@@ -160,7 +160,7 @@ This rule was introduced in eslint-plugin-css ${await this.since}
     if (footerPattern.test(this.content)) {
       this.content = this.content.replace(
         footerPattern,
-        footer.replace(/\$/gu, "$$$$")
+        footer.replace(/\$/gu, "$$$$"),
       );
     } else {
       this.content = `${this.content.trim()}\n\n${footer}`;
@@ -184,7 +184,7 @@ This rule was introduced in eslint-plugin-css ${await this.since}
         }
         ps.unshift("<eslint-code-block");
         return `${ps.join(" ")}>`;
-      }
+      },
     );
     return this;
   }
@@ -193,11 +193,11 @@ This rule was introduced in eslint-plugin-css ${await this.since}
     // Adjust the necessary blank lines before and after the code block so that GitHub can recognize `.md`.
     this.content = this.content.replace(
       /(?<startTag><eslint-code-block[\s\S]*?>)\n+```/gu,
-      "$<startTag>\n\n```"
+      "$<startTag>\n\n```",
     );
     this.content = this.content.replace(
       /```\n+<\/eslint-code-block>/gu,
-      "```\n\n</eslint-code-block>"
+      "```\n\n</eslint-code-block>",
     );
     return this;
   }
@@ -222,7 +222,7 @@ This rule was introduced in eslint-plugin-css ${await this.since}
     if (fileIntroPattern.test(this.content)) {
       this.content = this.content.replace(
         fileIntroPattern,
-        computed.replace(/\$/gu, "$$$$")
+        computed.replace(/\$/gu, "$$$$"),
       );
     } else {
       this.content = `${computed}${this.content.trim()}\n`;

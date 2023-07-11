@@ -121,7 +121,7 @@ export type IncompleteRgbData = {
  * Parses a RGB CSS color function/string
  */
 export function parseRgb(
-  input: string | postcssValueParser.Node
+  input: string | postcssValueParser.Node,
 ): RgbData | IncompleteRgbData | null {
   const fn = parseFunction(input, ["rgb", "rgba"]);
   if (fn == null) {
@@ -174,7 +174,7 @@ export function parseRgb(
 
 /** Checks wether given node is in valid color range. */
 function isValidColor<U extends "" | "%">(
-  node: NumberWithUnit<U> | null
+  node: NumberWithUnit<U> | null,
 ): node is NumberWithUnit<U> {
   if (!node) {
     return false;

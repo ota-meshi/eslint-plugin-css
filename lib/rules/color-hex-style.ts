@@ -76,7 +76,7 @@ export default createRule("color-hex-style", {
                 ) {
                   return fixer.replaceTextRange(
                     [startIndex, endIndex],
-                    expected
+                    expected,
                   );
                 }
                 return null;

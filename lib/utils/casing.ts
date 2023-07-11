@@ -76,7 +76,7 @@ const checkersMap = {
  * Return case checker
  */
 export function getChecker(
-  name: "camelCase" | "kebab-case"
+  name: "camelCase" | "kebab-case",
 ): (str: string) => boolean {
   return checkersMap[name] || isCamelCase;
 }
@@ -85,7 +85,7 @@ export function getChecker(
  * Return case converter
  */
 export function getConverter(
-  name: "camelCase" | "kebab-case"
+  name: "camelCase" | "kebab-case",
 ): (str: string) => string {
   return convertersMap[name] || camelCase;
 }
@@ -95,7 +95,7 @@ export function getConverter(
  * If the converted result is not the correct case, the original value is returned.
  */
 export function getExactConverter(
-  name: "camelCase" | "kebab-case"
+  name: "camelCase" | "kebab-case",
 ): (str: string) => string {
   const converter = getConverter(name);
   const checker = getChecker(name);

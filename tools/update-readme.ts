@@ -14,8 +14,8 @@ const newReadme = fs
     /<!--RULES_TABLE_START-->[\s\S]*<!--RULES_TABLE_END-->/u,
     `<!--RULES_TABLE_START-->${insertText.replace(
       /\$/gu,
-      "$$$$"
-    )}<!--RULES_TABLE_END-->`
+      "$$$$",
+    )}<!--RULES_TABLE_END-->`,
   );
 fs.writeFileSync(readmeFilePath, newReadme);
 
@@ -28,11 +28,11 @@ fs.writeFileSync(
     .replace(/.\/docs\//gu, "./")
     .replace(
       /<!--RULES_SECTION_START-->[\s\S]*<!--RULES_SECTION_END-->/u,
-      "See [Available Rules](./rules/README.md)."
+      "See [Available Rules](./rules/README.md).",
     )
     .replace(
       /<!--USAGE_SECTION_START-->[\s\S]*<!--USAGE_SECTION_END-->/u,
-      "See [User Guide](./user-guide/README.md)."
+      "See [User Guide](./user-guide/README.md).",
     )
     .replace(/<!--DOCS_IGNORE_START-->[\s\S]*?<!--DOCS_IGNORE_END-->/gu, "")
     .replace(
@@ -50,22 +50,22 @@ fs.writeFileSync(
         }
         result += ")";
         return result;
-      }
+      },
     )
-    .replace(/\n{3,}/gu, "\n\n")
+    .replace(/\n{3,}/gu, "\n\n"),
 );
 
 const userGuideReadmeFilePath = path.resolve(
   __dirname,
-  "../docs/user-guide/README.md"
+  "../docs/user-guide/README.md",
 );
 const newUserGuideReadme = fs
   .readFileSync(userGuideReadmeFilePath, "utf8")
   .replace(
     /<!--USAGE_SECTION_START-->[\s\S]*<!--USAGE_SECTION_END-->/u,
     /<!--USAGE_SECTION_START-->[\s\S]*<!--USAGE_SECTION_END-->/u.exec(
-      newReadme
-    )![0]
+      newReadme,
+    )![0],
   );
 
 fs.writeFileSync(
@@ -87,7 +87,7 @@ fs.writeFileSync(
         }
         result += `${hash || ""})`;
         return result;
-      }
+      },
     )
-    .replace(/\n{3,}/gu, "\n\n")
+    .replace(/\n{3,}/gu, "\n\n"),
 );

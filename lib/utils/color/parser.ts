@@ -9,7 +9,7 @@ export class FunctionArgument {
   public constructor(
     before: string,
     node: postcssValueParser.Node,
-    after?: string
+    after?: string,
   ) {
     this.raws = {
       before,
@@ -37,7 +37,7 @@ export abstract class AbsAlphaArgument<V extends number | null> {
   public constructor(
     div: FunctionArgument,
     tokens: FunctionArgument[],
-    alpha: V
+    alpha: V,
   ) {
     this.div = div;
     this.tokens = tokens;
@@ -98,7 +98,7 @@ export class ValuesArgumentIncomplete extends AbsValuesArgument<null> {
 /** Parse function */
 export function parseFunction(
   input: string | postcssValueParser.Node,
-  expectName: string | string[]
+  expectName: string | string[],
 ): null | { rawName: string; arguments: FunctionArgument[] } {
   const node = parseInput(input);
   if (!node) {
@@ -135,7 +135,7 @@ export function parseFunction(
   return {
     rawName: node.value,
     arguments: argumentList.map(
-      (data) => new FunctionArgument(data.before, data.node, data.after)
+      (data) => new FunctionArgument(data.before, data.node, data.after),
     ),
   };
 }
@@ -143,7 +143,7 @@ export function parseFunction(
 /** Parse number unit */
 export function parseNumberUnit<U extends Unit>(
   input: FunctionArgument | undefined,
-  expectUnits: U[]
+  expectUnits: U[],
 ): NumberWithUnit<U> | null {
   if (!input) {
     return null;
@@ -169,7 +169,7 @@ export function parseNumberUnit<U extends Unit>(
 /** Parse alpha arguments */
 function parseAlphaArgument(
   div: FunctionArgument,
-  functionArguments: FunctionArgument[]
+  functionArguments: FunctionArgument[],
 ): AlphaArgument {
   const tokens: FunctionArgument[] = [];
   const alphaNode = functionArguments.shift();
@@ -196,7 +196,7 @@ function parseAlphaArgument(
 
 /** Parse input */
 export function parseInput(
-  input: string | postcssValueParser.Node | undefined
+  input: string | postcssValueParser.Node | undefined,
 ): postcssValueParser.Node | null {
   if (typeof input === "string") {
     const parsed = postcssValueParser(input);
@@ -210,7 +210,7 @@ export function parseInput(
 
 /** Checks wether given node is between 0 and 100. */
 export function isPercentRange(
-  node: NumberWithUnit<"" | "%"> | null
+  node: NumberWithUnit<"" | "%"> | null,
 ): node is NumberWithUnit<"" | "%"> {
   return Boolean(node && node.number >= 0 && node.number <= 100);
 }
@@ -225,7 +225,7 @@ type ParseArgumentValuesWithCommaOption<V> = ParseArgumentValuesOption<V> & {
 /** Parse argument values */
 export function parseArgumentValues<V>(
   functionArguments: FunctionArgument[],
-  option: ParseArgumentValuesWithCommaOption<V>
+  option: ParseArgumentValuesWithCommaOption<V>,
 ): {
   values: ValuesArgument<V>;
   alpha: AlphaArgument | null;
@@ -239,7 +239,7 @@ export function parseArgumentValues<V>(
 /** Parse argument values */
 export function parseArgumentValuesWithSpace<V>(
   functionArguments: FunctionArgument[],
-  option: ParseArgumentValuesOption<V>
+  option: ParseArgumentValuesOption<V>,
 ): {
   values: ValuesArgument<V>;
   alpha: AlphaArgument | null;
@@ -273,7 +273,7 @@ export function parseArgumentValuesWithSpace<V>(
 /** Parse argument values */
 export function parseArgumentValuesWithComma<V>(
   functionArguments: FunctionArgument[],
-  option: ParseArgumentValuesWithCommaOption<V>
+  option: ParseArgumentValuesWithCommaOption<V>,
 ): {
   values: ValuesArgument<V>;
   alpha: AlphaArgument | null;

@@ -132,7 +132,7 @@ export function parseColor(input: postcssValueParser.Node | string): Color {
     }
   }
   return new ColorForColord(
-    typeof input === "string" ? input : postcssValueParser.stringify(input)
+    typeof input === "string" ? input : postcssValueParser.stringify(input),
   );
 }
 /**

@@ -26,7 +26,7 @@ export function stripVendorPrefix(prop: string): string {
  */
 export function normalizePropertyName(
   name: string,
-  opt?: { keepVendorPrefix?: boolean }
+  opt?: { keepVendorPrefix?: boolean },
 ): string {
   // https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/cssFloat
   if (name === "cssFloat") {

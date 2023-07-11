@@ -134,7 +134,7 @@ export default createRule("prefer-reduce-shorthand-property-box-values", {
               ) {
                 return fixer.replaceTextRange(
                   [startIndex, endIndex],
-                  shortestFormString
+                  shortestFormString,
                 );
               }
               return null;

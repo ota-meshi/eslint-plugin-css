@@ -8,7 +8,7 @@ export * from "./css-visitor";
  */
 export function createRule(
   ruleName: string,
-  rule: PartialRuleModule
+  rule: PartialRuleModule,
 ): RuleModule {
   return {
     meta: {
@@ -16,7 +16,7 @@ export function createRule(
       docs: {
         ...rule.meta.docs,
         standard: Boolean(
-          rule.meta.docs.recommended || rule.meta.docs.standard
+          rule.meta.docs.recommended || rule.meta.docs.standard,
         ),
         url: `https://ota-meshi.github.io/eslint-plugin-css/rules/${ruleName}.html`,
         ruleId: `css/${ruleName}`,
