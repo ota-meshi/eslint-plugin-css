@@ -147,11 +147,11 @@ describe("detect CSS properties", () => {
             },
           },
         },
-        filename || "test.js"
+        filename || "test.js",
       );
       assert.deepStrictEqual(
         result.map(({ message }) => message),
-        expectedSelectors
+        expectedSelectors,
       );
     });
   }

@@ -54,12 +54,12 @@ export class ColorFromHwb extends AbsColor {
     if (hwb.complete) {
       return parseColord(
         `hwb(${numberWithUnitToString(
-          hwb.hwb.value.hue
+          hwb.hwb.value.hue,
         )} ${numberWithUnitToString(
-          hwb.hwb.value.whiteness
+          hwb.hwb.value.whiteness,
         )} ${numberWithUnitToString(hwb.hwb.value.blackness)}${
           hwb.alpha ? ` / ${hwb.alpha.toAlphaString()}` : ""
-        })`
+        })`,
       );
     }
     return null;
@@ -96,7 +96,7 @@ export type IncompleteHwbData = {
  * Parses a LAB CSS color function/string
  */
 export function parseHwb(
-  input: string | postcssValueParser.Node
+  input: string | postcssValueParser.Node,
 ): HwbData | IncompleteHwbData | null {
   const fn = parseFunction(input, "hwb");
   if (fn == null) {

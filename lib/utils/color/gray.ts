@@ -83,7 +83,7 @@ export type IncompleteGrayData = {
  * Parses a gray() CSS color function/string
  */
 export function parseGray(
-  input: string | postcssValueParser.Node
+  input: string | postcssValueParser.Node,
 ): GrayData | IncompleteGrayData | null {
   const fn = parseFunction(input, "gray");
   if (fn == null) {

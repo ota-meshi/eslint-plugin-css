@@ -8,7 +8,7 @@ import { isHTMLTableElement } from "./lib/dom-util";
 
 const filePath = path.resolve(
   __dirname,
-  "../lib/utils/resource/named-colors.ts"
+  "../lib/utils/resource/named-colors.ts",
 );
 
 // eslint-disable-next-line no-process-env -- ignore

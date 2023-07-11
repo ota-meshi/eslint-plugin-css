@@ -71,7 +71,7 @@ export default createRule("no-useless-color-alpha", {
                 ) {
                   return fixer.replaceTextRange(
                     [startIndex, endIndex],
-                    expected
+                    expected,
                   );
                 }
                 return null;

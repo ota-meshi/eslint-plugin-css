@@ -78,7 +78,7 @@ export type IncompleteLchData = {
  * Parses a LCH CSS color function/string
  */
 export function parseLch(
-  input: string | postcssValueParser.Node
+  input: string | postcssValueParser.Node,
 ): LchData | IncompleteLchData | null {
   const fn = parseFunction(input, "lch");
   if (fn == null) {

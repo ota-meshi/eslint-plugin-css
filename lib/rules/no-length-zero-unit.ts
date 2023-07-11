@@ -54,7 +54,7 @@ export default createRule("no-length-zero-unit", {
       ...(context.options[0]?.ignoreProperties ?? []),
     ].map(toRegExp);
     const ignoreCustomProperties = Boolean(
-      context.options[0]?.ignoreCustomProperties
+      context.options[0]?.ignoreCustomProperties,
     );
 
     /**

@@ -80,7 +80,7 @@ export type IncompleteHslData = {
  * Parses a HSL CSS color function/string
  */
 export function parseHsl(
-  input: string | postcssValueParser.Node
+  input: string | postcssValueParser.Node,
 ): HslData | IncompleteHslData | null {
   const fn = parseFunction(input, ["hsl", "hsla"]);
   if (fn == null) {

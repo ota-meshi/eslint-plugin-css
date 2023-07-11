@@ -131,7 +131,7 @@ export default createRule("named-color", {
                 ) {
                   return fixer.replaceTextRange(
                     [startIndex, endIndex],
-                    expected
+                    expected,
                   );
                 }
                 return null;

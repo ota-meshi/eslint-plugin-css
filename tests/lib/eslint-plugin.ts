@@ -20,7 +20,7 @@ describe("Integration with eslint-plugin-css", () => {
     assert.strictEqual(results.length, 1);
     assert.deepStrictEqual(
       results[0].messages.map((m) => m.ruleId),
-      ["css/no-invalid-color-hex", "css/no-unknown-property"]
+      ["css/no-invalid-color-hex", "css/no-unknown-property"],
     );
   });
 });

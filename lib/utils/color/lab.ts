@@ -89,7 +89,7 @@ export type IncompleteLabData = {
  * Parses a LAB CSS color function/string
  */
 export function parseLab(
-  input: string | postcssValueParser.Node
+  input: string | postcssValueParser.Node,
 ): LabData | IncompleteLabData | null {
   const fn = parseFunction(input, "lab");
   if (fn == null) {

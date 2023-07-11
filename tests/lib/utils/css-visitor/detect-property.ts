@@ -243,19 +243,19 @@ describe("detect CSS properties", () => {
             },
           },
         },
-        filename || "test.js"
+        filename || "test.js",
       );
       assert.deepStrictEqual(
         result
           .filter(({ ruleId }) => ruleId === "detect-property-key")
           .map(({ message }) => message),
-        expectedKeys
+        expectedKeys,
       );
       assert.deepStrictEqual(
         result
           .filter(({ ruleId }) => ruleId === "detect-property-value")
           .map(({ message }) => message),
-        expectedValues
+        expectedValues,
       );
     });
   }

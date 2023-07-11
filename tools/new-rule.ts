@@ -56,7 +56,7 @@ export default createRule("${ruleId}", {
         })
     },
 })
-`
+`,
   );
   fs.writeFileSync(
     testFile,
@@ -136,7 +136,7 @@ tester.run("${ruleId}", rule as any, {
     ],
 })
         
-`
+`,
   );
   fs.writeFileSync(
     docFile,
@@ -190,7 +190,7 @@ var foo = <div
 
 -
 
-`
+`,
   );
 
   cp.execSync(`code "${ruleFile}"`);

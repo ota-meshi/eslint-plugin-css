@@ -4,7 +4,7 @@ export abstract class AbsColor {
   private colordCache?: Colord | null;
 
   public toHex(
-    format?: "RGB" | "RRGGBB" | "default" | null | undefined
+    format?: "RGB" | "RRGGBB" | "default" | null | undefined,
   ): string | null {
     if (!this.isComplete()) {
       return null;

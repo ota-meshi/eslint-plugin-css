@@ -150,7 +150,7 @@ const cssRules = new WeakMap<ESTree.Program, CSSRule[]>();
  */
 export function defineCSSVisitor(
   context: Rule.RuleContext,
-  rule: DefineCSSVisitorRule
+  rule: DefineCSSVisitorRule,
 ): RuleListener {
   const programNode = context.getSourceCode().ast;
 
@@ -175,7 +175,7 @@ export function defineCSSVisitor(
 function buildCSSVisitor(
   context: Rule.RuleContext,
   rules: CSSRule[],
-  programExit: (node: ESTree.Program) => void
+  programExit: (node: ESTree.Program) => void,
 ): RuleListener {
   const verifiedObjects: (ESTree.Node | null)[] = [];
   const markedObjects: ESTree.ObjectExpression[] = [];
@@ -259,7 +259,7 @@ function buildCSSVisitor(
                   | ESTree.RestElement
                   | ESTree.AssignmentPattern
                 >,
-                ctx
+                ctx,
               );
               if (value.type === "ObjectExpression") {
                 const rule = buildRuleContext(ctx, prop);
@@ -292,7 +292,7 @@ function buildCSSVisitor(
   const settingsTarget = context.settings.css?.target || {};
 
   const attributes = ["style", ...(settingsTarget.attributes || [])].map(
-    toRegExp
+    toRegExp,
   );
 
   const defineFunctions: DefineFunctions = {
@@ -344,7 +344,7 @@ function buildCSSVisitor(
           for (const callReference of extractCallReferences(
             body,
             moduleDefineFunctions,
-            context
+            context,
           )) {
             for (const argument of callReference.node.arguments) {
               if (argument.type === "SpreadElement") {
@@ -356,7 +356,7 @@ function buildCSSVisitor(
               };
               const target = resolveDefineExpression(
                 defineStyleArgument.argument,
-                null
+                null,
               );
               if (target.type === "ObjectExpression") {
                 verifyCSSObject({
@@ -422,7 +422,7 @@ function buildCSSVisitor(
         scopeStack = scopeStack && scopeStack.upper;
       },
       [`JSXAttribute > JSXExpressionContainer.value > .expression`](
-        node: ESTree.Expression
+        node: ESTree.Expression,
       ) {
         const jsxAttr = getParent(getParent(node)) as {
           name?: { name?: string };
@@ -446,7 +446,7 @@ function buildCSSVisitor(
       ObjectExpression(node) {
         if (
           getCSSComments(context).some(
-            (comment) => comment.loc!.end.line === node.loc!.start.line - 1
+            (comment) => comment.loc!.end.line === node.loc!.start.line - 1,
           )
         ) {
           markedObjects.push(node);
@@ -469,7 +469,7 @@ function buildCSSVisitor(
     },
     defineTemplateBodyVisitor(context, {
       [`VAttribute[directive=true][key.name.name='bind'] > VExpressionContainer.value > :matches(ObjectExpression,ArrayExpression).expression`](
-        node: ESTree.ObjectExpression | ESTree.ArrayExpression
+        node: ESTree.ObjectExpression | ESTree.ArrayExpression,
       ) {
         const vBindAttr = getParent(getParent(node)) as {
           key?: {
@@ -488,14 +488,14 @@ function buildCSSVisitor(
         });
       },
     }),
-    {}
+    {},
   );
 
   /**
    * Build CSSObjectContext
    */
   function buildCSSObjectContext(
-    baseCtx: CSSObjectPropsContext
+    baseCtx: CSSObjectPropsContext,
   ): CSSObjectContext {
     return {
       ...baseCtx,
@@ -521,7 +521,7 @@ function buildCSSVisitor(
   /** Resolve define expression */
   function resolveDefineExpression(
     node: ESTree.Expression,
-    ctx: CSSObjectContext | null
+    ctx: CSSObjectContext | null,
   ) {
     if (ctx && ctx.on === "vue-style") {
       return node;
@@ -535,7 +535,7 @@ function buildCSSVisitor(
   /** Build property context */
   function buildPropertyContext(
     ctx: CSSObjectContext,
-    node: ESTree.Property
+    node: ESTree.Property,
   ): CSSPropertyContext {
     return {
       getName() {
@@ -592,7 +592,7 @@ function buildCSSVisitor(
   /** Build rule context */
   function buildRuleContext(
     ctx: CSSObjectContext,
-    node: ESTree.Property
+    node: ESTree.Property,
   ): CSSRuleContext {
     return {
       getSelector() {
@@ -662,7 +662,7 @@ function buildCSSVisitor(
 /** Create a visitor handler from the given rules */
 function createVisitorFromRules(
   rules: Iterable<CSSRule>,
-  context: CSSObjectContext
+  context: CSSObjectContext,
 ): CSSVisitorHandlers {
   const handlers: CSSVisitorHandlers = {};
   for (const rule of rules) {
@@ -698,7 +698,7 @@ function createVisitorFromRules(
  */
 function defineTemplateBodyVisitor(
   context: Rule.RuleContext,
-  templateBodyVisitor: RuleListener
+  templateBodyVisitor: RuleListener,
 ) {
   if (context.parserServices.defineTemplateBodyVisitor == null) {
     const filename = context.getFilename();
@@ -714,7 +714,7 @@ function defineTemplateBodyVisitor(
   return context.parserServices.defineTemplateBodyVisitor(
     templateBodyVisitor,
     {},
-    {}
+    {},
   );
 }
 

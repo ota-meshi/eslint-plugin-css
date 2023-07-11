@@ -26,7 +26,7 @@ export default createRule("property-casing", {
   create(context) {
     const option = context.options[0];
     const caseType: "camelCase" | "kebab-case" = allowedCaseOptions.includes(
-      option
+      option,
     )
       ? option
       : "camelCase";

@@ -31,7 +31,7 @@ export function getParent<E extends Node>(node: Node | null): E | null {
  */
 export function findVariable(
   context: Rule.RuleContext,
-  node: Identifier
+  node: Identifier,
 ): Scope.Variable | null {
   return eslintUtils.findVariable(getScope(context, node), node);
 }
@@ -51,7 +51,7 @@ export function findVariable(
  */
 export function getPropertyName(
   context: Rule.RuleContext,
-  node: MemberExpression | MethodDefinition | Property | PropertyDefinition
+  node: MemberExpression | MethodDefinition | Property | PropertyDefinition,
 ): string | null {
   return eslintUtils.getPropertyName(node, getScope(context, node));
 }
@@ -64,7 +64,7 @@ type GetStaticValueResult =
  */
 export function getStaticValue(
   context: Rule.RuleContext,
-  node: Node
+  node: Node,
 ): GetStaticValueResult | null {
   return eslintUtils.getStaticValue(node, getScope(context, node));
 }
@@ -74,7 +74,7 @@ export function getStaticValue(
  */
 export function getScope(
   context: Rule.RuleContext,
-  currentNode: Node
+  currentNode: Node,
 ): Scope.Scope {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ignore
   const scopeManager: Scope.ScopeManager = (context.getSourceCode() as any)
@@ -101,7 +101,7 @@ export function getScope(
  */
 export function findExpression(
   context: Rule.RuleContext,
-  id: Identifier
+  id: Identifier,
 ): Exclude<Expression, Identifier> | null {
   let target: Expression = id;
 
@@ -136,7 +136,7 @@ export function findExpression(
  * Checks whether given node is static template literal
  */
 export function isStaticTemplateLiteral(
-  node: Expression | PrivateIdentifier
+  node: Expression | PrivateIdentifier,
 ): node is TemplateLiteral & { quasis: [TemplateElement]; expressions: [] } {
   return node.type === "TemplateLiteral" && node.quasis.length === 1;
 }
@@ -144,7 +144,7 @@ export function isStaticTemplateLiteral(
  * Checks whether given node is string literal
  */
 export function isStringLiteral(
-  node: Expression | PrivateIdentifier
+  node: Expression | PrivateIdentifier,
 ): node is Literal & { value: string } {
   return node.type === "Literal" && typeof node.value === "string";
 }

@@ -66,7 +66,7 @@ function categorizeRules() {
 //eslint-disable-next-line require-jsdoc -- ignore
 function createTable(
   tableRules: RuleModule[],
-  buildRulePath: BuildRulePathFn
+  buildRulePath: BuildRulePathFn,
 ): string {
   let md = "| Rule ID | Description |    |\n|:--------|:------------|:---|";
 
@@ -79,7 +79,7 @@ function createTable(
     const mark = `${recommended}${standard}${fixable}${deprecated}`;
 
     const link = `[${meta.docs.ruleId}](${buildRulePath(
-      meta.docs.ruleName || ""
+      meta.docs.ruleName || "",
     )})`;
 
     const description = meta.docs.description || "(no description)";
@@ -93,13 +93,13 @@ function createTable(
 //eslint-disable-next-line require-jsdoc -- ignore
 function createDeprecationTable(
   tableRules: RuleModule[],
-  buildRulePath: BuildRulePathFn
+  buildRulePath: BuildRulePathFn,
 ): string {
   let md = "| Rule ID | Replaced by |\n|:--------|:------------|";
 
   for (const { meta } of tableRules) {
     const link = `[${meta.docs.ruleId}](${buildRulePath(
-      meta.docs.ruleName || ""
+      meta.docs.ruleName || "",
     )})`;
 
     const replacedRules = meta.replacedBy || [];
