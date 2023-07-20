@@ -1,5 +1,11 @@
 # eslint-plugin-css
 
+## 0.8.1
+
+### Patch Changes
+
+- [#103](https://github.com/ota-meshi/eslint-plugin-css/pull/103) [`e3c6c0d`](https://github.com/ota-meshi/eslint-plugin-css/commit/e3c6c0da946587557c2531917c680930d2d16f12) Thanks [@renovate](https://github.com/apps/renovate)! - fix(deps): update dependency known-css-properties to ^0.28.0
+
 ## 0.8.0
 
 ### Minor Changes
