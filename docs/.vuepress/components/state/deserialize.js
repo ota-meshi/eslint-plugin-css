@@ -1,6 +1,5 @@
-// eslint-disable-next-line eslint-comments/disable-enable-pair -- demo
-/* eslint-disable node/no-unsupported-features/es-syntax -- demo */
-import pako from "../../../../node_modules/pako";
+// eslint-disable-next-line n/no-extraneous-import -- ignore
+import pako from "pako";
 
 /**
  * Deserialize a given serialized string then update this object.

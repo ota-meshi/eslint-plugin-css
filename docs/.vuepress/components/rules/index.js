@@ -1,6 +1,6 @@
-// eslint-disable-next-line eslint-comments/disable-enable-pair -- demo
-/* eslint-disable node/no-unsupported-features/es-syntax -- demo */
+// eslint-disable-next-line n/no-missing-import -- demo
 import { Linter } from "eslint/lib/linter";
+// eslint-disable-next-line n/no-missing-import -- demo
 import plugin from "../../../../";
 
 const coreRules = Object.fromEntries(new Linter().getRules());
