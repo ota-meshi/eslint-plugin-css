@@ -1,5 +1,11 @@
 # eslint-plugin-css
 
+## 0.9.0
+
+### Minor Changes
+
+- [#126](https://github.com/ota-meshi/eslint-plugin-css/pull/126) [`0e17a94`](https://github.com/ota-meshi/eslint-plugin-css/commit/0e17a9460e843750ed39f6905e50830282e68ad1) Thanks [@ota-meshi](https://github.com/ota-meshi)! - feat: add support for eslint v9
+
 ## 0.8.1
 
 ### Patch Changes
