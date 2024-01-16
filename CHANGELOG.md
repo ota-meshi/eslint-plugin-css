@@ -1,5 +1,11 @@
 # eslint-plugin-css
 
+## 0.9.1
+
+### Patch Changes
+
+- [#128](https://github.com/ota-meshi/eslint-plugin-css/pull/128) [`c5b4171`](https://github.com/ota-meshi/eslint-plugin-css/commit/c5b41715ee64db9283650bd2ce8e29481bedda26) Thanks [@renovate](https://github.com/apps/renovate)! - fix(deps): update dependency eslint-compat-utils to ^0.4.0
+
 ## 0.9.0
 
 ### Minor Changes
