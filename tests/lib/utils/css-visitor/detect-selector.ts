@@ -1,7 +1,8 @@
 /* global require -- global */
 import assert from "assert";
 import { defineCSSVisitor, createRule } from "../../../../lib/utils";
-import { Linter } from "eslint";
+import { Linter } from "../../test-lib/eslint-compat";
+import { getSourceCode } from "eslint-compat-utils";
 
 const testRule = createRule("detect-selector", {
   meta: {
@@ -26,7 +27,7 @@ const testRule = createRule("detect-selector", {
             }
             context.report({
               node: sel.expression,
-              message: `${context.getSourceCode().getText(sel.expression)}=${
+              message: `${getSourceCode(context).getText(sel.expression)}=${
                 sel.selector
               }`,
             });
@@ -121,9 +122,6 @@ const TESTS = [
 
 describe("detect CSS properties", () => {
   const linter = new Linter();
-  linter.defineRule("detect-selector", testRule);
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports -- ignore
-  linter.defineParser("vue-eslint-parser", require("vue-eslint-parser"));
 
   for (const {
     code,
@@ -135,15 +133,29 @@ describe("detect CSS properties", () => {
       const result = linter.verify(
         code,
         {
-          rules: {
-            "detect-selector": "error",
+          files: ["**"],
+          plugins: {
+            // @ts-expect-error -- ignore
+            test: {
+              rules: {
+                "detect-selector": testRule,
+              },
+            },
           },
-          parser,
-          parserOptions: {
+          rules: {
+            "test/detect-selector": "error",
+          },
+          languageOptions: {
             ecmaVersion: 2020,
             sourceType: "module",
-            ecmaFeatures: {
-              jsx: true,
+            ...(parser === "vue-eslint-parser"
+              ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+                { parser: require("vue-eslint-parser") }
+              : {}),
+            parserOptions: {
+              ecmaFeatures: {
+                jsx: true,
+              },
             },
           },
         },

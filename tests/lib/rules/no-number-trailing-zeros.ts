@@ -1,11 +1,13 @@
-import { RuleTester } from "eslint";
+import { RuleTester } from "../test-lib/eslint-compat";
 import rule from "../../../lib/rules/no-number-trailing-zeros";
 
 const tester = new RuleTester({
-  parserOptions: {
+  languageOptions: {
     ecmaVersion: 2020,
     sourceType: "module",
-    ecmaFeatures: { jsx: true },
+    parserOptions: {
+      ecmaFeatures: { jsx: true },
+    },
   },
 });
 
@@ -27,7 +29,11 @@ tester.run("no-number-trailing-zeros", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
   invalid: [
@@ -72,7 +78,6 @@ tester.run("no-number-trailing-zeros", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         {
           message: "Unexpected trailing zero(s).",
@@ -82,6 +87,12 @@ tester.run("no-number-trailing-zeros", rule as any, {
           endColumn: 32,
         },
       ],
+
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
 });

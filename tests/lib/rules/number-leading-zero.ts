@@ -1,11 +1,13 @@
-import { RuleTester } from "eslint";
+import { RuleTester } from "../test-lib/eslint-compat";
 import rule from "../../../lib/rules/number-leading-zero";
 
 const tester = new RuleTester({
-  parserOptions: {
+  languageOptions: {
     ecmaVersion: 2020,
     sourceType: "module",
-    ecmaFeatures: { jsx: true },
+    parserOptions: {
+      ecmaFeatures: { jsx: true },
+    },
   },
 });
 
@@ -27,7 +29,11 @@ tester.run("number-leading-zero", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     {
       code: `
@@ -49,7 +55,11 @@ tester.run("number-leading-zero", rule as any, {
             </template>
             `,
       options: ["never"],
-      parser: require.resolve("vue-eslint-parser"),
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
   invalid: [
@@ -94,7 +104,6 @@ tester.run("number-leading-zero", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         {
           message: "Expected a leading zero.",
@@ -104,6 +113,11 @@ tester.run("number-leading-zero", rule as any, {
           endColumn: 29,
         },
       ],
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     {
       code: `
@@ -148,7 +162,6 @@ tester.run("number-leading-zero", rule as any, {
             </template>
             `,
       options: ["never"],
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         {
           message: "Unexpected leading zero.",
@@ -158,6 +171,11 @@ tester.run("number-leading-zero", rule as any, {
           endColumn: 28,
         },
       ],
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
 });

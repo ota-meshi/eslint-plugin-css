@@ -1,11 +1,13 @@
-import { RuleTester } from "eslint";
+import { RuleTester } from "../test-lib/eslint-compat";
 import rule from "../../../lib/rules/no-unknown-property";
 
 const tester = new RuleTester({
-  parserOptions: {
+  languageOptions: {
     ecmaVersion: 2020,
     sourceType: "module",
-    ecmaFeatures: { jsx: true },
+    parserOptions: {
+      ecmaFeatures: { jsx: true },
+    },
   },
 });
 
@@ -27,7 +29,11 @@ tester.run("no-unknown-property", rule as any, {
               }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     `
         var a = <div style={
@@ -73,7 +79,12 @@ tester.run("no-unknown-property", rule as any, {
               }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
+
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     {
       filename: "test.vue",
@@ -84,7 +95,12 @@ tester.run("no-unknown-property", rule as any, {
               }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
+
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     `
         var a = <div style={
@@ -147,7 +163,6 @@ tester.run("no-unknown-property", rule as any, {
               }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         {
           message: "Unexpected unknown property 'unknown'.",
@@ -157,6 +172,11 @@ tester.run("no-unknown-property", rule as any, {
           endColumn: 24,
         },
       ],
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
 });

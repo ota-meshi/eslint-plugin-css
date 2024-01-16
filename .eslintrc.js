@@ -70,6 +70,14 @@ module.exports = {
         ],
       },
     ],
+    "no-restricted-properties": [
+      "error",
+      {
+        object: "context",
+        property: "parserServices",
+        message: "Please use `getSourceCode(context).parserServices` instead.",
+      },
+    ],
   },
   overrides: [
     {

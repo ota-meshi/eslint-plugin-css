@@ -1,11 +1,13 @@
-import { RuleTester } from "eslint";
+import { RuleTester } from "../test-lib/eslint-compat";
 import rule from "../../../lib/rules/named-color";
 
 const tester = new RuleTester({
-  parserOptions: {
+  languageOptions: {
     ecmaVersion: 2020,
     sourceType: "module",
-    ecmaFeatures: { jsx: true },
+    parserOptions: {
+      ecmaFeatures: { jsx: true },
+    },
   },
 });
 
@@ -27,7 +29,11 @@ tester.run("named-color", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     {
       code: `
@@ -53,7 +59,11 @@ tester.run("named-color", rule as any, {
             </template>
             `,
       options: ["never"],
-      parser: require.resolve("vue-eslint-parser"),
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
   invalid: [
@@ -129,7 +139,6 @@ tester.run("named-color", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         {
           message: "Expected '#f00' to be 'red'.",
@@ -157,6 +166,11 @@ tester.run("named-color", rule as any, {
           column: 67,
         },
       ],
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     {
       filename: "test.vue",
@@ -178,7 +192,6 @@ tester.run("named-color", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         "Expected 'hwb(0 0% 100%)' to be 'black'.",
         "Expected 'hsl(0deg 100% 50%)' to be 'red'.",
@@ -186,6 +199,11 @@ tester.run("named-color", rule as any, {
         "Expected 'lab(100% 0 0)' to be 'white'.",
         "Expected 'lab(100% 0 0 / 1)' to be 'white'.",
       ],
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     {
       code: `
@@ -228,7 +246,6 @@ tester.run("named-color", rule as any, {
             </template>
             `,
       options: ["never"],
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         {
           message: "Expected 'red' to be '#f00'.",
@@ -236,6 +253,11 @@ tester.run("named-color", rule as any, {
           column: 29,
         },
       ],
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
 });

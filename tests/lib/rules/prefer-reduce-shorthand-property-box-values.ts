@@ -1,11 +1,13 @@
-import { RuleTester } from "eslint";
+import { RuleTester } from "../test-lib/eslint-compat";
 import rule from "../../../lib/rules/prefer-reduce-shorthand-property-box-values";
 
 const tester = new RuleTester({
-  parserOptions: {
+  languageOptions: {
     ecmaVersion: 2020,
     sourceType: "module",
-    ecmaFeatures: { jsx: true },
+    parserOptions: {
+      ecmaFeatures: { jsx: true },
+    },
   },
 });
 
@@ -27,7 +29,11 @@ tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
   invalid: [
@@ -89,7 +95,6 @@ tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         {
           message: "Unexpected longhand value '8px 8px' instead of '8px'.",
@@ -109,6 +114,11 @@ tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
           column: 37,
         },
       ],
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
 });

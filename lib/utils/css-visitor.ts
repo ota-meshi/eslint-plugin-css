@@ -13,6 +13,7 @@ import type { CallReference } from "./extract-calls-references";
 import { extractCallReferences } from "./extract-calls-references";
 import postcssValueParser from "postcss-value-parser";
 import type { ParsedValue as PostcssParsedValue } from "postcss-value-parser";
+import { getFilename, getSourceCode } from "eslint-compat-utils";
 
 type CSSHelperContext = {
   isFixable<T extends ESTree.Node>(targetNode?: T | null): targetNode is T;
@@ -152,7 +153,7 @@ export function defineCSSVisitor(
   context: Rule.RuleContext,
   rule: DefineCSSVisitorRule,
 ): RuleListener {
-  const programNode = context.getSourceCode().ast;
+  const programNode = getSourceCode(context).ast;
 
   let visitor: RuleListener;
   let rules = cssRules.get(programNode);
@@ -322,7 +323,7 @@ function buildCSSVisitor(
 
   let scopeStack: ScopeStack | null = {
     upper: null,
-    node: context.getSourceCode().ast,
+    node: getSourceCode(context).ast,
   };
   const defineStyleArgumentFunctions = new Map<
     ESTree.Node,
@@ -700,8 +701,9 @@ function defineTemplateBodyVisitor(
   context: Rule.RuleContext,
   templateBodyVisitor: RuleListener,
 ) {
-  if (context.parserServices.defineTemplateBodyVisitor == null) {
-    const filename = context.getFilename();
+  const sourceCode = getSourceCode(context);
+  if (sourceCode.parserServices.defineTemplateBodyVisitor == null) {
+    const filename = getFilename(context);
     if (path.extname(filename) === ".vue") {
       context.report({
         loc: { line: 1, column: 0 },
@@ -711,7 +713,7 @@ function defineTemplateBodyVisitor(
     }
     return {};
   }
-  return context.parserServices.defineTemplateBodyVisitor(
+  return sourceCode.parserServices.defineTemplateBodyVisitor(
     templateBodyVisitor,
     {},
     {},

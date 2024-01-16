@@ -1,11 +1,13 @@
-import { RuleTester } from "eslint";
+import { RuleTester } from "../test-lib/eslint-compat";
 import rule from "../../../lib/rules/color-hex-style";
 
 const tester = new RuleTester({
-  parserOptions: {
+  languageOptions: {
     ecmaVersion: 2020,
     sourceType: "module",
-    ecmaFeatures: { jsx: true },
+    parserOptions: {
+      ecmaFeatures: { jsx: true },
+    },
   },
 });
 
@@ -31,7 +33,11 @@ tester.run("color-hex-style", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     {
       code: `
@@ -57,7 +63,11 @@ tester.run("color-hex-style", rule as any, {
             </template>
             `,
       options: ["RRGGBB"],
-      parser: require.resolve("vue-eslint-parser"),
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
   invalid: [
@@ -118,7 +128,6 @@ tester.run("color-hex-style", rule as any, {
                 }"/>
             </template>
             `,
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         {
           message: "Expected '#ffffff' to be '#fff'.",
@@ -136,6 +145,11 @@ tester.run("color-hex-style", rule as any, {
           column: 35,
         },
       ],
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
     {
       code: `
@@ -196,7 +210,6 @@ tester.run("color-hex-style", rule as any, {
             </template>
             `,
       options: ["RRGGBB"],
-      parser: require.resolve("vue-eslint-parser"),
       errors: [
         {
           message: "Expected '#fff' to be '#ffffff'.",
@@ -214,6 +227,11 @@ tester.run("color-hex-style", rule as any, {
           column: 35,
         },
       ],
+      // @ts-expect-error -- ignore for eslint v9 property
+      languageOptions: {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+        parser: require("vue-eslint-parser"),
+      },
     },
   ],
 });
