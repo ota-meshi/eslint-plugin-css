@@ -1,0 +1,5 @@
+---
+"eslint-plugin-css": patch
+---
+
+fix(deps): update dependency eslint-compat-utils to ^0.4.0
