@@ -1,7 +1,8 @@
 /* global require -- global */
 import assert from "assert";
 import { defineCSSVisitor, createRule } from "../../../../lib/utils";
-import { Linter } from "eslint";
+import { Linter } from "../../test-lib/eslint-compat";
+import { getSourceCode } from "eslint-compat-utils";
 
 const testRule = createRule("detect-css", {
   meta: {
@@ -20,7 +21,7 @@ const testRule = createRule("detect-css", {
       createVisitor(cssContext) {
         context.report({
           node: cssContext.define,
-          message: context.getSourceCode().getText(cssContext.define),
+          message: getSourceCode(context).getText(cssContext.define),
         });
         return {};
       },
@@ -111,25 +112,35 @@ const TESTS = [
 
 describe("detect CSS objects", () => {
   const linter = new Linter();
-  linter.defineRule("detect-css", testRule);
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports -- ignore
-  linter.defineParser("vue-eslint-parser", require("vue-eslint-parser"));
-
   for (const { code, filename, count, parser, settings } of TESTS) {
     it(code, () => {
       const result = linter.verify(
         code,
         {
-          rules: { "detect-css": "error" },
-          parser,
-          parserOptions: {
-            ecmaVersion: 2020,
-            sourceType: "module",
-            ecmaFeatures: {
-              jsx: true,
+          files: ["**"],
+          plugins: {
+            // @ts-expect-error -- ignore
+            test: {
+              rules: {
+                "detect-css": testRule,
+              },
             },
           },
-          settings,
+          rules: { "test/detect-css": "error" },
+          languageOptions: {
+            ecmaVersion: 2020,
+            sourceType: "module",
+            ...(parser === "vue-eslint-parser"
+              ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+                { parser: require("vue-eslint-parser") }
+              : {}),
+            parserOptions: {
+              ecmaFeatures: {
+                jsx: true,
+              },
+            },
+          },
+          settings: settings || {},
         },
         filename || "test.js",
       );

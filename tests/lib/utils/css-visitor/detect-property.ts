@@ -1,7 +1,8 @@
 /* global require -- global */
 import assert from "assert";
 import { defineCSSVisitor, createRule } from "../../../../lib/utils";
-import { Linter } from "eslint";
+import { Linter } from "../../test-lib/eslint-compat";
+import { getSourceCode } from "eslint-compat-utils";
 
 const testRule1 = createRule("detect-property-key", {
   meta: {
@@ -26,7 +27,7 @@ const testRule1 = createRule("detect-property-key", {
             }
             context.report({
               node: name.expression,
-              message: context.getSourceCode().getText(name.expression),
+              message: getSourceCode(context).getText(name.expression),
             });
           },
         };
@@ -57,7 +58,7 @@ const testRule2 = createRule("detect-property-value", {
             }
             context.report({
               node: value.expression,
-              message: `${context.getSourceCode().getText(value.expression)}=${
+              message: `${getSourceCode(context).getText(value.expression)}=${
                 value.value
               }`,
             });
@@ -214,10 +215,6 @@ const TESTS = [
 
 describe("detect CSS properties", () => {
   const linter = new Linter();
-  linter.defineRule("detect-property-key", testRule1);
-  linter.defineRule("detect-property-value", testRule2);
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports -- ignore
-  linter.defineParser("vue-eslint-parser", require("vue-eslint-parser"));
 
   for (const {
     code,
@@ -230,16 +227,31 @@ describe("detect CSS properties", () => {
       const result = linter.verify(
         code,
         {
-          rules: {
-            "detect-property-key": "error",
-            "detect-property-value": "error",
+          files: ["**"],
+          plugins: {
+            // @ts-expect-error -- ignore
+            test: {
+              rules: {
+                "detect-property-key": testRule1,
+                "detect-property-value": testRule2,
+              },
+            },
           },
-          parser,
-          parserOptions: {
+          rules: {
+            "test/detect-property-key": "error",
+            "test/detect-property-value": "error",
+          },
+          languageOptions: {
             ecmaVersion: 2020,
             sourceType: "module",
-            ecmaFeatures: {
-              jsx: true,
+            ...(parser === "vue-eslint-parser"
+              ? // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
+                { parser: require("vue-eslint-parser") }
+              : {}),
+            parserOptions: {
+              ecmaFeatures: {
+                jsx: true,
+              },
             },
           },
         },
@@ -247,13 +259,13 @@ describe("detect CSS properties", () => {
       );
       assert.deepStrictEqual(
         result
-          .filter(({ ruleId }) => ruleId === "detect-property-key")
+          .filter(({ ruleId }) => ruleId === "test/detect-property-key")
           .map(({ message }) => message),
         expectedKeys,
       );
       assert.deepStrictEqual(
         result
-          .filter(({ ruleId }) => ruleId === "detect-property-value")
+          .filter(({ ruleId }) => ruleId === "test/detect-property-value")
           .map(({ message }) => message),
         expectedValues,
       );

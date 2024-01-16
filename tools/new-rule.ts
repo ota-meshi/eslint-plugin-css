@@ -60,15 +60,17 @@ export default createRule("${ruleId}", {
   );
   fs.writeFileSync(
     testFile,
-    `import { RuleTester } from "eslint"
+    `import { RuleTester } from "../test-lib/eslint-compat"
 import rule from "../../../lib/rules/${ruleId}"
 
 const tester = new RuleTester({
-    parserOptions: {
+    languageOptions: {
         ecmaVersion: 2020,
         sourceType: "module",
-        ecmaFeatures: { jsx: true },
-    },
+        parserOptions: {
+            ecmaFeatures: { jsx: true },
+        }
+    }
 })
 
 tester.run("${ruleId}", rule as any, {
@@ -89,7 +91,8 @@ tester.run("${ruleId}", rule as any, {
                 }"/>
             </template>
             \`,
-            parser: require.resolve("vue-eslint-parser"),
+            // @ts-expect-error -- ignore for eslint v9 property
+            languageOptions: { parser: require("vue-eslint-parser"),},
         },
     ],
     invalid: [
@@ -121,7 +124,8 @@ tester.run("${ruleId}", rule as any, {
                 }"/>
             </template>
             \`,
-            parser: require.resolve("vue-eslint-parser"),
+            // @ts-expect-error -- ignore for eslint v9 property
+            languageOptions: { parser: require("vue-eslint-parser"),},
             errors: [
                 {
                     messageId: "",
