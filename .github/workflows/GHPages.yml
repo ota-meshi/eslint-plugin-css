@@ -30,7 +30,6 @@ jobs:
         run: npm i
       - name: Build docs
         run: |+
-          export NODE_OPTIONS=--openssl-legacy-provider
           npm run docs:build
       - name: Setup Pages
         uses: actions/configure-pages@v4

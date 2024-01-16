@@ -31,7 +31,6 @@ module.exports = {
   description:
     "An ESLint plugin that provides rules to verify CSS definition objects.",
   serviceWorker: true,
-  evergreen: true,
   configureWebpack(_config, _isServer) {
     return {
       externals: {
@@ -51,9 +50,33 @@ module.exports = {
             __dirname,
             "../../node_modules/@eslint/eslintrc/dist/eslintrc-universal.cjs",
           ),
+          "eslint-compat-utils$": path.resolve(
+            __dirname,
+            "../../node_modules/eslint-compat-utils/dist/index.cjs",
+          ),
         },
       },
     };
+  },
+  chainWebpack(config) {
+    // In order to parse with webpack 4, the yaml package needs to be transpiled by babel.
+    const jsRule = config.module.rule("js");
+    const original = jsRule.exclude.values();
+    jsRule.exclude
+      .clear()
+      .add((filepath) => {
+        if (/node_modules\/(?:minimatch|yaml)\//u.test(filepath)) {
+          return false;
+        }
+        for (const fn of original) {
+          if (fn(filepath)) {
+            return true;
+          }
+        }
+        return false;
+      })
+      .end()
+      .use("babel-loader");
   },
 
   head: [
