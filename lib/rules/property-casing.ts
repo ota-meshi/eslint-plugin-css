@@ -42,6 +42,8 @@ export default createRule("property-casing", {
           if (!prop) {
             return;
           }
+          // CSS custom property
+          if (prop.name.startsWith("--")) return;
           if (checker(prop.name)) {
             return;
           }
