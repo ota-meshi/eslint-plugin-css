@@ -1,5 +1,11 @@
 # eslint-plugin-css
 
+## 0.9.2
+
+### Patch Changes
+
+- [#131](https://github.com/ota-meshi/eslint-plugin-css/pull/131) [`a82cc6c`](https://github.com/ota-meshi/eslint-plugin-css/commit/a82cc6c25da3cac5531718d6cf83dda80803a4a7) Thanks [@ota-meshi](https://github.com/ota-meshi)! - fix false positives for custom property in property-casing
+
 ## 0.9.1
 
 ### Patch Changes
