@@ -16,8 +16,8 @@ export abstract class AbsColor {
     return format === "RGB"
       ? toHexRGB(hex)
       : format === "RRGGBB"
-      ? toHexRRGGBB(hex)
-      : hex;
+        ? toHexRRGGBB(hex)
+        : hex;
   }
 
   public toName(): string | null {

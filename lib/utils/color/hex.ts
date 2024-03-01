@@ -100,8 +100,8 @@ export function parseHex(
     typeof input === "string"
       ? input
       : input.type === "word"
-      ? input.value
-      : "";
+        ? input.value
+        : "";
   if (!isHex(hex)) {
     return null;
   }
