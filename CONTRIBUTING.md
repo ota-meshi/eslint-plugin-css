@@ -78,9 +78,9 @@ Almost all Markdown files of our website and the project `README.md` are partial
 
 The following files are completely generated and must not be modified directly:
 
-- `docs/README.md` - change this section of the project `README.md` instead.
-- `docs/rules/README.md`
-- `docs/user-guide/README.md` - change this section of the project `README.md` instead.
+- `docs/index.md` - change this section of the project `README.md` instead.
+- `docs/rules/index.md`
+- `docs/user-guide/index.md` - change this section of the project `README.md` instead.
 
 The following files are partially generated:
 

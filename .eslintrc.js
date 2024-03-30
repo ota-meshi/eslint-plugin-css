@@ -108,7 +108,7 @@ module.exports = {
     },
     {
       files: ["*.vue"],
-      extends: ["plugin:@ota-meshi/+vue2", "plugin:@ota-meshi/+prettier"],
+      extends: ["plugin:@ota-meshi/+vue3", "plugin:@ota-meshi/+prettier"],
       parserOptions: {
         sourceType: "module",
       },
@@ -117,7 +117,8 @@ module.exports = {
       },
     },
     {
-      files: ["docs/.vuepress/**"],
+      files: ["docs/.vitepress/**"],
+      extends: ["plugin:@typescript-eslint/disable-type-checked"],
       parserOptions: {
         sourceType: "module",
         ecmaVersion: 2020,
@@ -133,6 +134,13 @@ module.exports = {
         "eslint-plugin/prefer-message-ids": "off",
         "eslint-plugin/prefer-object-rule": "off",
         "eslint-plugin/require-meta-schema": "off",
+        "n/no-extraneous-import": "off",
+      },
+    },
+    {
+      files: ["docs/.vitepress/**/*.ts", "docs/.vitepress/**/*.mts"],
+      parserOptions: {
+        project: null,
       },
     },
   ],

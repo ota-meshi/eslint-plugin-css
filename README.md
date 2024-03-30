@@ -24,7 +24,7 @@ This ESLint plugin provides linting rules to verify CSS definition objects.
 
 You can check on the [Online DEMO](https://ota-meshi.github.io/eslint-plugin-css/playground/).
 
-<img alt="vue" src="./docs/images/vue.png" height="150px"><img alt="jsx" src="./docs/images/jsx.png" height="150px">
+<img alt="vue" src="./images/vue.png" height="150px" style="height: 150px; display: inline-block;"><img alt="jsx" src="./images/jsx.png" height="150px" style="height: 150px; display: inline-block;">
 
 [styled-components]: https://styled-components.com/docs/advanced#style-objects
 
@@ -154,7 +154,7 @@ All CSS-related rules are applied to code that passes any of the following check
     createGlobalStyle({/*CSS*/})
     ```
 
-- According to [`settings.css.target` settings](../settings/README.md#target).
+- According to [`settings.css.target` settings](../settings/index.md#target).
 
 However, if you want to take advantage of the rules in any of your custom objects that are CSS objects, you might need to use the special comment `// @css` that marks an object in the next line as a CSS object in any file, e.g.:
 

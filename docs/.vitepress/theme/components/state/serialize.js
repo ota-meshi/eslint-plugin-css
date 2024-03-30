@@ -1,4 +1,3 @@
-// eslint-disable-next-line n/no-extraneous-import -- ignore
 import pako from "pako";
 
 /**
@@ -22,11 +21,12 @@ function getEnabledRules(allRules) {
  */
 export function serializeState(state) {
   const saveData = {
+    fileName: state.fileName,
     code: state.code,
     rules: state.rules ? getEnabledRules(state.rules) : undefined,
   };
   const jsonString = JSON.stringify(saveData);
-  const compressedString = pako.deflate(jsonString, { to: "string" });
+  const compressedString = String.fromCharCode(...pako.deflate(jsonString));
   const base64 =
     (typeof window !== "undefined" && window.btoa(compressedString)) ||
     compressedString;

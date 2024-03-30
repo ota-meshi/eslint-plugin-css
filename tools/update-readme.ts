@@ -19,7 +19,7 @@ const newReadme = fs
   );
 fs.writeFileSync(readmeFilePath, newReadme);
 
-const docsReadmeFilePath = path.resolve(__dirname, "../docs/README.md");
+const docsReadmeFilePath = path.resolve(__dirname, "../docs/index.md");
 
 fs.writeFileSync(
   docsReadmeFilePath,
@@ -28,11 +28,11 @@ fs.writeFileSync(
     .replace(/.\/docs\//gu, "./")
     .replace(
       /<!--RULES_SECTION_START-->[\s\S]*<!--RULES_SECTION_END-->/u,
-      "See [Available Rules](./rules/README.md).",
+      "See [Available Rules](./rules/index.md).",
     )
     .replace(
       /<!--USAGE_SECTION_START-->[\s\S]*<!--USAGE_SECTION_END-->/u,
-      "See [User Guide](./user-guide/README.md).",
+      "See [User Guide](./user-guide/index.md).",
     )
     .replace(/<!--DOCS_IGNORE_START-->[\s\S]*?<!--DOCS_IGNORE_END-->/gu, "")
     .replace(
@@ -43,21 +43,25 @@ fs.writeFileSync(
         if (name) {
           result +=
             name === "index.html"
-              ? "README.md"
+              ? "index.md"
               : name.replace(/\.html$/u, ".md");
         } else {
-          result += "README.md";
+          result += "index.md";
         }
         result += ")";
         return result;
       },
+    )
+    .replace(
+      "[LICENSE](LICENSE)",
+      "[LICENSE](https://github.com/ota-meshi/eslint-plugin-css/blob/main/LICENSE)",
     )
     .replace(/\n{3,}/gu, "\n\n"),
 );
 
 const userGuideReadmeFilePath = path.resolve(
   __dirname,
-  "../docs/user-guide/README.md",
+  "../docs/user-guide/index.md",
 );
 const newUserGuideReadme = fs
   .readFileSync(userGuideReadmeFilePath, "utf8")
@@ -71,7 +75,7 @@ const newUserGuideReadme = fs
 fs.writeFileSync(
   userGuideReadmeFilePath,
   newUserGuideReadme
-    .replace(/\(#white_check_mark-rules\)/gu, "(../rules/README.md)")
+    .replace(/\(#white_check_mark-rules\)/gu, "(../rules/index.md)")
     .replace(
       // eslint-disable-next-line regexp/no-super-linear-backtracking -- it's acceptable here
       /\(https:\/\/ota-meshi.github.io\/eslint-plugin-css(?<paths>.*?)(?<name>[^/]*\.html)?(?<hash>#.*?)?\)/gu,
@@ -80,10 +84,10 @@ fs.writeFileSync(
         if (name) {
           result +=
             name === "index.html"
-              ? "README.md"
+              ? "index.md"
               : name.replace(/\.html$/u, ".md");
         } else {
-          result += "README.md";
+          result += "index.md";
         }
         result += `${hash || ""})`;
         return result;

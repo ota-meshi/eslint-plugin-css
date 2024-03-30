@@ -22,7 +22,7 @@ and either use one of the two configurations available (`recommended` or `all`) 
 
 ### The recommended configuration
 
-The `plugin:css/recommended` config enables a subset of [the rules](../rules/README.md) that should be most useful to most users.
+The `plugin:css/recommended` config enables a subset of [the rules](../rules/index.md) that should be most useful to most users.
 *See [lib/configs/recommended.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/recommended.ts) for more details.*
 
 ```js
@@ -41,7 +41,7 @@ module.exports = {
 
 ### The standard configuration
 
-The `plugin:css/standard` config enables a subset of [the rules](../rules/README.md) and superset of `plugin:css/recommended` config that apply a subjective style.
+The `plugin:css/standard` config enables a subset of [the rules](../rules/index.md) and superset of `plugin:css/recommended` config that apply a subjective style.
 *See [lib/configs/standard.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/standard.ts) for more details.*
 
 ```js
@@ -113,7 +113,7 @@ All CSS-related rules are applied to code that passes any of the following check
     createGlobalStyle({/*CSS*/})
     ```
 
-- According to [`settings.css.target` settings](../settings/README.md#target).
+- According to [`settings.css.target` settings](../settings/index.md#target).
 
 However, if you want to take advantage of the rules in any of your custom objects that are CSS objects, you might need to use the special comment `// @css` that marks an object in the next line as a CSS object in any file, e.g.:
 
@@ -126,4 +126,4 @@ const myStyle = {
 
 <!--USAGE_SECTION_END-->
 
-See [the rule list](../rules/README.md) to get the `rules` that this plugin provides.
+See [the rule list](../rules/index.md) to get the `rules` that this plugin provides.

@@ -13,19 +13,16 @@
       <label class="tool">
         <input
           :checked="
-            categories.every((category) =>
+            checkedBinds(categories, (category) =>
               category.rules.every((rule) => isErrorState(rule.ruleId)),
-            )
+            ).checked
+          "
+          :indeterminate.prop="
+            checkedBinds(categories, (category) =>
+              category.rules.every((rule) => isErrorState(rule.ruleId)),
+            ).indeterminate
           "
           type="checkbox"
-          :indeterminate.prop="
-            categories.some((category) =>
-              category.rules.some((rule) => isErrorState(rule.ruleId)),
-            ) &&
-            categories.some((category) =>
-              category.rules.some((rule) => !isErrorState(rule.ruleId)),
-            )
-          "
           @input="onAllClick($event)"
         />
         <span class="tool-label">All Rules</span>
@@ -62,13 +59,16 @@
             <label class="category-title">
               <input
                 :checked="
-                  category.rules.every((rule) => isErrorState(rule.ruleId))
+                  checkedBinds(category.rules, (rule) =>
+                    isErrorState(rule.ruleId),
+                  ).checked
+                "
+                :indeterminate.prop="
+                  checkedBinds(category.rules, (rule) =>
+                    isErrorState(rule.ruleId),
+                  ).indeterminate
                 "
                 type="checkbox"
-                :indeterminate.prop="
-                  !category.rules.every((rule) => isErrorState(rule.ruleId)) &&
-                  !category.rules.every((rule) => !isErrorState(rule.ruleId))
-                "
                 @input="onCategoryClick(category, $event)"
               />
               {{ category.title }}
@@ -129,6 +129,7 @@ export default {
       required: true,
     },
   },
+  emits: ["update:rules"],
   data() {
     return {
       categoryState: Object.fromEntries(
@@ -200,6 +201,24 @@ export default {
     isErrorState(ruleId) {
       return this.rules[ruleId] === "error" || this.rules[ruleId] === 2;
     },
+    checkedBinds(array, fn) {
+      if (array.every(fn)) {
+        return {
+          checked: true,
+          indeterminate: false,
+        };
+      }
+      if (array.every((...args) => !fn(...args))) {
+        return {
+          checked: false,
+          indeterminate: false,
+        };
+      }
+      return {
+        checked: false,
+        indeterminate: true,
+      };
+    },
   },
 };
 </script>
@@ -212,6 +231,16 @@ export default {
 .tool {
   display: flex;
   padding: 4px;
+}
+
+.tools input {
+  border: 1px solid #cfd4db;
+  border-radius: 4px;
+  background: canvas;
+  color: canvastext;
+  line-height: 1rem;
+  padding-block: 1px;
+  padding-inline: 2px;
 }
 
 .tool-label {
