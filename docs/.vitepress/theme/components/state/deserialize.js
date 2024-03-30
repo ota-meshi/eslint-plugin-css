@@ -1,4 +1,3 @@
-// eslint-disable-next-line n/no-extraneous-import -- ignore
 import pako from "pako";
 
 /**
@@ -8,6 +7,7 @@ import pako from "pako";
  */
 export function deserializeState(serializedString) {
   const state = {
+    fileName: undefined,
     code: undefined,
     rules: undefined,
   };
@@ -17,17 +17,19 @@ export function deserializeState(serializedString) {
   }
 
   try {
-    // For backward compatibility, it can address non-compressed data.
-    const compressed = !serializedString.startsWith("eyJj");
     const decodedText = window.atob(serializedString);
-    const jsonText = compressed
-      ? pako.inflate(decodedText, { to: "string" })
-      : decodedText;
+    const jsonText = pako.inflate(
+      Uint8Array.from(decodedText, (c) => c.charCodeAt(0)),
+      { to: "string" },
+    );
     const json = JSON.parse(jsonText);
 
     if (typeof json === "object" && json != null) {
       if (typeof json.code === "string") {
         state.code = json.code;
+      }
+      if (typeof json.fileName === "string") {
+        state.fileName = json.fileName;
       }
       if (typeof json.rules === "object" && json.rules != null) {
         state.rules = {};
@@ -37,7 +39,7 @@ export function deserializeState(serializedString) {
       }
     }
   } catch (error) {
-    //eslint-disable-next-line no-console -- demo
+    // eslint-disable-next-line no-console -- demo
     console.error(error);
   }
 

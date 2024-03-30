@@ -1,17 +1,21 @@
 <template>
   <div class="app">
     <sns-bar />
+    <div class="tools">
+      <label class="file-name">FileName: <input v-model="fileName" /></label>
+    </div>
     <div class="main-content">
       <rules-settings
         ref="settings"
+        v-model:rules="rules"
         class="rules-settings"
-        :rules.sync="rules"
       />
       <div class="editor-content">
         <pg-editor
           v-model="code"
           :rules="rules"
           class="eslint-playground"
+          :file-name="fileName"
           @change="onChange"
         />
         <div class="messages">
@@ -20,10 +24,10 @@
               v-for="(msg, i) in messages"
               :key="msg.line + ':' + msg.column + ':' + msg.ruleId + '@' + i"
               class="message"
-              :class="getRule(msg.ruleId).classes"
+              :class="getRule(msg.ruleId)?.classes"
             >
               [{{ msg.line }}:{{ msg.column }}]: {{ msg.message }} (<a
-                :href="getRule(msg.ruleId).url"
+                :href="getRule(msg.ruleId)?.url"
                 target="_blank"
               >
                 {{ msg.ruleId }} </a
@@ -43,18 +47,22 @@ import SnsBar from "./components/SnsBar.vue";
 import { deserializeState, serializeState } from "./state";
 import { DEFAULT_RULES_CONFIG, getRule } from "./rules";
 
-const DEFAULT_CODE = require("!!raw-loader!./demo/demo-code.js").default;
+const DEFAULT_CODE = `var foo = <div style={
+    {
+        unknownColor: "#fff",
+        color: "#fffff",
+        'background-color': '#f00'
+    }
+} />`;
 
 export default {
   name: "PlaygroundBlock",
   components: { PgEditor, RulesSettings, SnsBar },
   data() {
-    const serializedString =
-      (typeof window !== "undefined" && window.location.hash.slice(1)) || "";
-    const state = deserializeState(serializedString);
     return {
-      code: state.code || DEFAULT_CODE,
-      rules: state.rules || Object.assign({}, DEFAULT_RULES_CONFIG),
+      fileName: "example.js",
+      code: DEFAULT_CODE,
+      rules: Object.assign({}, DEFAULT_RULES_CONFIG),
       messages: [],
     };
   },
@@ -62,11 +70,14 @@ export default {
     serializedString() {
       const defaultCode = DEFAULT_CODE;
       const defaultRules = DEFAULT_RULES_CONFIG;
+      const fileName =
+        this.fileName === "example.js" ? undefined : this.fileName;
       const code = defaultCode === this.code ? undefined : this.code;
       const rules = equalsRules(defaultRules, this.rules)
         ? undefined
         : this.rules;
       const serializedString = serializeState({
+        fileName,
         code,
         rules,
       });
@@ -75,19 +86,33 @@ export default {
   },
   watch: {
     serializedString(serializedString) {
-      if (typeof window !== "undefined") {
-        window.location.replace(`#${serializedString}`);
+      if (
+        typeof window !== "undefined" &&
+        serializedString !== window.location.hash.slice(1) &&
+        !this._initializing
+      ) {
+        history.replaceState(null, "", `#${serializedString}`);
       }
     },
   },
   mounted() {
     if (typeof window !== "undefined") {
-      window.addEventListener("hashchange", this.onUrlHashChange);
+      window.addEventListener("hashchange", this.processUrlHashChange);
+    }
+    const serializedString =
+      (typeof window !== "undefined" && window.location.hash.slice(1)) || "";
+    if (serializedString) {
+      this._initializing = true;
+      this.rules = {};
+      this.$nextTick().then(() => {
+        this._initializing = false;
+        this.processUrlHashChange();
+      });
     }
   },
-  beforeDestroey() {
+  beforeUnmount() {
     if (typeof window !== "undefined") {
-      window.removeEventListener("hashchange", this.onUrlHashChange);
+      window.removeEventListener("hashchange", this.processUrlHashChange);
     }
   },
   methods: {
@@ -97,27 +122,31 @@ export default {
     getRule(ruleId) {
       return getRule(ruleId);
     },
-    onUrlHashChange() {
+    processUrlHashChange() {
       const serializedString =
         (typeof window !== "undefined" && window.location.hash.slice(1)) || "";
       if (serializedString !== this.serializedString) {
         const state = deserializeState(serializedString);
-        this.code = state.code || DEFAULT_CODE;
+        this.fileName = state.fileName || "example.js";
+        if (this.code !== state.code) {
+          this.code = state.code || DEFAULT_CODE;
+        }
         this.rules = state.rules || Object.assign({}, DEFAULT_RULES_CONFIG);
-        this.script = state.script;
+        return true;
       }
+      return false;
     },
   },
 };
 
 function equalsRules(a, b) {
-  const akeys = Object.keys(a).filter((k) => a[k] !== "off");
-  const bkeys = Object.keys(b).filter((k) => b[k] !== "off");
-  if (akeys.length !== bkeys.length) {
+  const aKeys = Object.keys(a).filter((k) => a[k] !== "off");
+  const bKeys = Object.keys(b).filter((k) => b[k] !== "off");
+  if (aKeys.length !== bKeys.length) {
     return false;
   }
 
-  for (const k of akeys) {
+  for (const k of aKeys) {
     if (a[k] !== b[k]) {
       return false;
     }
@@ -126,6 +155,31 @@ function equalsRules(a, b) {
 }
 </script>
 <style scoped>
+.app {
+  height: calc(100vh - 70px);
+}
+
+.tools {
+  padding-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.tools input {
+  border: 1px solid #cfd4db;
+  border-radius: 4px;
+}
+
+.tools button {
+  border: 2px outset #cfd4db;
+  border-radius: 4px;
+  padding-inline: 8px;
+}
+
+.tools button:active {
+  border: 2px inset #cfd4db;
+}
+
 .main-content {
   display: flex;
   flex-wrap: wrap;

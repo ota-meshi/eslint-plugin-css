@@ -22,9 +22,9 @@ This ESLint plugin provides linting rules to verify CSS definition objects.
 - Support for Vue and JSX (React).
 - Partial support for [styled-components] style objects.
 
-You can check on the [Online DEMO](./playground/README.md).
+You can check on the [Online DEMO](./playground/index.md).
 
-<img alt="vue" src="./images/vue.png" height="150px"><img alt="jsx" src="./images/jsx.png" height="150px">
+<img alt="vue" src="./images/vue.png" height="150px" style="height: 150px; display: inline-block;"><img alt="jsx" src="./images/jsx.png" height="150px" style="height: 150px; display: inline-block;">
 
 [styled-components]: https://styled-components.co./advanced#style-objects
 
@@ -37,16 +37,16 @@ Also, CSS definitions using template literals are similar to CSS syntax, but CSS
 
 ## :book: Usage
 
-See [User Guide](./user-guide/README.md).
+See [User Guide](./user-guide/index.md).
 
 ## :white_check_mark: Rules
 
-See [Available Rules](./rules/README.md).
+See [Available Rules](./rules/index.md).
 
 ## :gear: Settings
 
-See [Settings](./settings/README.md).
+See [Settings](./settings/index.md).
 
 ## :lock: License
 
-See the [LICENSE](LICENSE) file for license rights and limitations (MIT).
+See the [LICENSE](https://github.com/ota-meshi/eslint-plugin-css/blob/main/LICENSE) file for license rights and limitations (MIT).

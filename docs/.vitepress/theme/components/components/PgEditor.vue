@@ -1,11 +1,12 @@
 <template>
   <eslint-plugin-editor
     ref="editor"
-    :code="value"
+    :code="modelValue"
     :rules="rules"
+    :file-name="fileName"
     fix
     dark
-    @input="$emit('input', $event)"
+    @update:code="$emit('update:modelValue', $event)"
     @change="$emit('change', $event)"
   />
 </template>
@@ -17,7 +18,7 @@ export default {
   name: "PgEditor",
   components: { EslintPluginEditor },
   props: {
-    value: {
+    modelValue: {
       type: String,
       default: "",
     },
@@ -29,6 +30,11 @@ export default {
       type: Array,
       default: () => [],
     },
+    fileName: {
+      type: String,
+      default: undefined,
+    },
   },
+  emits: ["change", "update:modelValue"],
 };
 </script>

@@ -91,6 +91,10 @@ dist
 # vuepress build output
 .vuepress/dist
 
+# vitepress build output
+docs/.vitepress/dist
+docs/.vitepress/cache
+
 # Serverless directories
 .serverless/
 
@@ -104,3 +108,5 @@ dist
 .tern-port
 
 package-lock.json
+
+/docs/.vitepress/build-system/shim

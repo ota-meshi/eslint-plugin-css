@@ -1,31 +1,22 @@
-// eslint-disable-next-line n/no-missing-import -- demo
-import { Linter } from "eslint/lib/linter";
-// eslint-disable-next-line n/no-missing-import -- demo
-import plugin from "../../../../";
+import { Linter } from "eslint";
+import { rules } from "../../../../../lib/utils/rules.ts";
 
 const coreRules = Object.fromEntries(new Linter().getRules());
 
 const CATEGORY_TITLES = {
-  "Possible Errors": "Possible Errors",
-  "Best Practices": "Best Practices",
-  "Stylistic Issues": "Stylistic Issues",
+  css: "eslint-plugin-css",
   "eslint-core-rules@problem": "ESLint core rules(Possible Errors)",
   "eslint-core-rules@suggestion": "ESLint core rules(Suggestions)",
   "eslint-core-rules@layout": "ESLint core rules(Layout & Formatting)",
 };
 const CATEGORY_INDEX = {
-  "Possible Errors": 1,
-  "Best Practices": 2,
-  "Stylistic Issues": 3,
+  css: 2,
   "eslint-core-rules@problem": 20,
   "eslint-core-rules@suggestion": 21,
   "eslint-core-rules@layout": 22,
 };
 const CATEGORY_CLASSES = {
-  base: "eslint-plugin-css-category",
-  "Possible Errors": "eslint-plugin-css-category",
-  "Best Practices": "eslint-plugin-css-category",
-  "Stylistic Issues": "eslint-plugin-css-category",
+  css: "eslint-plugin-css-category",
   "eslint-core-rules@problem": "eslint-core-category",
   "eslint-core-rules@suggestion": "eslint-core-category",
   "eslint-core-rules@layout": "eslint-core-category",
@@ -33,17 +24,17 @@ const CATEGORY_CLASSES = {
 
 const allRules = [];
 
-for (const k of Object.keys(plugin.rules)) {
-  const rule = plugin.rules[k];
+for (const k of Object.keys(rules)) {
+  const rule = rules[k];
   if (rule.meta.deprecated) {
     continue;
   }
   allRules.push({
     classes: "eslint-plugin-css-rule",
-    category: rule.meta.docs.category,
+    category: "css",
     ruleId: rule.meta.docs.ruleId,
     url: rule.meta.docs.url,
-    init: "error",
+    initChecked: CATEGORY_INDEX.css <= 3,
   });
 }
 for (const k of Object.keys(coreRules)) {
@@ -56,7 +47,7 @@ for (const k of Object.keys(coreRules)) {
     category: `eslint-core-rules@${rule.meta.type}`,
     ruleId: k,
     url: rule.meta.docs.url,
-    init: plugin.configs.standard.rules[k] || "off",
+    initChecked: rule.meta.docs.recommended,
   });
 }
 
@@ -94,11 +85,22 @@ categories.sort((a, b) =>
 );
 
 export const DEFAULT_RULES_CONFIG = allRules.reduce((c, r) => {
-  c[r.ruleId] = r.init;
+  if (
+    [
+      "no-trailing-spaces",
+      "no-multiple-empty-lines",
+      "comma-spacing",
+      "no-multi-spaces",
+    ].includes(r.ruleId)
+  ) {
+    c[r.ruleId] = "error";
+  } else {
+    c[r.ruleId] = r.initChecked ? "error" : "off";
+  }
   return c;
 }, {});
 
-export const rules = allRules;
+export { allRules as rules };
 
 export function getRule(ruleId) {
   if (!ruleId) {
