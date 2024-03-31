@@ -34,6 +34,7 @@ export default async (): Promise<UserConfig<DefaultTheme.Config>> => {
     head: [],
 
     vite: {
+      publicDir: path.resolve(dirname, "./public"),
       plugins: [eslint4b()],
       define: {
         "process.env.NODE_DEBUG": "false",
