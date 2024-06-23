@@ -8,6 +8,7 @@ for (const rule of rules) {
 
 import type { ESLint, Linter } from "eslint";
 export default {
+  name: "css:all",
   plugins: {
     get css(): ESLint.Plugin {
       // eslint-disable-next-line @typescript-eslint/no-require-imports -- ignore

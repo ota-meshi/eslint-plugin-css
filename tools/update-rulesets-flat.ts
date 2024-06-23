@@ -7,6 +7,7 @@ fs.writeFileSync(
   path.resolve(__dirname, "../lib/configs/flat/recommended.ts"),
   `import type { ESLint, Linter } from "eslint";
 export default {
+  name: "css:recommended",
   plugins: {
     get css(): ESLint.Plugin {
       // eslint-disable-next-line @typescript-eslint/no-require-imports -- ignore
@@ -30,6 +31,7 @@ fs.writeFileSync(
   path.resolve(__dirname, "../lib/configs/flat/standard.ts"),
   `import type { ESLint, Linter } from "eslint";
 export default {
+  name: "css:standard",
   plugins: {
     get css(): ESLint.Plugin {
       // eslint-disable-next-line @typescript-eslint/no-require-imports -- ignore

@@ -1,5 +1,6 @@
 import type { ESLint, Linter } from "eslint";
 export default {
+  name: "css:standard",
   plugins: {
     get css(): ESLint.Plugin {
       // eslint-disable-next-line @typescript-eslint/no-require-imports -- ignore
