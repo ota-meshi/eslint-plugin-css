@@ -1,5 +1,11 @@
 # eslint-plugin-css
 
+## 0.10.0
+
+### Minor Changes
+
+- [#155](https://github.com/ota-meshi/eslint-plugin-css/pull/155) [`69d7064`](https://github.com/ota-meshi/eslint-plugin-css/commit/69d70644a03c993d7ecd4e2ec377a613c0bb1756) Thanks [@ota-meshi](https://github.com/ota-meshi)! - feat: add support flat config
+
 ## 0.9.2
 
 ### Patch Changes
