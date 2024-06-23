@@ -1,5 +1,4 @@
 // https://github.com/NekR/self-destroying-sw
-/* globals self -- Work on SW */
 self.addEventListener("install", (_e) => {
   self.skipWaiting();
 });

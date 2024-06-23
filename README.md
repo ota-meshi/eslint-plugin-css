@@ -187,10 +187,10 @@ All CSS-related rules are applied to code that passes any of the following check
     ```js
     import styled, { css, createGlobalStyle } from 'styled-components'
 
-    styled.input({/*CSS*/})
-    styled.input.attrs({})({/*CSS*/})
-    css({/*CSS*/})
-    createGlobalStyle({/*CSS*/})
+    styled.input({/* CSS */})
+    styled.input.attrs({})({/* CSS */})
+    css({/* CSS */})
+    createGlobalStyle({/* CSS */})
     ```
 
 - According to [`settings.css.target` settings](../settings/index.md#target).

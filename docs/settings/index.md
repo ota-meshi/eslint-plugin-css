@@ -10,7 +10,7 @@ Example **.eslintrc.js**:
 
 ```js
 module.exports = {
-  ..., // rules, plugins, etc.
+  // ... rules, plugins, etc.
 
   settings: {
     // all settings for this plugin have to be in the `css` namespace
@@ -39,7 +39,7 @@ Specifies the attribute name or pattern that uses the style object.
 
 ```js
 module.exports = {
-  ..., // rules, plugins, etc.
+  // ... rules, plugins, etc.
   settings: {
     css: {
       target: {
@@ -60,7 +60,7 @@ Specifies the function paths that uses the style object.
 
 ```js
 module.exports = {
-  ..., // rules, plugins, etc.
+  // ... rules, plugins, etc.
   settings: {
     css: {
       target: {
