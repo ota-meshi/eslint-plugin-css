@@ -61,7 +61,20 @@ npm install --save-dev eslint eslint-plugin-css
 Add `css` to the plugins section of your `.eslintrc` configuration file (you can omit the `eslint-plugin-` prefix)
 and either use one of the two configurations available (`recommended` or `all`) or configure the rules you want:
 
-### The recommended configuration
+### The recommended configuration (`eslint.config.js`)
+
+The `plugin.configs["flat/recommended"]` config enables a subset of [the rules](#white_check_mark-rules) that should be most useful to most users.
+*See [lib/configs/flat/recommended.ts](https://github.com/ota-meshi/eslint-plugin-regexp/blob/master/lib/configs/flat/recommended.ts) for more details.*
+
+```js
+// eslint.config.js
+import * as cssPlugin from "eslint-plugin-css"
+export default [
+    cssPlugin.configs["flat/recommended"],
+];
+```
+
+### The recommended configuration (`.eslintrc.*`)
 
 The `plugin:css/recommended` config enables a subset of [the rules](#white_check_mark-rules) that should be most useful to most users.
 *See [lib/configs/recommended.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/recommended.ts) for more details.*
@@ -80,7 +93,20 @@ module.exports = {
 }
 ```
 
-### The standard configuration
+### The standard configuration (`eslint.config.js`)
+
+The `plugin.configs["flat/standard"]` config enables a subset of [the rules](#white_check_mark-rules) and superset of `plugin.configs["flat/recommended"]` config that apply a subjective style.
+*See [lib/configs/flat/standard.ts](https://github.com/ota-meshi/eslint-plugin-regexp/blob/master/lib/configs/flat/standard.ts) for more details.*
+
+```js
+// eslint.config.js
+import * as cssPlugin from "eslint-plugin-css"
+export default [
+    cssPlugin.configs["flat/standard"],
+];
+```
+
+### The standard configuration (`.eslintrc.*`)
 
 The `plugin:css/standard` config enables a subset of [the rules](#white_check_mark-rules) and superset of `plugin:css/recommended` config that apply a subjective style.
 *See [lib/configs/standard.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/standard.ts) for more details.*
@@ -102,6 +128,20 @@ module.exports = {
 Override/add specific rules configurations. *See also: [http://eslint.org/docs/user-guide/configuring](http://eslint.org/docs/user-guide/configuring)*.
 
 ```js
+// eslint.config.js
+import * as cssPlugin from "eslint-plugin-css"
+export default [
+    {
+        plugins: { css: cssPlugin },
+        rules: {
+            // Override/add rules settings here, such as:
+            "css/rule-name": "error"
+        }
+    }
+];
+```
+
+```js
 // .eslintrc.js
 module.exports = {
     "plugins": [
@@ -116,8 +156,7 @@ module.exports = {
 
 ### Using `"plugin:css/all"`
 
-The `plugin:css/all` config enables all rules. It's meant for testing, not for production use because it changes with every minor and major version of the plugin. Use it at your own risk.
-*See [lib/configs/all.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/all.ts) for more details.*
+The `plugin.configs["flat/all"]` / `plugin:css/all` config enables all rules. It's meant for testing, not for production use because it changes with every minor and major version of the plugin. Use it at your own risk.
 
 ### How does ESLint detect CSS objects?
 
