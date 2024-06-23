@@ -74,59 +74,66 @@ export default {
       return "javascript";
     },
     parser() {
-      return this.language === "html" ? "vue-eslint-parser" : "espree";
+      return this.language === "html" ? this.vueESLintParser : this.espree;
     },
     config() {
-      return {
-        globals: {
-          // Node
-          module: false,
-          // ES2015 globals
-          ArrayBuffer: false,
-          DataView: false,
-          Float32Array: false,
-          Float64Array: false,
-          Int16Array: false,
-          Int32Array: false,
-          Int8Array: false,
-          Map: false,
-          Promise: false,
-          Proxy: false,
-          Reflect: false,
-          Set: false,
-          Symbol: false,
-          Uint16Array: false,
-          Uint32Array: false,
-          Uint8Array: false,
-          Uint8ClampedArray: false,
-          WeakMap: false,
-          WeakSet: false,
-          // ES2017 globals
-          Atomics: false,
-          SharedArrayBuffer: false,
+      return [
+        {
+          plugins: {
+            css: {
+              rules: Object.fromEntries(
+                rules.map((rule) => [rule.meta.docs.ruleName, rule]),
+              ),
+            },
+          },
+          languageOptions: {
+            globals: {
+              // Node
+              module: false,
+              // ES2015 globals
+              ArrayBuffer: false,
+              DataView: false,
+              Float32Array: false,
+              Float64Array: false,
+              Int16Array: false,
+              Int32Array: false,
+              Int8Array: false,
+              Map: false,
+              Promise: false,
+              Proxy: false,
+              Reflect: false,
+              Set: false,
+              Symbol: false,
+              Uint16Array: false,
+              Uint32Array: false,
+              Uint8Array: false,
+              Uint8ClampedArray: false,
+              WeakMap: false,
+              WeakSet: false,
+              // ES2017 globals
+              Atomics: false,
+              SharedArrayBuffer: false,
+            },
+            sourceType: "module",
+            ecmaVersion: "latest",
+            parser: this.parser,
+            parserOptions: {
+              parser: this.espree,
+              ecmaFeatures: { jsx: true },
+            },
+          },
+          rules: this.rules,
         },
-        rules: this.rules,
-        parser: this.parser,
-        parserOptions: {
-          parser: this.espree,
-          sourceType: "module",
-          ecmaVersion: "latest",
-          ecmaFeatures: { jsx: true },
-        },
-      };
+      ];
     },
     linter() {
-      // if (!this.vueESLintParser) {
-      //   return null;
-      // }
-      const linter = new Linter();
-      // linter.defineParser("vue-eslint-parser", this.vueESLintParser);
-
-      for (const k of Object.keys(rules)) {
-        const rule = rules[k];
-        linter.defineRule(rule.meta.docs.ruleId, rule);
+      if (
+        !this.espree
+        // || !this.vueESLintParser
+      ) {
+        return null;
       }
-
+      const linter = new Linter();
       return linter;
     },
   },
