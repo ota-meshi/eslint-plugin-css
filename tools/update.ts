@@ -1,5 +1,6 @@
 import "./update-rules";
 import "./update-rulesets";
+import "./update-rulesets-flat";
 import "./update-docs";
 import "./update-readme";
 import "./update-docs-rules-index";
