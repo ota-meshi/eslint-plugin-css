@@ -1,5 +1,5 @@
 /* global setTimeout -- global  */
-/* eslint require-jsdoc:0 -- ignore */
+/* eslint jsdoc/require-jsdoc:0 -- ignore */
 import path from "path";
 import fs from "fs";
 import type { DOMWindow } from "jsdom";

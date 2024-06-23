@@ -6,7 +6,7 @@ export type BuildRulePathFn = (ruleName: string) => string;
 const DEFAULT_BUILD_RULE_PATH: BuildRulePathFn = (ruleName: string) =>
   `./${ruleName}.md`;
 
-//eslint-disable-next-line require-jsdoc -- ignore
+//eslint-disable-next-line jsdoc/require-jsdoc -- ignore
 export default function renderRulesTableContent(opt?: {
   header?: "##" | "###";
   buildRulePath?: BuildRulePathFn;
@@ -43,7 +43,7 @@ ${createDeprecationTable(categories.deprecated, buildRulePath)}
   return md;
 }
 
-//eslint-disable-next-line require-jsdoc -- ignore
+//eslint-disable-next-line jsdoc/require-jsdoc -- ignore
 function categorizeRules() {
   const result: Record<RuleCategory | "deprecated", RuleModule[]> = {
     "Best Practices": [],
@@ -63,7 +63,7 @@ function categorizeRules() {
   return result;
 }
 
-//eslint-disable-next-line require-jsdoc -- ignore
+//eslint-disable-next-line jsdoc/require-jsdoc -- ignore
 function createTable(
   tableRules: RuleModule[],
   buildRulePath: BuildRulePathFn,
@@ -90,7 +90,7 @@ function createTable(
   return md;
 }
 
-//eslint-disable-next-line require-jsdoc -- ignore
+//eslint-disable-next-line jsdoc/require-jsdoc -- ignore
 function createDeprecationTable(
   tableRules: RuleModule[],
   buildRulePath: BuildRulePathFn,
