@@ -26,7 +26,7 @@ You can check on the [Online DEMO](./playground/index.md).
 
 <img alt="vue" src="./images/vue.png" height="150px" style="height: 150px; display: inline-block;"><img alt="jsx" src="./images/jsx.png" height="150px" style="height: 150px; display: inline-block;">
 
-[styled-components]: https://styled-components.com/docs/advanced#style-objects
+[styled-components]: https://styled-components.co./advanced#style-objects
 
 ## :question: Why is it ESLint plugin?
 
