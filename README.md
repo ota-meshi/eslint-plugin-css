@@ -64,7 +64,7 @@ and either use one of the two configurations available (`recommended` or `all`) 
 ### The recommended configuration (`eslint.config.js`)
 
 The `plugin.configs["flat/recommended"]` config enables a subset of [the rules](#white_check_mark-rules) that should be most useful to most users.
-*See [lib/configs/flat/recommended.ts](https://github.com/ota-meshi/eslint-plugin-regexp/blob/master/lib/configs/flat/recommended.ts) for more details.*
+*See [lib/configs/flat/recommended.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/flat/recommended.ts) for more details.*
 
 ```js
 // eslint.config.js
@@ -96,7 +96,7 @@ module.exports = {
 ### The standard configuration (`eslint.config.js`)
 
 The `plugin.configs["flat/standard"]` config enables a subset of [the rules](#white_check_mark-rules) and superset of `plugin.configs["flat/recommended"]` config that apply a subjective style.
-*See [lib/configs/flat/standard.ts](https://github.com/ota-meshi/eslint-plugin-regexp/blob/master/lib/configs/flat/standard.ts) for more details.*
+*See [lib/configs/flat/standard.ts](https://github.com/ota-meshi/eslint-plugin-css/blob/main/lib/configs/flat/standard.ts) for more details.*
 
 ```js
 // eslint.config.js
