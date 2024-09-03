@@ -5,6 +5,7 @@
     "lib": ["es2020", "DOM"],
     "allowJs": true,
     "checkJs": true,
+    "declaration": true,
     "outDir": "./dist",
     "strict": true,
     "noImplicitAny": true,
