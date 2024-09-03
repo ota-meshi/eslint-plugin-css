@@ -1,5 +1,11 @@
 # eslint-plugin-css
 
+## 0.11.0
+
+### Minor Changes
+
+- [#164](https://github.com/ota-meshi/eslint-plugin-css/pull/164) [`ee9e184`](https://github.com/ota-meshi/eslint-plugin-css/commit/ee9e1841b1a851f27e2678ed1e34d1aa6dab2c6b) Thanks [@Logicer16](https://github.com/Logicer16)! - Add typescript declarations
+
 ## 0.10.0
 
 ### Minor Changes
