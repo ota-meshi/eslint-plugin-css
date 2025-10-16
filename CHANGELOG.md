@@ -1,5 +1,11 @@
 # eslint-plugin-css
 
+## 0.11.1
+
+### Patch Changes
+
+- [#177](https://github.com/ota-meshi/eslint-plugin-css/pull/177) [`7db396d`](https://github.com/ota-meshi/eslint-plugin-css/commit/7db396dddeb284b8c03838983239e2e55e3d96f4) Thanks [@ota-meshi](https://github.com/ota-meshi)! - use trusted publisher
+
 ## 0.11.0
 
 ### Minor Changes
