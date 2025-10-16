@@ -50,7 +50,7 @@ jobs:
           npx rimraf node_modules
           npm i
       - name: Test
-        run: npm test
+        run: npm run test:debug
   test-with-eslint7:
     runs-on: ubuntu-latest
     strategy:
@@ -68,7 +68,7 @@ jobs:
           npx rimraf node_modules
           npm i
       - name: Test
-        run: npm test
+        run: npm run test:debug
   test-and-coverage:
     runs-on: ubuntu-latest
     steps:

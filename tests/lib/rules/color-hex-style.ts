@@ -33,7 +33,6 @@ tester.run("color-hex-style", rule as any, {
                 }"/>
             </template>
             `,
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -63,7 +62,6 @@ tester.run("color-hex-style", rule as any, {
             </template>
             `,
       options: ["RRGGBB"],
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -145,7 +143,6 @@ tester.run("color-hex-style", rule as any, {
           column: 35,
         },
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -227,7 +224,6 @@ tester.run("color-hex-style", rule as any, {
           column: 35,
         },
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),

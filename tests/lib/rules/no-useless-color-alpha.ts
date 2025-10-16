@@ -29,7 +29,7 @@ tester.run("no-useless-color-alpha", rule as any, {
                 }"/>
             </template>
             `,
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -90,7 +90,7 @@ tester.run("no-useless-color-alpha", rule as any, {
           column: 29,
         },
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -124,7 +124,7 @@ tester.run("no-useless-color-alpha", rule as any, {
         "The alpha value is 100% and does not need to be specified.",
         "The alpha value is 100% and does not need to be specified.",
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -158,7 +158,7 @@ tester.run("no-useless-color-alpha", rule as any, {
         "The alpha value is 100% and does not need to be specified.",
         "The alpha value is 100% and does not need to be specified.",
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -189,7 +189,7 @@ tester.run("no-useless-color-alpha", rule as any, {
         "The alpha value is 100% and does not need to be specified.",
         "The alpha value is 100% and does not need to be specified.",
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -219,7 +219,7 @@ tester.run("no-useless-color-alpha", rule as any, {
         "The alpha value is 100% and does not need to be specified.",
         "The alpha value is 100% and does not need to be specified.",
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -251,7 +251,7 @@ tester.run("no-useless-color-alpha", rule as any, {
         "The alpha value is 100% and does not need to be specified.",
         "The alpha value is 100% and does not need to be specified.",
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -276,7 +276,7 @@ tester.run("no-useless-color-alpha", rule as any, {
             </template>
             `,
       errors: ["The alpha value is 100% and does not need to be specified."],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),

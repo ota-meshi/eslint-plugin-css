@@ -119,7 +119,6 @@ describe("detect CSS objects", () => {
         {
           files: ["**"],
           plugins: {
-            // @ts-expect-error -- ignore
             test: {
               rules: {
                 "detect-css": testRule,
