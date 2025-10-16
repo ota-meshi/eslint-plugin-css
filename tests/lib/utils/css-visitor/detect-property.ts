@@ -229,7 +229,6 @@ describe("detect CSS properties", () => {
         {
           files: ["**"],
           plugins: {
-            // @ts-expect-error -- ignore
             test: {
               rules: {
                 "detect-property-key": testRule1,
