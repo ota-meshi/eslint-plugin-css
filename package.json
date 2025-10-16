@@ -69,7 +69,6 @@
     "@ota-meshi/eslint-plugin": "^0.17.4",
     "@ota-meshi/site-kit-eslint-editor-vue": "^0.2.0",
     "@types/chai": "^4.2.22",
-    "@types/eslint": "^8.56.10",
     "@types/eslint-community__eslint-utils": "npm:@types/eslint-utils@^3",
     "@types/eslint-scope": "^3.7.1",
     "@types/estree": "^1.0.0",
