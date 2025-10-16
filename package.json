@@ -16,7 +16,7 @@
     "lint": "eslint .",
     "eslint-fix": "eslint . --fix",
     "pretest": "npm run build",
-    "test:base": "mocha --require ts-node/register \"tests/**/*.ts\" --reporter dot --timeout 60000",
+    "test:base": "mocha --require ts-node/register/transpile-only \"tests/**/*.ts\" --reporter dot --timeout 60000",
     "test": "npm run test:nyc",
     "test:nyc": "nyc --reporter=lcov npm run test:base",
     "test:debug": "mocha --require ts-node/register/transpile-only \"tests/**/*.ts\" --reporter dot --timeout 60000",
