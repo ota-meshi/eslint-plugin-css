@@ -103,7 +103,9 @@ export function* extractCallReferences(
     } else if (specifier.type === "ImportSpecifier") {
       yield* extractCallReferencesForVariable(
         variable,
-        specifier.imported.name,
+        specifier.imported.type === "Literal"
+          ? String(specifier.imported.value)
+          : specifier.imported.name,
         paths,
         context,
       );

@@ -53,7 +53,7 @@ export function getPropertyName(
   context: Rule.RuleContext,
   node: MemberExpression | MethodDefinition | Property | PropertyDefinition,
 ): string | null {
-  return eslintUtils.getPropertyName(node, getScope(context, node));
+  return eslintUtils.getPropertyName(node, getScope(context, node)) ?? null;
 }
 type GetStaticValueResult =
   | { value: unknown }

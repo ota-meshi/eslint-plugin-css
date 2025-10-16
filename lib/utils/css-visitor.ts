@@ -290,11 +290,19 @@ function buildCSSVisitor(
     }
   }
 
-  const settingsTarget = context.settings.css?.target || {};
+  type Settings = {
+    css?: {
+      target?: Record<string, unknown>;
+    };
+  };
 
-  const attributes = ["style", ...(settingsTarget.attributes || [])].map(
-    toRegExp,
-  );
+  const settingsTarget = (context.settings as Settings).css?.target || {};
+
+  const settingsTargetAttributes = Array.isArray(settingsTarget.attributes)
+    ? settingsTarget.attributes.map(String)
+    : [];
+
+  const attributes = ["style", ...settingsTargetAttributes].map(toRegExp);
 
   const defineFunctions: DefineFunctions = {
     ...normalizeDefineFunctions(settingsTarget.defineFunctions),

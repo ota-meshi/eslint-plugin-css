@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    "target": "es2018",
     "module": "node16",
     "lib": ["es2020", "DOM"],
     "allowJs": true,
