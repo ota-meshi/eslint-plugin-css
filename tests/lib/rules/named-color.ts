@@ -29,7 +29,6 @@ tester.run("named-color", rule as any, {
                 }"/>
             </template>
             `,
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -59,7 +58,6 @@ tester.run("named-color", rule as any, {
             </template>
             `,
       options: ["never"],
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -166,7 +164,6 @@ tester.run("named-color", rule as any, {
           column: 67,
         },
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -199,7 +196,6 @@ tester.run("named-color", rule as any, {
         "Expected 'lab(100% 0 0)' to be 'white'.",
         "Expected 'lab(100% 0 0 / 1)' to be 'white'.",
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -253,7 +249,6 @@ tester.run("named-color", rule as any, {
           column: 29,
         },
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),

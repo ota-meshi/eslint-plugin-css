@@ -91,7 +91,6 @@ tester.run("${ruleId}", rule as any, {
                 }"/>
             </template>
             \`,
-            // @ts-expect-error -- ignore for eslint v9 property
             languageOptions: { parser: require("vue-eslint-parser"),},
         },
     ],
@@ -124,7 +123,6 @@ tester.run("${ruleId}", rule as any, {
                 }"/>
             </template>
             \`,
-            // @ts-expect-error -- ignore for eslint v9 property
             languageOptions: { parser: require("vue-eslint-parser"),},
             errors: [
                 {

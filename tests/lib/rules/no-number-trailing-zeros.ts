@@ -29,7 +29,7 @@ tester.run("no-number-trailing-zeros", rule as any, {
                 }"/>
             </template>
             `,
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -88,7 +88,6 @@ tester.run("no-number-trailing-zeros", rule as any, {
         },
       ],
 
-      // @ts-expect-error -- ignore for eslint v9 property
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),

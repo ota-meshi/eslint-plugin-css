@@ -29,7 +29,7 @@ tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
                 }"/>
             </template>
             `,
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -114,7 +114,7 @@ tester.run("prefer-reduce-shorthand-property-box-values", rule as any, {
           column: 37,
         },
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),

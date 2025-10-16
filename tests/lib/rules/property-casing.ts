@@ -29,7 +29,7 @@ tester.run("property-casing", rule as any, {
                 }"/>
             </template>
             `,
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -44,7 +44,7 @@ tester.run("property-casing", rule as any, {
                 }"/>
             </template>
             `,
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -130,7 +130,7 @@ tester.run("property-casing", rule as any, {
           endColumn: 39,
         },
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -188,7 +188,7 @@ tester.run("property-casing", rule as any, {
           endColumn: 38,
         },
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
@@ -305,7 +305,7 @@ tester.run("property-casing", rule as any, {
         "'background-color' is not in camelCase.",
         "'border-color' is not in camelCase.",
       ],
-      // @ts-expect-error -- ignore for eslint v9 property
+
       languageOptions: {
         // eslint-disable-next-line @typescript-eslint/no-require-imports -- test
         parser: require("vue-eslint-parser"),
