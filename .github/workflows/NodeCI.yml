@@ -8,7 +8,7 @@ on:
 
 # Allow one concurrent deployment
 concurrency:
-  group: ci
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
