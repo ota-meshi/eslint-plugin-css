@@ -1,3 +1,4 @@
+/* globals self -- Service worker */
 // https://github.com/NekR/self-destroying-sw
 self.addEventListener("install", (_e) => {
   self.skipWaiting();
