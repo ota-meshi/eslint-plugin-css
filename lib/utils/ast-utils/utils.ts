@@ -76,9 +76,8 @@ export function getScope(
   context: Rule.RuleContext,
   currentNode: Node,
 ): Scope.Scope {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ignore
-  const scopeManager: Scope.ScopeManager = (context.getSourceCode() as any)
-    .scopeManager;
+  const sourceCode = context.sourceCode ?? context.getSourceCode();
+  const scopeManager = sourceCode.scopeManager;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ignore
   let node: any = currentNode;

@@ -30,7 +30,7 @@ export default createRule("number-leading-zero", {
      * Create visitor
      */
     function createVisitor(cssContext: CSSObjectContext): CSSVisitorHandlers {
-      const sourceCode = context.getSourceCode();
+      const sourceCode = context.sourceCode ?? context.getSourceCode();
       return {
         onProperty(property) {
           const value = property.getValue();

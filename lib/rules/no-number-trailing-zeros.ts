@@ -22,7 +22,7 @@ export default createRule("no-number-trailing-zeros", {
      * Create visitor
      */
     function createVisitor(cssContext: CSSObjectContext): CSSVisitorHandlers {
-      const sourceCode = context.getSourceCode();
+      const sourceCode = context.sourceCode ?? context.getSourceCode();
       return {
         onProperty(property) {
           const value = property.getValue();

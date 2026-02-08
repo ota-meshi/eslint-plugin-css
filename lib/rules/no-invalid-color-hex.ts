@@ -43,7 +43,7 @@ export default createRule("no-invalid-color-hex", {
 
             if (parseHexColor(hexValue).isComplete()) return undefined;
 
-            const sourceCode = context.getSourceCode();
+            const sourceCode = context.sourceCode ?? context.getSourceCode();
             const startIndex =
               value.expression.range![0] + sourceIndex + 1; /* quote */
             const endIndex = startIndex + textValue.length;
