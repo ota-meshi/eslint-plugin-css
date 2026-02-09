@@ -55,7 +55,7 @@ jobs:
           npx rimraf node_modules
           npm i
       - name: Test
-        run: npm test
+        run: npm run test:debug
   test-with-eslint8:
     runs-on: ubuntu-latest
     strategy:

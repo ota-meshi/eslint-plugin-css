@@ -1,3 +1,5 @@
+import type { SourceCode } from "eslint";
+
 export type LegacyContext = {
-  getSourceCode: () => import("eslint").SourceCode;
+  getSourceCode: () => SourceCode;
 };
