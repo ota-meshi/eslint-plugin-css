@@ -103,7 +103,7 @@ export default createRule("no-unknown-unit", {
               }
             }
 
-            const sourceCode = context.getSourceCode();
+            const sourceCode = context.sourceCode ?? context.getSourceCode();
             const startIndex =
               value.expression.range![0] + node.sourceIndex + 1; /* quote */
             const endIndex = startIndex + node.value.length;

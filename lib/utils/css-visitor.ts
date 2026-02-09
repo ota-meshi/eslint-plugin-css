@@ -136,7 +136,7 @@ function getCSSComments(context: Rule.RuleContext) {
   if (tokens) {
     return tokens;
   }
-  const sourceCode = context.getSourceCode();
+  const sourceCode = context.sourceCode ?? context.getSourceCode();
   tokens = sourceCode
     .getAllComments()
     .filter((comment) => /@css(?:\b|$)/u.test(comment.value));

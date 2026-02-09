@@ -70,7 +70,7 @@ export default createRule("prefer-reduce-shorthand-property-box-values", {
      * Create visitor
      */
     function createVisitor(cssContext: CSSObjectContext): CSSVisitorHandlers {
-      const sourceCode = context.getSourceCode();
+      const sourceCode = context.sourceCode ?? context.getSourceCode();
       return {
         onProperty(property) {
           const name = property.getName();

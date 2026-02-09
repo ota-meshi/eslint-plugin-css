@@ -51,7 +51,7 @@ export default createRule("color-hex-style", {
               return undefined;
             }
 
-            const sourceCode = context.getSourceCode();
+            const sourceCode = context.sourceCode ?? context.getSourceCode();
             const startIndex =
               value.expression.range![0] + sourceIndex + 1; /* quote */
             const endIndex = startIndex + textValue.length;

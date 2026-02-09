@@ -122,7 +122,7 @@ export default createRule("no-length-zero-unit", {
             )
               return undefined;
 
-            const sourceCode = context.getSourceCode();
+            const sourceCode = context.sourceCode ?? context.getSourceCode();
             const startIndex =
               value.expression.range![0] +
               sourceIndex +
