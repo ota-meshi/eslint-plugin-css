@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [20, 22, 24]
     steps:
       - uses: actions/checkout@v6
       - name: Use Node.js ${{ matrix.node-version }}
@@ -36,6 +36,24 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install Packages
         run: npm i
+      - name: Test
+        run: npm test
+  test-with-eslint9:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Target Packages
+        run: |+
+          npm i -D eslint@9
+          npx rimraf node_modules
+          npm i
       - name: Test
         run: npm test
   test-with-eslint8:
