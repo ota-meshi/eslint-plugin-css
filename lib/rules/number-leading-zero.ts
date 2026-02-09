@@ -1,5 +1,6 @@
 import type { CSSObjectContext, CSSVisitorHandlers } from "../utils";
 import { createRule, defineCSSVisitor } from "../utils";
+import type { LegacyContext } from "../utils/legacy";
 
 export default createRule("number-leading-zero", {
   meta: {
@@ -30,7 +31,9 @@ export default createRule("number-leading-zero", {
      * Create visitor
      */
     function createVisitor(cssContext: CSSObjectContext): CSSVisitorHandlers {
-      const sourceCode = context.sourceCode ?? context.getSourceCode();
+      const sourceCode =
+        context.sourceCode ??
+        (context as unknown as LegacyContext).getSourceCode();
       return {
         onProperty(property) {
           const value = property.getValue();

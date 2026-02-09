@@ -2,6 +2,7 @@ import type { CSSObjectContext, CSSVisitorHandlers } from "../utils";
 import { createRule, defineCSSVisitor } from "../utils";
 import { parseColor } from "../utils/color";
 import valueParser from "postcss-value-parser";
+import type { LegacyContext } from "../utils/legacy";
 
 export default createRule("no-useless-color-alpha", {
   meta: {
@@ -50,7 +51,9 @@ export default createRule("no-useless-color-alpha", {
             if (expected === actual) {
               return undefined;
             }
-            const sourceCode = context.sourceCode ?? context.getSourceCode();
+            const sourceCode =
+              context.sourceCode ??
+              (context as unknown as LegacyContext).getSourceCode();
             const startIndex =
               value.expression.range![0] + sourceIndex + 1; /* quote */
             const endIndex = startIndex + actual.length;

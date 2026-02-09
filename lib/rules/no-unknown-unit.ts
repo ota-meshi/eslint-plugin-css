@@ -5,6 +5,7 @@ import valueParser from "postcss-value-parser";
 import { toRegExp } from "../utils/regexp";
 import { UNITS } from "../utils/resource";
 import { stripVendorPrefix } from "../utils/css-utils";
+import type { LegacyContext } from "../utils/legacy";
 
 export default createRule("no-unknown-unit", {
   meta: {
@@ -103,7 +104,9 @@ export default createRule("no-unknown-unit", {
               }
             }
 
-            const sourceCode = context.sourceCode ?? context.getSourceCode();
+            const sourceCode =
+              context.sourceCode ??
+              (context as unknown as LegacyContext).getSourceCode();
             const startIndex =
               value.expression.range![0] + node.sourceIndex + 1; /* quote */
             const endIndex = startIndex + node.value.length;

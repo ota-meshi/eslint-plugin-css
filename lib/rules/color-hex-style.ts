@@ -1,6 +1,7 @@
 import type { CSSObjectContext, CSSVisitorHandlers } from "../utils";
 import { createRule, defineCSSVisitor } from "../utils";
 import { parseHexColor } from "../utils/color";
+import type { LegacyContext } from "../utils/legacy";
 
 export default createRule("color-hex-style", {
   meta: {
@@ -51,7 +52,9 @@ export default createRule("color-hex-style", {
               return undefined;
             }
 
-            const sourceCode = context.sourceCode ?? context.getSourceCode();
+            const sourceCode =
+              context.sourceCode ??
+              (context as unknown as LegacyContext).getSourceCode();
             const startIndex =
               value.expression.range![0] + sourceIndex + 1; /* quote */
             const endIndex = startIndex + textValue.length;
