@@ -13,6 +13,7 @@ import type {
   TemplateElement,
   TemplateLiteral,
 } from "estree";
+import type { LegacyContext } from "../legacy";
 
 /**
  * Get a parent node
@@ -76,7 +77,8 @@ export function getScope(
   context: Rule.RuleContext,
   currentNode: Node,
 ): Scope.Scope {
-  const sourceCode = context.sourceCode ?? context.getSourceCode();
+  const sourceCode =
+    context.sourceCode ?? (context as unknown as LegacyContext).getSourceCode();
   const scopeManager = sourceCode.scopeManager;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ignore

@@ -5,6 +5,7 @@ import valueParser from "postcss-value-parser";
 import { toRegExp } from "../utils/regexp";
 import { isCamelCase, kebabCase } from "../utils/casing";
 import { LENGTH_UNITS, MATH_FUNCTIONS } from "../utils/resource";
+import type { LegacyContext } from "../utils/legacy";
 
 export default createRule("no-length-zero-unit", {
   meta: {
@@ -122,7 +123,9 @@ export default createRule("no-length-zero-unit", {
             )
               return undefined;
 
-            const sourceCode = context.sourceCode ?? context.getSourceCode();
+            const sourceCode =
+              context.sourceCode ??
+              (context as unknown as LegacyContext).getSourceCode();
             const startIndex =
               value.expression.range![0] +
               sourceIndex +

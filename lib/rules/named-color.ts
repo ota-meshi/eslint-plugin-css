@@ -8,6 +8,7 @@ import { isCamelCase, kebabCase } from "../utils/casing";
 import { toRegExp } from "../utils/regexp";
 import { parseColor, parseHexColor } from "../utils/color";
 import valueParser from "postcss-value-parser";
+import type { LegacyContext } from "../utils/legacy";
 
 export default createRule("named-color", {
   meta: {
@@ -106,7 +107,9 @@ export default createRule("named-color", {
               return undefined;
             }
 
-            const sourceCode = context.sourceCode ?? context.getSourceCode();
+            const sourceCode =
+              context.sourceCode ??
+              (context as unknown as LegacyContext).getSourceCode();
             const startIndex =
               value.expression.range![0] + sourceIndex + 1; /* quote */
             const endIndex = startIndex + actual.length;

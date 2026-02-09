@@ -124,6 +124,9 @@ function* extractCallReferencesForVariable(
     if (!reference.isRead()) {
       continue;
     }
+    if (reference.identifier.type === "JSXIdentifier") {
+      continue;
+    }
     yield* extractCallReferencesForExpression(
       reference.identifier,
       name,

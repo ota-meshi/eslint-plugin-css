@@ -14,6 +14,7 @@ import { extractCallReferences } from "./extract-calls-references";
 import postcssValueParser from "postcss-value-parser";
 import type { ParsedValue as PostcssParsedValue } from "postcss-value-parser";
 import { getFilename, getSourceCode } from "eslint-compat-utils";
+import type { LegacyContext } from "./legacy";
 
 type CSSHelperContext = {
   isFixable<T extends ESTree.Node>(targetNode?: T | null): targetNode is T;
@@ -136,7 +137,8 @@ function getCSSComments(context: Rule.RuleContext) {
   if (tokens) {
     return tokens;
   }
-  const sourceCode = context.sourceCode ?? context.getSourceCode();
+  const sourceCode =
+    context.sourceCode ?? (context as unknown as LegacyContext).getSourceCode();
   tokens = sourceCode
     .getAllComments()
     .filter((comment) => /@css(?:\b|$)/u.test(comment.value));

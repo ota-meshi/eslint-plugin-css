@@ -3,6 +3,7 @@ import { createRule, defineCSSVisitor } from "../utils";
 import { normalizePropertyName } from "../utils/css-utils";
 import valueParser from "postcss-value-parser";
 import { isStaticTemplateLiteral, isStringLiteral } from "../utils/ast-utils";
+import type { LegacyContext } from "../utils/legacy";
 
 const SHORTHAND_PROPERTIES = new Set([
   "margin",
@@ -70,7 +71,9 @@ export default createRule("prefer-reduce-shorthand-property-box-values", {
      * Create visitor
      */
     function createVisitor(cssContext: CSSObjectContext): CSSVisitorHandlers {
-      const sourceCode = context.sourceCode ?? context.getSourceCode();
+      const sourceCode =
+        context.sourceCode ??
+        (context as unknown as LegacyContext).getSourceCode();
       return {
         onProperty(property) {
           const name = property.getName();
