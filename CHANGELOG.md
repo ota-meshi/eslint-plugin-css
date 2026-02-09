@@ -1,5 +1,11 @@
 # eslint-plugin-css
 
+## 0.12.0
+
+### Minor Changes
+
+- [#211](https://github.com/ota-meshi/eslint-plugin-css/pull/211) [`f9e3681`](https://github.com/ota-meshi/eslint-plugin-css/commit/f9e3681d72d3272ed333bc2192cfcb14935c002b) Thanks [@astrochemx](https://github.com/astrochemx)! - feat: `eslint` 10 support
+
 ## 0.11.1
 
 ### Patch Changes
